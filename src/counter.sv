@@ -1,5 +1,5 @@
 module counter #(
-    parameters NUM_BITS = 10;
+    parameter NUM_BITS = 10
 ) (
     input logic clk,
     input logic rst,
