@@ -1,6 +1,7 @@
 module vga_gpu #(
-    parameters width = 1920; // ignore for now
-    parameters height = 1080; // ignore for now
+    parameter WIDTH = 1920; // ignore for now
+    parameter HEIGHT = 1080; // ignore for now
+    parameter REFRESH_RATE = 60; // ignore for now
 ) (
     input logic clk,
     input logic rst,
