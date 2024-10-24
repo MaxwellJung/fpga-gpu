@@ -1,19 +1,23 @@
 `timescale 1ns / 1ps
 
-module tb_counter ();
-    localparam NUM_BITS = 8;
+module tb_gpu ();
     localparam CLK_PERIOD = 2;
 
     logic clk;
     logic rst;
-    logic enable;
-    logic [NUM_BITS-1:0] count;
+    wire h_sync;
+    wire v_sync;
     
-    counter c0 (
+    vga_gpu dut (
         .clk(clk),
         .rst(rst),
-        .enable(enable),
-        .count(count)
+
+        .red(),
+        .green(),
+        .blue(),
+
+        .h_sync(h_sync),
+        .v_sync(v_sync)
     );
 
     initial clk = 0;
@@ -21,25 +25,17 @@ module tb_counter ();
         clk = ~clk;
 
     initial begin
-        // pause counter
-        enable <= 0;
+        // simulation files dumped to the tb_gpu file
+        $dumpfile("tb_gpu.vcd");
+        $dumpvars(0,tb_gpu);
 
         // hold reset for 10 ns
         rst <= 1;
         #10
         rst <= 0;
 
-        // start counter for 50 ns
-        #10
-        enable <= 1;
-        #50
-        enable <= 0;
-
-        // resume counter for 50 ns
-        #10
-        enable <= 1;
-        #50
-        enable <= 0;
+        // simulate 3 frames
+        #(CLK_PERIOD*264*628*3)
 
         // hold reset for 50 ns
         rst <= 1;
