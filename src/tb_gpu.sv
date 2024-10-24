@@ -5,6 +5,9 @@ module tb_gpu ();
 
     logic clk;
     logic rst;
+
+    wire [3:0] red, green, blue;
+
     wire h_sync;
     wire v_sync;
     
@@ -12,9 +15,9 @@ module tb_gpu ();
         .clk(clk),
         .rst(rst),
 
-        .red(),
-        .green(),
-        .blue(),
+        .red(red),
+        .green(green),
+        .blue(blue),
 
         .h_sync(h_sync),
         .v_sync(v_sync)
