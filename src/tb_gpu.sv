@@ -25,9 +25,7 @@ module tb_gpu ();
         clk = ~clk;
 
     initial begin
-        // simulation files dumped to the tb_gpu file
-        $dumpfile("tb_gpu.vcd");
-        $dumpvars(0,tb_gpu);
+        $dumpvars(0, tb_gpu);
 
         // hold reset for 10 ns
         rst <= 1;
