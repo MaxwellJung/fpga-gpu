@@ -7,7 +7,7 @@ module tb_counter ();
     logic clk;
     logic rst;
     logic enable;
-    logic [NUM_BITS-1:0] count;
+    wire [NUM_BITS-1:0] count;
     
     counter c0 (
         .clk(clk),
