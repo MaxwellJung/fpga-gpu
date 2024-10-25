@@ -21,6 +21,7 @@ module tb_counter ();
         clk = ~clk;
 
     initial begin
+        $dumpvars(0, tb_counter);
         // pause counter
         enable <= 0;
 
