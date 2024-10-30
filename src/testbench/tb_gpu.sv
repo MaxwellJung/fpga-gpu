@@ -4,7 +4,7 @@ module tb_gpu ();
     localparam CLK_PERIOD = 100; // 10MHz clock
 
     logic clk;
-    logic aresetn;
+    logic resetn;
 
     wire [3:0] red, green, blue;
 
@@ -13,7 +13,7 @@ module tb_gpu ();
     
     vga_gpu dut (
         .clk(clk),
-        .aresetn(aresetn),
+        .resetn(resetn),
 
         .red(red),
         .green(green),
@@ -31,17 +31,17 @@ module tb_gpu ();
         $dumpvars(0, tb_gpu);
 
         // hold reset for 10 ns
-        aresetn <= 0;
-        #10
-        aresetn <= 1;
+        resetn <= 0;
+        #(CLK_PERIOD+10)
+        resetn <= 1;
 
         // simulate 3 frames
-        #(CLK_PERIOD*264*628*3)
+        #(CLK_PERIOD*1056*628*3)
 
         // hold reset for 50 ns
-        aresetn <= 0;
+        resetn <= 0;
         #50
-        aresetn <= 1;
+        resetn <= 1;
 
         #20 $finish;
     end

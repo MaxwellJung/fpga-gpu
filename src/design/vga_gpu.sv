@@ -15,7 +15,7 @@ module vga_gpu #(
     parameter CHANNEL_COUNT = 4
 ) (
     input logic clk,
-    input logic aresetn,
+    input logic resetn,
 
     // VGA pins
     output wire [CHANNEL_BITS-1:0] red,
@@ -34,8 +34,8 @@ module vga_gpu #(
     localparam H_WHOLE_LINE_PXL = H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL + H_BACK_PORCH_PXL;
     localparam V_WHOE_FRAME_PXL =  V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL + V_BACK_PORCH_PXL;
 
-    wire h_counter_end = h_pxl_count >= H_WHOLE_LINE_PXL;
-    wire v_counter_end = v_pxl_count >= V_WHOE_FRAME_PXL;
+    wire h_counter_end = h_pxl_count >= H_WHOLE_LINE_PXL - 1;
+    wire v_counter_end = v_pxl_count >= V_WHOE_FRAME_PXL - 1;
     wire h_visible = h_pxl_count < H_VIS_AREA_PXL;
     wire v_visible = v_pxl_count < V_VIS_AREA_PXL;
     wire pxl_visible = h_visible && v_visible;
@@ -44,7 +44,7 @@ module vga_gpu #(
         .NUM_BITS(H_NUM_BITS)
         ) h_pxl_counter (
         .clk(clk),
-        .aresetn(!(!aresetn || h_counter_end)),
+        .resetn(!(!resetn || h_counter_end)),
         .enable(1'b1),
         .count(h_pxl_count)
     );
@@ -52,9 +52,9 @@ module vga_gpu #(
     counter #(
         .NUM_BITS(V_NUM_BITS)
         ) v_pxl_counter (
-        .clk(h_counter_end),
-        .aresetn(!(!aresetn || v_counter_end)),
-        .enable(1'b1),
+        .clk(clk),
+        .resetn(!(!resetn || (h_counter_end && v_counter_end))),
+        .enable(h_counter_end),
         .count(v_pxl_count)
     );
 

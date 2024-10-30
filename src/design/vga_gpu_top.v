@@ -15,7 +15,7 @@ module vga_gpu_top #(
     parameter CHANNEL_COUNT = 4
 ) (
     input wire clk,
-    input wire aresetn,
+    input wire resetn,
 
     output wire [CHANNEL_BITS-1:0] VGA_R,
     output wire [CHANNEL_BITS-1:0] VGA_G,
@@ -43,7 +43,7 @@ module vga_gpu_top #(
         .CHANNEL_BITS(CHANNEL_BITS)
     ) gpu0 (
         .clk(clk),
-        .aresetn(aresetn),
+        .resetn(resetn),
 
         .red(VGA_R),
         .green(VGA_G),

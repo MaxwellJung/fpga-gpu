@@ -250,20 +250,7 @@ proc create_root_design { parentCell } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-    set_property -dict [list \
-    CONFIG.H_BACK_PORCH_PXL {88} \
-    CONFIG.H_FRONT_PORCH_PXL {40} \
-    CONFIG.H_NUM_BITS {11} \
-    CONFIG.H_SYNC_PULSE_PXL {128} \
-    CONFIG.H_VIS_AREA_PXL {800} \
-    CONFIG.V_BACK_PORCH_PXL {23} \
-    CONFIG.V_FRONT_PORCH_PXL {1} \
-    CONFIG.V_NUM_BITS {10} \
-    CONFIG.V_SYNC_PULSE_PXL {4} \
-    CONFIG.V_VIS_AREA_PXL {600} \
-  ] $vga_gpu_top_0
-
-
+  
   # Create instance: clk_wiz, and set properties
   set clk_wiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz ]
   set_property -dict [list \
@@ -276,8 +263,8 @@ proc create_root_design { parentCell } {
   ] $clk_wiz
 
 
-  # Create instance: rst_clk_wiz_10M, and set properties
-  set rst_clk_wiz_10M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_clk_wiz_10M ]
+  # Create instance: rst_clk_wiz, and set properties
+  set rst_clk_wiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_clk_wiz ]
 
   # Create instance: util_vector_logic_0, and set properties
   set util_vector_logic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 util_vector_logic_0 ]
@@ -303,9 +290,9 @@ proc create_root_design { parentCell } {
   connect_bd_net -net Op1_0_1 [get_bd_ports CPU_RESETN] [get_bd_pins util_vector_logic_0/Op1]
   connect_bd_net -net SW_0_1 [get_bd_ports SW] [get_bd_pins vga_gpu_top_0/SW]
   connect_bd_net -net clk_in1_0_1 [get_bd_ports CLK100MHZ] [get_bd_pins clk_wiz/clk_in1] [get_bd_pins ila_0/clk]
-  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins clk_wiz/clk_out1] [get_bd_pins rst_clk_wiz_10M/slowest_sync_clk] [get_bd_pins vga_gpu_top_0/clk]
-  connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz_10M/dcm_locked] [get_bd_pins rst_clk_wiz_10M/ext_reset_in]
-  connect_bd_net -net rst_clk_wiz_10M_peripheral_aresetn [get_bd_pins rst_clk_wiz_10M/peripheral_aresetn] [get_bd_pins vga_gpu_top_0/aresetn]
+  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins clk_wiz/clk_out1] [get_bd_pins rst_clk_wiz/slowest_sync_clk] [get_bd_pins vga_gpu_top_0/clk]
+  connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz/dcm_locked] [get_bd_pins rst_clk_wiz/ext_reset_in]
+  connect_bd_net -net rst_clk_wiz_10M_peripheral_aresetn [get_bd_pins rst_clk_wiz/peripheral_aresetn] [get_bd_pins vga_gpu_top_0/resetn]
   connect_bd_net -net util_vector_logic_0_Res [get_bd_pins util_vector_logic_0/Res] [get_bd_pins clk_wiz/reset]
   connect_bd_net -net vga_gpu_top_0_VGA_B [get_bd_pins vga_gpu_top_0/VGA_B] [get_bd_ports VGA_B] [get_bd_pins ila_0/probe2]
   connect_bd_net -net vga_gpu_top_0_VGA_G [get_bd_pins vga_gpu_top_0/VGA_G] [get_bd_ports VGA_G] [get_bd_pins ila_0/probe1]
