@@ -1,15 +1,15 @@
 module vga_gpu #(
-    parameter H_VIS_AREA_PXL = 800,
-    parameter H_FRONT_PORCH_PXL = 40,
-    parameter H_SYNC_PULSE_PXL = 128,
-    parameter H_BACK_PORCH_PXL = 88,
-    parameter H_NUM_BITS = 11, // ceil(log2(H_WHOLE_LINE_PXL))
+    parameter H_VIS_AREA_PXL = 1920,
+    parameter H_FRONT_PORCH_PXL = 88,
+    parameter H_SYNC_PULSE_PXL = 44,
+    parameter H_BACK_PORCH_PXL = 148,
+    parameter H_NUM_BITS = 12, // ceil(log2(H_WHOLE_LINE_PXL))
 
-    parameter V_VIS_AREA_PXL =  600,
-    parameter V_FRONT_PORCH_PXL =  1,
-    parameter V_SYNC_PULSE_PXL =  4,
-    parameter V_BACK_PORCH_PXL =  23,
-    parameter V_NUM_BITS = 10, // ceil(log2(V_WHOE_FRAME_PXL))
+    parameter V_VIS_AREA_PXL =  1080,
+    parameter V_FRONT_PORCH_PXL =  4,
+    parameter V_SYNC_PULSE_PXL =  5,
+    parameter V_BACK_PORCH_PXL =  36,
+    parameter V_NUM_BITS = 11, // ceil(log2(V_WHOE_FRAME_PXL))
 
     parameter CHANNEL_BITS = 4,
     parameter CHANNEL_COUNT = 4
@@ -63,8 +63,8 @@ module vga_gpu #(
     assign v_sync = !(((V_VIS_AREA_PXL + V_FRONT_PORCH_PXL) <= v_pxl_count) 
                   && (v_pxl_count < (V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL)));
 
-    assign {red, green, blue} = pxl_visible ? color[CHANNEL_COUNT*CHANNEL_BITS-1:4] : 12'b0;
+    // assign {red, green, blue} = pxl_visible ? color[CHANNEL_COUNT*CHANNEL_BITS-1:4] : 12'b0;
     // assign {red, green, blue} = pxl_visible ? {3{v_pxl_count[3:0]}} : 12'b0;
-    // assign {red, green, blue} = pxl_visible ? v_pxl_count : 12'b0;
+    assign {red, green, blue} = pxl_visible ? {1'b0, h_pxl_count} : 12'b0;
 
 endmodule
