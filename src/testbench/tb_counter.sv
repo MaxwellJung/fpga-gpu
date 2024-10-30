@@ -5,13 +5,13 @@ module tb_counter ();
     localparam CLK_PERIOD = 2;
 
     logic clk;
-    logic rst;
+    logic aresetn;
     logic enable;
     wire [NUM_BITS-1:0] count;
     
     counter c0 (
         .clk(clk),
-        .rst(rst),
+        .aresetn(aresetn),
         .enable(enable),
         .count(count)
     );
@@ -21,13 +21,14 @@ module tb_counter ();
         clk = ~clk;
 
     initial begin
+        $dumpvars(0, tb_counter);
         // pause counter
         enable <= 0;
 
         // hold reset for 10 ns
-        rst <= 1;
+        aresetn <= 0;
         #10
-        rst <= 0;
+        aresetn <= 1;
 
         // start counter for 50 ns
         #10
@@ -42,9 +43,9 @@ module tb_counter ();
         enable <= 0;
 
         // hold reset for 50 ns
-        rst <= 1;
+        aresetn <= 0;
         #50
-        rst <= 0;
+        aresetn <= 1;
 
         #20 $finish;
     end
