@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# vga_gpu_top
+# gpu_top
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -140,7 +140,6 @@ if { $bCheckIPs == 1 } {
 xilinx.com:ip:clk_wiz:6.0\
 xilinx.com:ip:proc_sys_reset:5.0\
 xilinx.com:ip:util_vector_logic:2.0\
-xilinx.com:ip:ila:6.2\
 "
 
    set list_ips_missing ""
@@ -166,7 +165,7 @@ xilinx.com:ip:ila:6.2\
 set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
-vga_gpu_top\
+gpu_top\
 "
 
    set list_mods_missing ""
@@ -232,39 +231,36 @@ proc create_root_design { parentCell } {
 
   # Create ports
   set VGA_R [ create_bd_port -dir O -from 3 -to 0 VGA_R ]
-  set VGA_B [ create_bd_port -dir O -from 3 -to 0 VGA_B ]
   set VGA_G [ create_bd_port -dir O -from 3 -to 0 VGA_G ]
   set VGA_HS [ create_bd_port -dir O VGA_HS ]
+  set VGA_B [ create_bd_port -dir O -from 3 -to 0 VGA_B ]
   set VGA_VS [ create_bd_port -dir O VGA_VS ]
+  set CPU_RESETN [ create_bd_port -dir I -type rst CPU_RESETN ]
+  set_property -dict [ list \
+   CONFIG.POLARITY {ACTIVE_LOW} \
+ ] $CPU_RESETN
   set CLK100MHZ [ create_bd_port -dir I -type clk CLK100MHZ ]
-  set CPU_RESETN [ create_bd_port -dir I -from 0 -to 0 CPU_RESETN ]
-  set SW [ create_bd_port -dir I -from 15 -to 0 SW ]
 
-  # Create instance: vga_gpu_top_0, and set properties
-  set block_name vga_gpu_top
-  set block_cell_name vga_gpu_top_0
-  if { [catch {set vga_gpu_top_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+  # Create instance: gpu_top_0, and set properties
+  set block_name gpu_top
+  set block_cell_name gpu_top_0
+  if { [catch {set gpu_top_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
-   } elseif { $vga_gpu_top_0 eq "" } {
+   } elseif { $gpu_top_0 eq "" } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.INIT_FILE {~/programming/fpga-gpu/data/ram_init.mem} $gpu_top_0
+
+
   # Create instance: clk_wiz, and set properties
   set clk_wiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz ]
-  set_property -dict [list \
-    CONFIG.CLKOUT1_JITTER {159.371} \
-    CONFIG.CLKOUT1_PHASE_ERROR {98.575} \
-    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {40} \
-    CONFIG.MMCM_CLKFBOUT_MULT_F {10.000} \
-    CONFIG.MMCM_CLKOUT0_DIVIDE_F {25.000} \
-    CONFIG.MMCM_DIVCLK_DIVIDE {1} \
-  ] $clk_wiz
+  set_property CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {40} $clk_wiz
 
 
-  # Create instance: rst_clk_wiz, and set properties
-  set rst_clk_wiz [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_clk_wiz ]
+  # Create instance: rst_clk_wiz_40M, and set properties
+  set rst_clk_wiz_40M [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_clk_wiz_40M ]
 
   # Create instance: util_vector_logic_0, and set properties
   set util_vector_logic_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:util_vector_logic:2.0 util_vector_logic_0 ]
@@ -274,31 +270,18 @@ proc create_root_design { parentCell } {
   ] $util_vector_logic_0
 
 
-  # Create instance: ila_0, and set properties
-  set ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:ila:6.2 ila_0 ]
-  set_property -dict [list \
-    CONFIG.C_DATA_DEPTH {4096} \
-    CONFIG.C_MONITOR_TYPE {Native} \
-    CONFIG.C_NUM_OF_PROBES {5} \
-    CONFIG.C_PROBE0_WIDTH {4} \
-    CONFIG.C_PROBE1_WIDTH {4} \
-    CONFIG.C_PROBE2_WIDTH {4} \
-  ] $ila_0
-
-
   # Create port connections
-  connect_bd_net -net Op1_0_1 [get_bd_ports CPU_RESETN] [get_bd_pins util_vector_logic_0/Op1]
-  connect_bd_net -net SW_0_1 [get_bd_ports SW] [get_bd_pins vga_gpu_top_0/SW]
-  connect_bd_net -net clk_in1_0_1 [get_bd_ports CLK100MHZ] [get_bd_pins clk_wiz/clk_in1] [get_bd_pins ila_0/clk]
-  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins clk_wiz/clk_out1] [get_bd_pins rst_clk_wiz/slowest_sync_clk] [get_bd_pins vga_gpu_top_0/clk]
-  connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz/dcm_locked] [get_bd_pins rst_clk_wiz/ext_reset_in]
-  connect_bd_net -net rst_clk_wiz_10M_peripheral_aresetn [get_bd_pins rst_clk_wiz/peripheral_aresetn] [get_bd_pins vga_gpu_top_0/resetn]
+  connect_bd_net -net clk_in1_0_1 [get_bd_ports CLK100MHZ] [get_bd_pins clk_wiz/clk_in1]
+  connect_bd_net -net clk_wiz_clk_out1 [get_bd_pins clk_wiz/clk_out1] [get_bd_pins rst_clk_wiz_40M/slowest_sync_clk] [get_bd_pins gpu_top_0/clk]
+  connect_bd_net -net clk_wiz_locked [get_bd_pins clk_wiz/locked] [get_bd_pins rst_clk_wiz_40M/dcm_locked] [get_bd_pins rst_clk_wiz_40M/ext_reset_in]
+  connect_bd_net -net gpu_top_0_VGA_B [get_bd_pins gpu_top_0/VGA_B] [get_bd_ports VGA_B]
+  connect_bd_net -net gpu_top_0_VGA_G [get_bd_pins gpu_top_0/VGA_G] [get_bd_ports VGA_G]
+  connect_bd_net -net gpu_top_0_VGA_HS [get_bd_pins gpu_top_0/VGA_HS] [get_bd_ports VGA_HS]
+  connect_bd_net -net gpu_top_0_VGA_R [get_bd_pins gpu_top_0/VGA_R] [get_bd_ports VGA_R]
+  connect_bd_net -net gpu_top_0_VGA_VS [get_bd_pins gpu_top_0/VGA_VS] [get_bd_ports VGA_VS]
+  connect_bd_net -net reset_0_1 [get_bd_ports CPU_RESETN] [get_bd_pins util_vector_logic_0/Op1]
+  connect_bd_net -net rst_clk_wiz_40M_peripheral_aresetn [get_bd_pins rst_clk_wiz_40M/peripheral_aresetn] [get_bd_pins gpu_top_0/resetn]
   connect_bd_net -net util_vector_logic_0_Res [get_bd_pins util_vector_logic_0/Res] [get_bd_pins clk_wiz/reset]
-  connect_bd_net -net vga_gpu_top_0_VGA_B [get_bd_pins vga_gpu_top_0/VGA_B] [get_bd_ports VGA_B] [get_bd_pins ila_0/probe2]
-  connect_bd_net -net vga_gpu_top_0_VGA_G [get_bd_pins vga_gpu_top_0/VGA_G] [get_bd_ports VGA_G] [get_bd_pins ila_0/probe1]
-  connect_bd_net -net vga_gpu_top_0_VGA_HS [get_bd_pins vga_gpu_top_0/VGA_HS] [get_bd_ports VGA_HS] [get_bd_pins ila_0/probe3]
-  connect_bd_net -net vga_gpu_top_0_VGA_R [get_bd_pins vga_gpu_top_0/VGA_R] [get_bd_ports VGA_R] [get_bd_pins ila_0/probe0]
-  connect_bd_net -net vga_gpu_top_0_VGA_VS [get_bd_pins vga_gpu_top_0/VGA_VS] [get_bd_ports VGA_VS] [get_bd_pins ila_0/probe4]
 
   # Create address segments
 

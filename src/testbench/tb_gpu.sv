@@ -11,16 +11,18 @@ module tb_gpu ();
     wire h_sync;
     wire v_sync;
     
-    vga_gpu dut (
+    gpu_top #(
+        .INIT_FILE("./data/ram_init.mem")
+    ) dut (
         .clk(clk),
         .resetn(resetn),
 
-        .red(red),
-        .green(green),
-        .blue(blue),
+        .VGA_R(red),
+        .VGA_G(green),
+        .VGA_B(blue),
 
-        .h_sync(h_sync),
-        .v_sync(v_sync)
+        .VGA_HS(h_sync),
+        .VGA_VS(v_sync)
     );
 
     initial clk = 0;
