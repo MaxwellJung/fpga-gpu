@@ -61,8 +61,8 @@ module gpu_top #(
         .clk(vga_clk),
         .resetn(resetn),
 
-        .early_h_pxl_count(vga_h_pxl_index),
-        .early_v_pxl_count(vga_v_pxl_index),
+        .h_pxl_count(vga_h_pxl_index),
+        .v_pxl_count(vga_v_pxl_index),
 
         .color(pixel_color),
 
