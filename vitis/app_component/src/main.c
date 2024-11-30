@@ -45,7 +45,7 @@ int main() {
     for (int row = 0; row < 300; row++) {
         for (int col = 0; col < 400; col++) {
             i = 400 * row + col;
-            XBram_Out8(bram_cfg_ptr->BaseAddress + i, i);
+            XBram_Out8(bram_cfg_ptr->BaseAddress + i, row + col);
             // XBram_Out8(bram_cfg_ptr->BaseAddress + i, 0);
             // xil_printf("Wrote %x to address %x\r\n", i, bram_cfg_ptr->BaseAddress + i);
             // for (u32 delay = 0; delay < 1000; delay++);

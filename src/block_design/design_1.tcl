@@ -149,6 +149,7 @@ xilinx.com:ip:axi_uartlite:2.0\
 xilinx.com:ip:axi_gpio:2.0\
 xilinx.com:ip:axi_bram_ctrl:4.1\
 xilinx.com:ip:blk_mem_gen:8.4\
+xilinx.com:ip:ila:6.2\
 xilinx.com:ip:lmb_v10:3.0\
 xilinx.com:ip:lmb_bram_if_cntlr:4.0\
 "
@@ -464,6 +465,20 @@ proc create_root_design { parentCell } {
   set_property CONFIG.Memory_Type {True_Dual_Port_RAM} $axi_bram_ctrl_0_bram
 
 
+  # Create instance: ila_0, and set properties
+  set ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:ila:6.2 ila_0 ]
+  set_property -dict [list \
+    CONFIG.C_DATA_DEPTH {4096} \
+    CONFIG.C_MONITOR_TYPE {Native} \
+    CONFIG.C_NUM_OF_PROBES {9} \
+    CONFIG.C_PROBE2_WIDTH {32} \
+    CONFIG.C_PROBE3_WIDTH {32} \
+    CONFIG.C_PROBE4_WIDTH {4} \
+    CONFIG.C_PROBE5_WIDTH {4} \
+    CONFIG.C_PROBE6_WIDTH {4} \
+  ] $ila_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0_bram/BRAM_PORTA] [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA]
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_16bits] [get_bd_intf_pins axi_gpio_0/GPIO]
@@ -485,14 +500,15 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net mig_7series_0_DDR2 [get_bd_intf_ports ddr2_sdram] [get_bd_intf_pins mig_7series_0/DDR2]
 
   # Create port connections
-  connect_bd_net -net axi_bram_ctrl_0_bram_doutb [get_bd_pins axi_bram_ctrl_0_bram/doutb] [get_bd_pins gpu_top_0/buffer_dout]
-  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins clk_wiz_0/vga_clk] [get_bd_pins axi_bram_ctrl_0_bram/clkb] [get_bd_pins gpu_top_0/vga_clk]
-  connect_bd_net -net gpu_top_0_VGA_B [get_bd_pins gpu_top_0/VGA_B] [get_bd_ports VGA_B]
-  connect_bd_net -net gpu_top_0_VGA_G [get_bd_pins gpu_top_0/VGA_G] [get_bd_ports VGA_G]
-  connect_bd_net -net gpu_top_0_VGA_HS [get_bd_pins gpu_top_0/VGA_HS] [get_bd_ports VGA_HS]
-  connect_bd_net -net gpu_top_0_VGA_R [get_bd_pins gpu_top_0/VGA_R] [get_bd_ports VGA_R]
-  connect_bd_net -net gpu_top_0_VGA_VS [get_bd_pins gpu_top_0/VGA_VS] [get_bd_ports VGA_VS]
-  connect_bd_net -net gpu_top_0_buffer_addr [get_bd_pins gpu_top_0/buffer_addr] [get_bd_pins axi_bram_ctrl_0_bram/addrb]
+  connect_bd_net -net axi_bram_ctrl_0_bram_doutb [get_bd_pins axi_bram_ctrl_0_bram/doutb] [get_bd_pins ila_0/probe3] [get_bd_pins gpu_top_0/buffer_dout]
+  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins clk_wiz_0/vga_clk] [get_bd_pins axi_bram_ctrl_0_bram/clkb] [get_bd_pins ila_0/probe0] [get_bd_pins gpu_top_0/vga_clk]
+  connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins ila_0/clk]
+  connect_bd_net -net gpu_top_0_VGA_B [get_bd_pins gpu_top_0/VGA_B] [get_bd_ports VGA_B] [get_bd_pins ila_0/probe6]
+  connect_bd_net -net gpu_top_0_VGA_G [get_bd_pins gpu_top_0/VGA_G] [get_bd_ports VGA_G] [get_bd_pins ila_0/probe5]
+  connect_bd_net -net gpu_top_0_VGA_HS [get_bd_pins gpu_top_0/VGA_HS] [get_bd_ports VGA_HS] [get_bd_pins ila_0/probe7]
+  connect_bd_net -net gpu_top_0_VGA_R [get_bd_pins gpu_top_0/VGA_R] [get_bd_ports VGA_R] [get_bd_pins ila_0/probe4]
+  connect_bd_net -net gpu_top_0_VGA_VS [get_bd_pins gpu_top_0/VGA_VS] [get_bd_ports VGA_VS] [get_bd_pins ila_0/probe8]
+  connect_bd_net -net gpu_top_0_buffer_addr [get_bd_pins gpu_top_0/buffer_addr] [get_bd_pins axi_bram_ctrl_0_bram/addrb] [get_bd_pins ila_0/probe2]
   connect_bd_net -net gpu_top_0_buffer_din [get_bd_pins gpu_top_0/buffer_din] [get_bd_pins axi_bram_ctrl_0_bram/dinb]
   connect_bd_net -net gpu_top_0_buffer_en [get_bd_pins gpu_top_0/buffer_en] [get_bd_pins axi_bram_ctrl_0_bram/enb]
   connect_bd_net -net gpu_top_0_buffer_rst [get_bd_pins gpu_top_0/buffer_rst] [get_bd_pins axi_bram_ctrl_0_bram/rstb]
@@ -506,7 +522,7 @@ proc create_root_design { parentCell } {
   connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins mig_7series_0/sys_rst]
   connect_bd_net -net rst_mig_7series_0_81M_bus_struct_reset [get_bd_pins rst_mig_7series_0_81M/bus_struct_reset] [get_bd_pins microblaze_riscv_0_local_memory/SYS_Rst]
   connect_bd_net -net rst_mig_7series_0_81M_mb_reset [get_bd_pins rst_mig_7series_0_81M/mb_reset] [get_bd_pins microblaze_riscv_0/Reset] [get_bd_pins microblaze_riscv_0_axi_intc/processor_rst]
-  connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aresetn] [get_bd_pins mig_7series_0/aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ARESETN] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ARESETN] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins gpu_top_0/resetn]
+  connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aresetn] [get_bd_pins mig_7series_0/aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ARESETN] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ARESETN] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins ila_0/probe1] [get_bd_pins gpu_top_0/resetn]
   connect_bd_net -net sys_clk_i_1 [get_bd_ports CLK100MHZ] [get_bd_pins mig_7series_0/sys_clk_i]
 
   # Create address segments
