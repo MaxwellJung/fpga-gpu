@@ -48,30 +48,16 @@ int main() {
     draw_diagonal_background(bram_cfg_ptr);
 
 	u32 sw_data;
-    u32 pixel_index = 0;
-	u8 pixel_color;
-    int f = 15;
 	while (1) {
 		sw_data = XGpio_DiscreteRead(&sw_device, SW_CHANNEL);
 		XGpio_DiscreteWrite(&led_device, LED_CHANNEL, sw_data);
 
-        if (sw_data != 0) {
-            if (pixel_index%f < f/3) {
-                draw_horizontal_background(bram_cfg_ptr);
-            } else if (pixel_index%f < 2*f/3) {
-                draw_diagonal_background(bram_cfg_ptr);
-            } else {
-                draw_vertical_background(bram_cfg_ptr);
-            }
+        if (sw_data == 0) {
+            continue;
         }
-
-		pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
-		XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0xff);
-	    xil_printf("Wrote %x to address %x\r\n", 0xff, bram_cfg_ptr->BaseAddress + pixel_index);
-
-        XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
-        pixel_index++;
-        if (pixel_index > 400*300) pixel_index = 0;
+        draw_horizontal_background(bram_cfg_ptr);
+        draw_diagonal_background(bram_cfg_ptr);
+        draw_vertical_background(bram_cfg_ptr);
 	}
 }
 
