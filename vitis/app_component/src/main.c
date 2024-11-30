@@ -45,15 +45,13 @@ int main() {
     for (int row = 0; row < 300; row++) {
         for (int col = 0; col < 400; col++) {
             i = 400 * row + col;
-            // XBram_Out8(bram_cfg_ptr->BaseAddress + i, i);
-            XBram_Out8(bram_cfg_ptr->BaseAddress + i, 0);
-            // XBram_Out8(bram_cfg_ptr->BaseAddress + i, i);
+            XBram_Out8(bram_cfg_ptr->BaseAddress + i, i);
+            // XBram_Out8(bram_cfg_ptr->BaseAddress + i, 0);
             // xil_printf("Wrote %x to address %x\r\n", i, bram_cfg_ptr->BaseAddress + i);
             // for (u32 delay = 0; delay < 1000; delay++);
         }
     }
 
-    XBram_Out8(bram_cfg_ptr->BaseAddress, 0xff);
 
 	// u32 sw_data;
     u32 pixel_index = 0;
@@ -63,15 +61,12 @@ int main() {
 		// XGpio_DiscreteWrite(&led_device, LED_CHANNEL, sw_data);
         // pixel_index = sw_data;
 
-		// pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
-		// XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0xff);
+		pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
+		XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0xff);
+	    xil_printf("Wrote %x to address %x\r\n", 0xff, bram_cfg_ptr->BaseAddress + pixel_index);
 
-
-	    // xil_printf("Wrote %x to address %x\r\n", 0xff, bram_cfg_ptr->BaseAddress + pixel_index);
-        // for (u32 delay = 0; delay < 10000000; delay++);
-
-        // XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
-        // pixel_index++;
-        // if (pixel_index > 400*300) pixel_index = 0;
+        XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
+        pixel_index++;
+        if (pixel_index > 400*300) pixel_index = 0;
 	}
 }
