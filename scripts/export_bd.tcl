@@ -2,7 +2,7 @@ set projectName gpu
 set projectRoot ./build/vivado/$projectName
 
 set bdName design_1
-set bdDir ./src/block_design
+set bdDir ./hardware/block_design
 
 open_project $projectRoot/${projectName}.xpr
 

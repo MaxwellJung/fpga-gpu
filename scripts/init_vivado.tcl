@@ -3,12 +3,12 @@ set projectRoot ./build/vivado/$projectName
 
 set fpgaTarget xc7a100tcsg324-1
 set boardPart digilentinc.com:nexys-a7-100t:part0:1.3
-set constraintsFile ./src/constraint/Nexys-A7-100T.xdc
+set constraintsFile ./hardware/constraint/Nexys-A7-100T.xdc
 set bdName design_1
-set bdFile ./src/block_design/${bdName}.tcl
+set bdFile ./hardware/block_design/${bdName}.tcl
 
-set designDir ./src/design
-set simDir ./src/testbench
+set designDir ./hardware/hdl/design
+set simDir ./hardware/hdl/testbench
 
 create_project $projectName $projectRoot -part $fpgaTarget -force
 set_property board_part $boardPart [current_project]

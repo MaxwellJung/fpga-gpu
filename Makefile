@@ -1,4 +1,4 @@
-SRC_DIRS := ./src
+SRC_DIRS := ./hardware/hdl
 BUILD_DIR := ./build
 SIM_DIR := $(BUILD_DIR)/sim
 SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
