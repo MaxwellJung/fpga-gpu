@@ -62,11 +62,11 @@ int main() {
         // pixel_index = sw_data;
 
 		pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
-		XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0xff);
+		XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0b00111100);
 
 
-	    // xil_printf("Wrote %x to address %x\r\n", 0xff, bram_cfg_ptr->BaseAddress + pixel_index);
-        for (u32 delay = 0; delay < 30000; delay++);
+	    xil_printf("Wrote %x to address %x\r\n", 0b00111100, bram_cfg_ptr->BaseAddress + pixel_index);
+        for (u32 delay = 0; delay < 10000000; delay++);
 
         XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
         pixel_index++;
