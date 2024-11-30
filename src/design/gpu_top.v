@@ -1,6 +1,4 @@
 module gpu_top #(
-    parameter INIT_FILE = "data/ram_init.mem",
-
     parameter H_VIS_AREA_PXL = 800,
     parameter H_FRONT_PORCH_PXL = 40,
     parameter H_SYNC_PULSE_PXL = 128,
@@ -13,26 +11,34 @@ module gpu_top #(
     parameter V_BACK_PORCH_PXL =  23,
     parameter V_NUM_BITS = 10, // ceil(log2(V_WHOE_FRAME_PXL))
 
-    parameter CHANNEL_BITS = 4,
-    parameter CHANNEL_COUNT = 4
+    parameter DOWNSCALE_FACTOR = 2,
+
+    parameter BUFFER_ADDR_BITS = 17, // ceil(log2(H_VIS_AREA_PXL/DOWNSCALE_FACTOR * V_VIS_AREA_PXL/DOWNSCALE_FACTOR))
+    parameter CHANNEL_BITS = 2
 ) (
-    input wire clk,
-    input wire resetn,
+    input  wire        vga_clk,
+    input  wire        resetn,
 
-    output wire [CHANNEL_BITS-1:0] VGA_R,
-    output wire [CHANNEL_BITS-1:0] VGA_G,
-    output wire [CHANNEL_BITS-1:0] VGA_B,
+    output wire [31:0] buffer_addr,
+    output wire [31:0] buffer_din,
+    input  wire [31:0] buffer_dout,
+    output wire        buffer_en,
+    output wire        buffer_rst,
+    output wire [3:0]  buffer_we,
 
-    output wire VGA_HS,
-    output wire VGA_VS
+    output wire [3:0]  VGA_R,
+    output wire [3:0]  VGA_G,
+    output wire [3:0]  VGA_B,
+
+    output wire        VGA_HS,
+    output wire        VGA_VS
 );
-    wire [H_NUM_BITS-1:0] h_pxl_index;
-    wire [V_NUM_BITS-1:0] v_pxl_index;
-    wire [ADDR_BITS-1:0] pixel_index = h_pxl_index + v_pxl_index * H_VIS_AREA_PXL;
-    wire [CHANNEL_BITS-1:0] color_r;
-    wire [CHANNEL_BITS-1:0] color_g;
-    wire [CHANNEL_BITS-1:0] color_b;
-    wire [CHANNEL_BITS-1:0] color_a;
+    wire [H_NUM_BITS-1:0] vga_h_pxl_index;
+    wire [V_NUM_BITS-1:0] vga_v_pxl_index;
+
+    wire [H_NUM_BITS-DOWNSCALE_FACTOR:0] h_pxl_index = (vga_h_pxl_index >> (DOWNSCALE_FACTOR - 1));
+    wire [V_NUM_BITS-DOWNSCALE_FACTOR:0] v_pxl_index = (vga_v_pxl_index >> (DOWNSCALE_FACTOR - 1));
+    wire [BUFFER_ADDR_BITS-1:0] pixel_index = (v_pxl_index * (H_VIS_AREA_PXL >> (DOWNSCALE_FACTOR - 1))) + h_pxl_index;
 
     vga #(
         .H_VIS_AREA_PXL(H_VIS_AREA_PXL),
@@ -49,7 +55,7 @@ module gpu_top #(
 
         .CHANNEL_BITS(CHANNEL_BITS)
     ) vga_0 (
-        .clk(clk),
+        .clk(vga_clk),
         .resetn(resetn),
 
         .red(VGA_R),
@@ -59,29 +65,24 @@ module gpu_top #(
         .h_sync(VGA_HS),
         .v_sync(VGA_VS),
 
-        .h_pxl_count(h_pxl_index),
-        .v_pxl_count(v_pxl_index),
+        .h_pxl_count(vga_h_pxl_index),
+        .v_pxl_count(vga_v_pxl_index),
 
-        .color({pixel_color[7:6], 2'b00, pixel_color[5:4], 2'b00, pixel_color[3:2], 2'b00, pixel_color[1:0], 2'b00})
+        .color(pixel_color)
     );
 
-    localparam WIDTH = 8;
-    localparam DEPTH = H_VIS_AREA_PXL*V_VIS_AREA_PXL;
-    localparam ADDR_BITS = 19; // ceil(log2(DEPTH))
-
-    wire [WIDTH-1:0] pixel_color;
-
-    ram #(
-        .INIT_FILE(INIT_FILE),
-        .WIDTH(WIDTH),
-        .DEPTH(DEPTH),
-        .ADDR_BITS(ADDR_BITS)
-    ) ram_0 (
-        .clk(clk),
-        .we(1'b0),
-
-        .addr(pixel_index),
-        .dout(pixel_color)
-    );
+    localparam H_WHOLE_LINE_PXL = H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL + H_BACK_PORCH_PXL;
+    localparam V_WHOLE_LINE_PXL = V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL + V_BACK_PORCH_PXL;
+    wire end_of_frame = (vga_h_pxl_index == H_WHOLE_LINE_PXL - 1) && (vga_v_pxl_index == V_WHOLE_LINE_PXL - 1);
+    
+    // read 1 pixel ahead to account for 1 clock cycle memory latency
+    assign buffer_addr = end_of_frame ? {BUFFER_ADDR_BITS{1'b0}} 
+                                      : pixel_index + 1'b1;
+    assign buffer_din = 32'b0;
+    wire [1:0] byte_index = buffer_addr[1:0];
+    wire [3*CHANNEL_BITS-1:0] pixel_color = buffer_dout[8*byte_index +: 8];
+    assign buffer_en = 1'b1;
+    assign buffer_rst = 1'b0;
+    assign buffer_we = 4'b0;
 
 endmodule

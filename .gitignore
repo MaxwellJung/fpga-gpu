@@ -1,5 +1,6 @@
 build/
 sim/
+*.xsa
 
 # gitignore template for Xilinx Vivado Design Suite
 # website: https://www.xilinx.com/support/download.html
@@ -98,8 +99,8 @@ sim/
 */*/bd/*/ip/*/*.xml
 */*/*/bd/*/ip/*/*.xml
 
-*.c
-*.h
+# *.c
+# *.h
 *.vho
 *.html
 */*/bd/*/ip/*/*.tcl

@@ -10,11 +10,13 @@ module tb_gpu ();
 
     wire h_sync;
     wire v_sync;
+
+    reg [18:0] addr;
+    reg [5:0] data;
     
     gpu_top #(
-        .INIT_FILE("./data/ram_init.mem")
     ) dut (
-        .clk(clk),
+        .vga_clk(clk),
         .resetn(resetn),
 
         .VGA_R(red),
@@ -46,6 +48,12 @@ module tb_gpu ();
         resetn <= 1;
 
         #20 $finish;
+    end
+
+    initial begin
+        #500
+        addr <= 500;
+        data <= 5;
     end
 
 endmodule

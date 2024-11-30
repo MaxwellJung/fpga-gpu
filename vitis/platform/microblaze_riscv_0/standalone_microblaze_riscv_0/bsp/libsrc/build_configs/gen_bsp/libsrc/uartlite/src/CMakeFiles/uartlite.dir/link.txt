@@ -1,0 +1,2 @@
+riscv64-unknown-elf-ar qc libuartlite.a CMakeFiles/uartlite.dir/xuartlite.c.obj CMakeFiles/uartlite.dir/xuartlite_g.c.obj CMakeFiles/uartlite.dir/xuartlite_intr.c.obj CMakeFiles/uartlite.dir/xuartlite_l.c.obj CMakeFiles/uartlite.dir/xuartlite_selftest.c.obj CMakeFiles/uartlite.dir/xuartlite_sinit.c.obj CMakeFiles/uartlite.dir/xuartlite_stats.c.obj
+/tools/Xilinx/Vitis/2024.1/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-ranlib libuartlite.a
