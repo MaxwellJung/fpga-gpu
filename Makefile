@@ -62,3 +62,6 @@ $(BUILD_DIR)/vga_sim.vvp: $(SRC_FILES)
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
+
+clean_vivado:
+	rm -r $(BUILD_DIR)/vivado

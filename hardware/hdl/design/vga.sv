@@ -12,13 +12,15 @@ module vga #(
     parameter V_NUM_BITS = 10, // ceil(log2(V_WHOLE_FRAME_PXL))
 
     parameter FRAME_BUFFER_READ_LATENCY = 1,
-    parameter CHANNEL_BITS = 2
+    parameter RED_CHANNEL_WIDTH = 3,
+    parameter GREEN_CHANNEL_WIDTH = 3,
+    parameter BLUE_CHANNEL_WIDTH = 2
 ) (
     input logic clk,
     input logic resetn,
 
     // 3 color channels (RGB)
-    input wire [3*CHANNEL_BITS-1:0] color,
+    input wire [(RED_CHANNEL_WIDTH + GREEN_CHANNEL_WIDTH + BLUE_CHANNEL_WIDTH)-1:0] color,
 
     // custom pins
     output wire [H_NUM_BITS-1:0] h_pxl_count,
@@ -78,9 +80,9 @@ module vga #(
     wire v_visible = delayed_v_pxl_count < V_VIS_AREA_PXL;
     wire pxl_visible = h_visible && v_visible;
 
-    assign {red, green, blue} = pxl_visible ? {color[3*CHANNEL_BITS-1:2*CHANNEL_BITS], {(4-CHANNEL_BITS){1'b0}}, 
-                                               color[2*CHANNEL_BITS-1:1*CHANNEL_BITS], {(4-CHANNEL_BITS){1'b0}}, 
-                                               color[1*CHANNEL_BITS-1:0], {(4-CHANNEL_BITS){1'b0}}}
+    assign {red, green, blue} = pxl_visible ? {color[BLUE_CHANNEL_WIDTH + GREEN_CHANNEL_WIDTH +: RED_CHANNEL_WIDTH], {(4-RED_CHANNEL_WIDTH){1'b0}}, 
+                                               color[BLUE_CHANNEL_WIDTH +: GREEN_CHANNEL_WIDTH], {(4-GREEN_CHANNEL_WIDTH){1'b0}}, 
+                                               color[0 +: BLUE_CHANNEL_WIDTH], {(4-BLUE_CHANNEL_WIDTH){1'b0}}}
                                             : 12'b0;
 
 endmodule

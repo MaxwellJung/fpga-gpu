@@ -15,7 +15,9 @@ module gpu_top #(
 
     parameter BUFFER_ADDR_BITS = 17, // ceil(log2(H_VIS_AREA_PXL/DOWNSCALE_FACTOR * V_VIS_AREA_PXL/DOWNSCALE_FACTOR)),
     parameter FRAME_BUFFER_READ_LATENCY = 1,
-    parameter CHANNEL_BITS = 2
+    parameter RED_CHANNEL_WIDTH = 3,
+    parameter GREEN_CHANNEL_WIDTH = 3,
+    parameter BLUE_CHANNEL_WIDTH = 2
 ) (
     input  wire        vga_clk,
     input  wire        resetn,
@@ -56,7 +58,9 @@ module gpu_top #(
         .V_NUM_BITS(V_NUM_BITS),
 
         .FRAME_BUFFER_READ_LATENCY(FRAME_BUFFER_READ_LATENCY),
-        .CHANNEL_BITS(CHANNEL_BITS)
+        .RED_CHANNEL_WIDTH(RED_CHANNEL_WIDTH),
+        .GREEN_CHANNEL_WIDTH(GREEN_CHANNEL_WIDTH),
+        .BLUE_CHANNEL_WIDTH(BLUE_CHANNEL_WIDTH)
     ) vga_0 (
         .clk(vga_clk),
         .resetn(resetn),
@@ -87,7 +91,7 @@ module gpu_top #(
         .in(buffer_addr[1:0]),
         .out(byte_index)
     );
-    wire [3*CHANNEL_BITS-1:0] pixel_color = buffer_dout[8*byte_index +: 8];
+    wire [(RED_CHANNEL_WIDTH + GREEN_CHANNEL_WIDTH + BLUE_CHANNEL_WIDTH)-1:0] pixel_color = buffer_dout[8*byte_index +: 8];
     assign buffer_en = 1'b1;
     assign buffer_rst = 1'b0;
     assign buffer_we = 4'b0;
