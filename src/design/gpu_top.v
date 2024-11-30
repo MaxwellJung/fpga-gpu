@@ -76,7 +76,17 @@ module gpu_top #(
     
     assign buffer_addr = pixel_index;
     assign buffer_din = 32'b0;
-    wire [1:0] byte_index = buffer_addr[1:0];
+    wire [1:0] byte_index;
+    latency #(
+        .LENGTH(FRAME_BUFFER_READ_LATENCY),
+        .WIDTH(2)
+    ) delay_byte_index (
+        .clk(vga_clk),
+        .rst(!resetn),
+
+        .in(buffer_addr[1:0]),
+        .out(byte_index)
+    );
     wire [3*CHANNEL_BITS-1:0] pixel_color = buffer_dout[8*byte_index +: 8];
     assign buffer_en = 1'b1;
     assign buffer_rst = 1'b0;

@@ -53,6 +53,8 @@ int main() {
         }
     }
 
+    XBram_Out8(bram_cfg_ptr->BaseAddress, 0xff);
+
 	// u32 sw_data;
     u32 pixel_index = 0;
 	u8 pixel_color;
@@ -61,15 +63,15 @@ int main() {
 		// XGpio_DiscreteWrite(&led_device, LED_CHANNEL, sw_data);
         // pixel_index = sw_data;
 
-		pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
-		XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0b00111100);
+		// pixel_color = XBram_In8(bram_cfg_ptr->BaseAddress + pixel_index);
+		// XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, 0xff);
 
 
-	    xil_printf("Wrote %x to address %x\r\n", 0b00111100, bram_cfg_ptr->BaseAddress + pixel_index);
-        for (u32 delay = 0; delay < 10000000; delay++);
+	    // xil_printf("Wrote %x to address %x\r\n", 0xff, bram_cfg_ptr->BaseAddress + pixel_index);
+        // for (u32 delay = 0; delay < 10000000; delay++);
 
-        XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
-        pixel_index++;
-        if (pixel_index > 400*300) pixel_index = 0;
+        // XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, pixel_color);
+        // pixel_index++;
+        // if (pixel_index > 400*300) pixel_index = 0;
 	}
 }
