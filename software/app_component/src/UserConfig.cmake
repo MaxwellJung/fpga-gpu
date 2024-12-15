@@ -10,7 +10,6 @@ cmake_minimum_required(VERSION 3.16)
 # Add any compiler definitions, they will be added as extra definitions
 # Example adding VERBOSE=1 will pass -DVERBOSE=1 to the compiler.
 set(USER_COMPILE_DEFINITIONS
-""
 )
 
 # Undefine any previously specified compiler definitions, either built in or provided with a -D option
@@ -106,6 +105,7 @@ set(USER_LINK_OMIT_ALL_SYMBOL_INFO )
 # Add any libraries to be linked below, they will be added as extra libraries.
 # User need to update USER_LINK_DIRECTORIES below with these library paths.
 set(USER_LINK_LIBRARIES
+~/programming/fpga-gpu/lvgl
 )
 
 # Add any directories to look for the libraries to be linked.
