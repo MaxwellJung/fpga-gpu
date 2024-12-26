@@ -1,0 +1,14 @@
+{
+    "files.associations": {
+        "doomgeneric.h": "c",
+        "ctype.h": "c",
+        "random": "c",
+        "doomkeys.h": "c",
+        "xparameters.h": "c",
+        "graphics.h": "c",
+        "stdlib.h": "c",
+        "stdint.h": "c",
+        "m_argv.h": "c",
+        "types.h": "c"
+    }
+}
