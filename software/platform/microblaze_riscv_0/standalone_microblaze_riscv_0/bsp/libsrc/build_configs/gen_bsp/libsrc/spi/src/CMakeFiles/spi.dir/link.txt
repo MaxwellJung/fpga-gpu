@@ -1,0 +1,2 @@
+riscv64-unknown-elf-ar qc libspi.a CMakeFiles/spi.dir/xspi.c.obj CMakeFiles/spi.dir/xspi_g.c.obj CMakeFiles/spi.dir/xspi_options.c.obj CMakeFiles/spi.dir/xspi_selftest.c.obj CMakeFiles/spi.dir/xspi_sinit.c.obj CMakeFiles/spi.dir/xspi_stats.c.obj
+/tools/Xilinx/Vitis/2024.1/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-ranlib libspi.a

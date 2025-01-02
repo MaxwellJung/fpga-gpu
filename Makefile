@@ -26,6 +26,10 @@ bitstream:
 
 # Icarus
 
+sd: FORCE
+	mkdir -p $(BUILD_DIR)
+	iverilog -o $(BUILD_DIR)/sd.vvp -s sdspi $(SRC_FILES)
+
 gpu_sim: $(SIM_DIR)/gpu_sim.vcd
 
 $(SIM_DIR)/gpu_sim.vcd: $(BUILD_DIR)/gpu_sim.vvp
@@ -65,3 +69,5 @@ clean:
 
 clean_vivado:
 	rm -r $(BUILD_DIR)/vivado
+
+FORCE: ;

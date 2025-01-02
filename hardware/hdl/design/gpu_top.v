@@ -20,7 +20,7 @@ module gpu_top #(
     parameter BLUE_CHANNEL_WIDTH = 2
 ) (
     input  wire        vga_clk,
-    input  wire        resetn,
+    input  wire        reset,
 
     output wire [31:0] buffer_addr,
     output wire [31:0] buffer_din,
@@ -63,7 +63,7 @@ module gpu_top #(
         .BLUE_CHANNEL_WIDTH(BLUE_CHANNEL_WIDTH)
     ) vga_0 (
         .clk(vga_clk),
-        .resetn(resetn),
+        .reset(reset),
 
         .h_pxl_count(vga_h_pxl_index),
         .v_pxl_count(vga_v_pxl_index),
@@ -86,7 +86,7 @@ module gpu_top #(
         .WIDTH(2)
     ) delay_byte_index (
         .clk(vga_clk),
-        .rst(!resetn),
+        .rst(reset),
 
         .in(buffer_addr[1:0]),
         .out(byte_index)

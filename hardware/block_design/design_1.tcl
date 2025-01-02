@@ -46,7 +46,7 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# gpu_top
+# gpu_top, micro_sd
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -149,7 +149,9 @@ xilinx.com:ip:axi_uartlite:2.0\
 xilinx.com:ip:axi_gpio:2.0\
 xilinx.com:ip:axi_bram_ctrl:4.1\
 xilinx.com:ip:blk_mem_gen:8.4\
-xilinx.com:ip:ila:6.2\
+xilinx.com:ip:xlconstant:1.1\
+xilinx.com:ip:axi_quad_spi:3.2\
+xilinx.com:ip:axi_timer:2.0\
 xilinx.com:ip:lmb_v10:3.0\
 xilinx.com:ip:lmb_bram_if_cntlr:4.0\
 "
@@ -178,6 +180,7 @@ set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
 gpu_top\
+micro_sd\
 "
 
    set list_mods_missing ""
@@ -344,6 +347,11 @@ proc create_root_design { parentCell } {
   set VGA_B [ create_bd_port -dir O -from 3 -to 0 VGA_B ]
   set VGA_HS [ create_bd_port -dir O VGA_HS ]
   set VGA_VS [ create_bd_port -dir O VGA_VS ]
+  set SD_RESET [ create_bd_port -dir O SD_RESET ]
+  set SD_SCK [ create_bd_port -dir O -type clk SD_SCK ]
+  set SD_DAT3 [ create_bd_port -dir O SD_DAT3 ]
+  set SD_CMD [ create_bd_port -dir O SD_CMD ]
+  set SD_DAT0 [ create_bd_port -dir I SD_DAT0 ]
 
   # Create instance: mig_7series_0, and set properties
   set mig_7series_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mig_7series:4.2 mig_7series_0 ]
@@ -364,6 +372,7 @@ proc create_root_design { parentCell } {
     CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {100} \
     CONFIG.CLKOUT2_USED {true} \
     CONFIG.CLK_OUT1_PORT {vga_clk} \
+    CONFIG.CLK_OUT2_PORT {sd_clk} \
     CONFIG.MMCM_CLKFBOUT_MULT_F {44.125} \
     CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
     CONFIG.MMCM_CLKOUT0_DIVIDE_F {29.875} \
@@ -392,7 +401,7 @@ proc create_root_design { parentCell } {
 
   # Create instance: microblaze_riscv_0_axi_periph, and set properties
   set microblaze_riscv_0_axi_periph [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_interconnect:2.1 microblaze_riscv_0_axi_periph ]
-  set_property CONFIG.NUM_MI {4} $microblaze_riscv_0_axi_periph
+  set_property CONFIG.NUM_MI {7} $microblaze_riscv_0_axi_periph
 
 
   # Create instance: microblaze_riscv_0_axi_intc, and set properties
@@ -465,19 +474,48 @@ proc create_root_design { parentCell } {
   set_property CONFIG.Memory_Type {True_Dual_Port_RAM} $axi_bram_ctrl_0_bram
 
 
-  # Create instance: ila_0, and set properties
-  set ila_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:ila:6.2 ila_0 ]
+  # Create instance: rst_vga, and set properties
+  set rst_vga [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_vga ]
   set_property -dict [list \
-    CONFIG.C_DATA_DEPTH {4096} \
-    CONFIG.C_MONITOR_TYPE {Native} \
-    CONFIG.C_NUM_OF_PROBES {9} \
-    CONFIG.C_PROBE2_WIDTH {32} \
-    CONFIG.C_PROBE3_WIDTH {32} \
-    CONFIG.C_PROBE4_WIDTH {4} \
-    CONFIG.C_PROBE5_WIDTH {4} \
-    CONFIG.C_PROBE6_WIDTH {4} \
-  ] $ila_0
+    CONFIG.RESET_BOARD_INTERFACE {reset} \
+    CONFIG.USE_BOARD_FLOW {true} \
+  ] $rst_vga
 
+
+  # Create instance: xlconstant_0, and set properties
+  set xlconstant_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_0 ]
+  set_property CONFIG.CONST_VAL {0} $xlconstant_0
+
+
+  # Create instance: xlconstant_1, and set properties
+  set xlconstant_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconstant:1.1 xlconstant_1 ]
+
+  # Create instance: axi_quad_spi_0, and set properties
+  set axi_quad_spi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_quad_spi:3.2 axi_quad_spi_0 ]
+  set_property CONFIG.C_USE_STARTUP {0} $axi_quad_spi_0
+
+
+  # Create instance: micro_sd_0, and set properties
+  set block_name micro_sd
+  set block_cell_name micro_sd_0
+  if { [catch {set micro_sd_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $micro_sd_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
+  # Create instance: rst_microsd, and set properties
+  set rst_microsd [ create_bd_cell -type ip -vlnv xilinx.com:ip:proc_sys_reset:5.0 rst_microsd ]
+  set_property -dict [list \
+    CONFIG.RESET_BOARD_INTERFACE {reset} \
+    CONFIG.USE_BOARD_FLOW {true} \
+  ] $rst_microsd
+
+
+  # Create instance: axi_timer_0, and set properties
+  set axi_timer_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_timer:2.0 axi_timer_0 ]
 
   # Create interface connections
   connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins axi_bram_ctrl_0_bram/BRAM_PORTA] [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA]
@@ -492,6 +530,8 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M01_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M01_AXI] [get_bd_intf_pins axi_uartlite_0/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M02_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M02_AXI] [get_bd_intf_pins axi_gpio_0/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M03_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M03_AXI] [get_bd_intf_pins axi_gpio_1/S_AXI]
+  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M04_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M04_AXI] [get_bd_intf_pins axi_quad_spi_0/AXI_LITE]
+  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M05_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M05_AXI] [get_bd_intf_pins axi_timer_0/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_debug [get_bd_intf_pins mdm_1/MBDEBUG_0] [get_bd_intf_pins microblaze_riscv_0/DEBUG]
   connect_bd_intf_net -intf_net microblaze_riscv_0_dlmb_1 [get_bd_intf_pins microblaze_riscv_0/DLMB] [get_bd_intf_pins microblaze_riscv_0_local_memory/DLMB]
   connect_bd_intf_net -intf_net microblaze_riscv_0_ilmb_1 [get_bd_intf_pins microblaze_riscv_0/ILMB] [get_bd_intf_pins microblaze_riscv_0_local_memory/ILMB]
@@ -500,35 +540,48 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net mig_7series_0_DDR2 [get_bd_intf_ports ddr2_sdram] [get_bd_intf_pins mig_7series_0/DDR2]
 
   # Create port connections
-  connect_bd_net -net axi_bram_ctrl_0_bram_doutb [get_bd_pins axi_bram_ctrl_0_bram/doutb] [get_bd_pins ila_0/probe3] [get_bd_pins gpu_top_0/buffer_dout]
-  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins clk_wiz_0/vga_clk] [get_bd_pins axi_bram_ctrl_0_bram/clkb] [get_bd_pins ila_0/probe0] [get_bd_pins gpu_top_0/vga_clk]
-  connect_bd_net -net clk_wiz_0_clk_out2 [get_bd_pins clk_wiz_0/clk_out2] [get_bd_pins ila_0/clk]
-  connect_bd_net -net gpu_top_0_VGA_B [get_bd_pins gpu_top_0/VGA_B] [get_bd_ports VGA_B] [get_bd_pins ila_0/probe6]
-  connect_bd_net -net gpu_top_0_VGA_G [get_bd_pins gpu_top_0/VGA_G] [get_bd_ports VGA_G] [get_bd_pins ila_0/probe5]
-  connect_bd_net -net gpu_top_0_VGA_HS [get_bd_pins gpu_top_0/VGA_HS] [get_bd_ports VGA_HS] [get_bd_pins ila_0/probe7]
-  connect_bd_net -net gpu_top_0_VGA_R [get_bd_pins gpu_top_0/VGA_R] [get_bd_ports VGA_R] [get_bd_pins ila_0/probe4]
-  connect_bd_net -net gpu_top_0_VGA_VS [get_bd_pins gpu_top_0/VGA_VS] [get_bd_ports VGA_VS] [get_bd_pins ila_0/probe8]
-  connect_bd_net -net gpu_top_0_buffer_addr [get_bd_pins gpu_top_0/buffer_addr] [get_bd_pins axi_bram_ctrl_0_bram/addrb] [get_bd_pins ila_0/probe2]
+  connect_bd_net -net SD_CMD [get_bd_pins micro_sd_0/sd_cmd] [get_bd_ports SD_CMD]
+  connect_bd_net -net axi_bram_ctrl_0_bram_doutb [get_bd_pins axi_bram_ctrl_0_bram/doutb] [get_bd_pins gpu_top_0/buffer_dout]
+  connect_bd_net -net axi_quad_spi_0_io0_o [get_bd_pins axi_quad_spi_0/io0_o] [get_bd_pins micro_sd_0/mosi]
+  connect_bd_net -net axi_quad_spi_0_sck_o [get_bd_pins axi_quad_spi_0/sck_o] [get_bd_pins micro_sd_0/sck] [get_bd_pins rst_microsd/slowest_sync_clk]
+  connect_bd_net -net axi_quad_spi_0_ss_o [get_bd_pins axi_quad_spi_0/ss_o] [get_bd_pins micro_sd_0/cs]
+  connect_bd_net -net axi_timer_0_interrupt [get_bd_pins axi_timer_0/interrupt] [get_bd_pins microblaze_riscv_0_xlconcat/In0]
+  connect_bd_net -net clk_wiz_0_clk_out1 [get_bd_pins clk_wiz_0/vga_clk] [get_bd_pins axi_bram_ctrl_0_bram/clkb] [get_bd_pins rst_vga/slowest_sync_clk] [get_bd_pins gpu_top_0/vga_clk]
+  connect_bd_net -net gpu_top_0_VGA_B [get_bd_pins gpu_top_0/VGA_B] [get_bd_ports VGA_B]
+  connect_bd_net -net gpu_top_0_VGA_G [get_bd_pins gpu_top_0/VGA_G] [get_bd_ports VGA_G]
+  connect_bd_net -net gpu_top_0_VGA_HS [get_bd_pins gpu_top_0/VGA_HS] [get_bd_ports VGA_HS]
+  connect_bd_net -net gpu_top_0_VGA_R [get_bd_pins gpu_top_0/VGA_R] [get_bd_ports VGA_R]
+  connect_bd_net -net gpu_top_0_VGA_VS [get_bd_pins gpu_top_0/VGA_VS] [get_bd_ports VGA_VS]
+  connect_bd_net -net gpu_top_0_buffer_addr [get_bd_pins gpu_top_0/buffer_addr] [get_bd_pins axi_bram_ctrl_0_bram/addrb]
   connect_bd_net -net gpu_top_0_buffer_din [get_bd_pins gpu_top_0/buffer_din] [get_bd_pins axi_bram_ctrl_0_bram/dinb]
   connect_bd_net -net gpu_top_0_buffer_en [get_bd_pins gpu_top_0/buffer_en] [get_bd_pins axi_bram_ctrl_0_bram/enb]
   connect_bd_net -net gpu_top_0_buffer_rst [get_bd_pins gpu_top_0/buffer_rst] [get_bd_pins axi_bram_ctrl_0_bram/rstb]
   connect_bd_net -net gpu_top_0_buffer_we [get_bd_pins gpu_top_0/buffer_we] [get_bd_pins axi_bram_ctrl_0_bram/web]
   connect_bd_net -net mdm_1_debug_sys_rst [get_bd_pins mdm_1/Debug_SYS_Rst] [get_bd_pins rst_mig_7series_0_81M/mb_debug_sys_rst]
-  connect_bd_net -net microblaze_riscv_0_Clk [get_bd_pins mig_7series_0/ui_clk] [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_axi_periph/ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_intc/processor_clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins rst_mig_7series_0_81M/slowest_sync_clk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ACLK] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ACLK] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk]
+  connect_bd_net -net micro_sd_0_miso [get_bd_pins micro_sd_0/miso] [get_bd_pins axi_quad_spi_0/io1_i]
+  connect_bd_net -net micro_sd_0_sd_clk [get_bd_pins micro_sd_0/sd_clk] [get_bd_ports SD_SCK]
+  connect_bd_net -net micro_sd_0_sd_dat3 [get_bd_pins micro_sd_0/sd_dat3] [get_bd_ports SD_DAT3]
+  connect_bd_net -net micro_sd_0_sd_vdd [get_bd_pins micro_sd_0/sd_vdd] [get_bd_ports SD_RESET]
+  connect_bd_net -net microblaze_riscv_0_Clk [get_bd_pins mig_7series_0/ui_clk] [get_bd_pins clk_wiz_0/clk_in1] [get_bd_pins microblaze_riscv_0/Clk] [get_bd_pins microblaze_riscv_0_axi_periph/ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ACLK] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_intc/processor_clk] [get_bd_pins microblaze_riscv_0_local_memory/LMB_Clk] [get_bd_pins axi_smc/aclk] [get_bd_pins axi_uartlite_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ACLK] [get_bd_pins axi_gpio_1/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ACLK] [get_bd_pins axi_gpio_0/s_axi_aclk] [get_bd_pins axi_bram_ctrl_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M04_ACLK] [get_bd_pins rst_mig_7series_0_81M/slowest_sync_clk] [get_bd_pins axi_quad_spi_0/s_axi_aclk] [get_bd_pins axi_quad_spi_0/ext_spi_clk] [get_bd_pins axi_timer_0/s_axi_aclk] [get_bd_pins microblaze_riscv_0_axi_periph/M05_ACLK] [get_bd_pins microblaze_riscv_0_axi_periph/M06_ACLK]
   connect_bd_net -net microblaze_riscv_0_intr [get_bd_pins microblaze_riscv_0_xlconcat/dout] [get_bd_pins microblaze_riscv_0_axi_intc/intr]
   connect_bd_net -net mig_7series_0_mmcm_locked [get_bd_pins mig_7series_0/mmcm_locked] [get_bd_pins rst_mig_7series_0_81M/dcm_locked]
   connect_bd_net -net mig_7series_0_ui_addn_clk_0 [get_bd_pins mig_7series_0/ui_addn_clk_0] [get_bd_pins mig_7series_0/clk_ref_i]
   connect_bd_net -net mig_7series_0_ui_clk_sync_rst [get_bd_pins mig_7series_0/ui_clk_sync_rst] [get_bd_pins clk_wiz_0/reset] [get_bd_pins rst_mig_7series_0_81M/ext_reset_in]
-  connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins mig_7series_0/sys_rst]
+  connect_bd_net -net proc_sys_reset_0_peripheral_reset [get_bd_pins rst_microsd/peripheral_reset] [get_bd_pins micro_sd_0/reset]
+  connect_bd_net -net reset_1 [get_bd_ports reset] [get_bd_pins mig_7series_0/sys_rst] [get_bd_pins rst_vga/ext_reset_in] [get_bd_pins rst_microsd/ext_reset_in]
   connect_bd_net -net rst_mig_7series_0_81M_bus_struct_reset [get_bd_pins rst_mig_7series_0_81M/bus_struct_reset] [get_bd_pins microblaze_riscv_0_local_memory/SYS_Rst]
   connect_bd_net -net rst_mig_7series_0_81M_mb_reset [get_bd_pins rst_mig_7series_0_81M/mb_reset] [get_bd_pins microblaze_riscv_0/Reset] [get_bd_pins microblaze_riscv_0_axi_intc/processor_rst]
-  connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aresetn] [get_bd_pins mig_7series_0/aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ARESETN] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ARESETN] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins ila_0/probe1] [get_bd_pins gpu_top_0/resetn]
+  connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/S00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M00_ARESETN] [get_bd_pins microblaze_riscv_0_axi_intc/s_axi_aresetn] [get_bd_pins mig_7series_0/aresetn] [get_bd_pins axi_smc/aresetn] [get_bd_pins axi_uartlite_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M01_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M02_ARESETN] [get_bd_pins axi_gpio_1/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M03_ARESETN] [get_bd_pins axi_gpio_0/s_axi_aresetn] [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M04_ARESETN] [get_bd_pins axi_quad_spi_0/s_axi_aresetn] [get_bd_pins axi_timer_0/s_axi_aresetn] [get_bd_pins microblaze_riscv_0_axi_periph/M05_ARESETN] [get_bd_pins microblaze_riscv_0_axi_periph/M06_ARESETN]
+  connect_bd_net -net rst_vga_peripheral_reset [get_bd_pins rst_vga/peripheral_reset] [get_bd_pins gpu_top_0/reset]
+  connect_bd_net -net sd_dat0_0_1 [get_bd_ports SD_DAT0] [get_bd_pins micro_sd_0/sd_dat0]
   connect_bd_net -net sys_clk_i_1 [get_bd_ports CLK100MHZ] [get_bd_pins mig_7series_0/sys_clk_i]
 
   # Create address segments
   assign_bd_address -offset 0xC0000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
+  assign_bd_address -offset 0x44A00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_quad_spi_0/AXI_LITE/Reg] -force
+  assign_bd_address -offset 0x41C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_timer_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00008000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs microblaze_riscv_0_local_memory/dlmb_bram_if_cntlr/SLMB/Mem] -force
   assign_bd_address -offset 0x41200000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs microblaze_riscv_0_axi_intc/S_AXI/Reg] -force

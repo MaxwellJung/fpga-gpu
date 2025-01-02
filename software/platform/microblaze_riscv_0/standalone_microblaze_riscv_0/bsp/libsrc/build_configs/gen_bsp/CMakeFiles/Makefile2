@@ -92,6 +92,8 @@ libsrc/all: libsrc/bram/src/all
 libsrc/all: libsrc/common/src/all
 libsrc/all: libsrc/gpio/src/all
 libsrc/all: libsrc/intc/src/all
+libsrc/all: libsrc/spi/src/all
+libsrc/all: libsrc/tmrctr/src/all
 libsrc/all: libsrc/uartlite/src/all
 .PHONY : libsrc/all
 
@@ -100,6 +102,8 @@ libsrc/preinstall: libsrc/bram/src/preinstall
 libsrc/preinstall: libsrc/common/src/preinstall
 libsrc/preinstall: libsrc/gpio/src/preinstall
 libsrc/preinstall: libsrc/intc/src/preinstall
+libsrc/preinstall: libsrc/spi/src/preinstall
+libsrc/preinstall: libsrc/tmrctr/src/preinstall
 libsrc/preinstall: libsrc/uartlite/src/preinstall
 .PHONY : libsrc/preinstall
 
@@ -109,6 +113,8 @@ libsrc/clean: libsrc/bram/src/clean
 libsrc/clean: libsrc/common/src/clean
 libsrc/clean: libsrc/gpio/src/clean
 libsrc/clean: libsrc/intc/src/clean
+libsrc/clean: libsrc/spi/src/clean
+libsrc/clean: libsrc/tmrctr/src/clean
 libsrc/clean: libsrc/uartlite/src/clean
 .PHONY : libsrc/clean
 
@@ -171,6 +177,21 @@ libsrc/intc/src/preinstall:
 # Recursive "clean" directory target.
 libsrc/intc/src/clean: libsrc/intc/src/CMakeFiles/intc.dir/clean
 .PHONY : libsrc/intc/src/clean
+
+#=============================================================================
+# Directory level rules for directory libsrc/spi/src
+
+# Recursive "all" directory target.
+libsrc/spi/src/all: libsrc/spi/src/CMakeFiles/spi.dir/all
+.PHONY : libsrc/spi/src/all
+
+# Recursive "preinstall" directory target.
+libsrc/spi/src/preinstall:
+.PHONY : libsrc/spi/src/preinstall
+
+# Recursive "clean" directory target.
+libsrc/spi/src/clean: libsrc/spi/src/CMakeFiles/spi.dir/clean
+.PHONY : libsrc/spi/src/clean
 
 #=============================================================================
 # Directory level rules for directory libsrc/standalone/src
@@ -236,6 +257,21 @@ libsrc/standalone/src/riscv/preinstall:
 # Recursive "clean" directory target.
 libsrc/standalone/src/riscv/clean:
 .PHONY : libsrc/standalone/src/riscv/clean
+
+#=============================================================================
+# Directory level rules for directory libsrc/tmrctr/src
+
+# Recursive "all" directory target.
+libsrc/tmrctr/src/all: libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/all
+.PHONY : libsrc/tmrctr/src/all
+
+# Recursive "preinstall" directory target.
+libsrc/tmrctr/src/preinstall:
+.PHONY : libsrc/tmrctr/src/preinstall
+
+# Recursive "clean" directory target.
+libsrc/tmrctr/src/clean: libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/clean
+.PHONY : libsrc/tmrctr/src/clean
 
 #=============================================================================
 # Directory level rules for directory libsrc/uartlite/src
@@ -306,6 +342,8 @@ libsrc/xiltimer/src/core/default_timer/clean:
 libsrc/CMakeFiles/combined.dir/all: libsrc/bram/src/CMakeFiles/bram.dir/all
 libsrc/CMakeFiles/combined.dir/all: libsrc/gpio/src/CMakeFiles/gpio.dir/all
 libsrc/CMakeFiles/combined.dir/all: libsrc/intc/src/CMakeFiles/intc.dir/all
+libsrc/CMakeFiles/combined.dir/all: libsrc/spi/src/CMakeFiles/spi.dir/all
+libsrc/CMakeFiles/combined.dir/all: libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/all
 libsrc/CMakeFiles/combined.dir/all: libsrc/uartlite/src/CMakeFiles/uartlite.dir/all
 	$(MAKE) $(MAKESILENT) -f libsrc/CMakeFiles/combined.dir/build.make libsrc/CMakeFiles/combined.dir/depend
 	$(MAKE) $(MAKESILENT) -f libsrc/CMakeFiles/combined.dir/build.make libsrc/CMakeFiles/combined.dir/build
@@ -314,7 +352,7 @@ libsrc/CMakeFiles/combined.dir/all: libsrc/uartlite/src/CMakeFiles/uartlite.dir/
 
 # Build rule for subdir invocation for target.
 libsrc/CMakeFiles/combined.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 28
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 44
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libsrc/CMakeFiles/combined.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 0
 .PHONY : libsrc/CMakeFiles/combined.dir/rule
@@ -407,13 +445,65 @@ libsrc/intc/src/CMakeFiles/intc.dir/clean:
 .PHONY : libsrc/intc/src/CMakeFiles/intc.dir/clean
 
 #=============================================================================
+# Target rules for target libsrc/spi/src/CMakeFiles/spi.dir
+
+# All Build rule for target.
+libsrc/spi/src/CMakeFiles/spi.dir/all:
+	$(MAKE) $(MAKESILENT) -f libsrc/spi/src/CMakeFiles/spi.dir/build.make libsrc/spi/src/CMakeFiles/spi.dir/depend
+	$(MAKE) $(MAKESILENT) -f libsrc/spi/src/CMakeFiles/spi.dir/build.make libsrc/spi/src/CMakeFiles/spi.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=21,22,23,24,25,26,27 "Built target spi"
+.PHONY : libsrc/spi/src/CMakeFiles/spi.dir/all
+
+# Build rule for subdir invocation for target.
+libsrc/spi/src/CMakeFiles/spi.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 7
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libsrc/spi/src/CMakeFiles/spi.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 0
+.PHONY : libsrc/spi/src/CMakeFiles/spi.dir/rule
+
+# Convenience name for target.
+spi: libsrc/spi/src/CMakeFiles/spi.dir/rule
+.PHONY : spi
+
+# clean rule for target.
+libsrc/spi/src/CMakeFiles/spi.dir/clean:
+	$(MAKE) $(MAKESILENT) -f libsrc/spi/src/CMakeFiles/spi.dir/build.make libsrc/spi/src/CMakeFiles/spi.dir/clean
+.PHONY : libsrc/spi/src/CMakeFiles/spi.dir/clean
+
+#=============================================================================
+# Target rules for target libsrc/tmrctr/src/CMakeFiles/tmrctr.dir
+
+# All Build rule for target.
+libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/all:
+	$(MAKE) $(MAKESILENT) -f libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/build.make libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/depend
+	$(MAKE) $(MAKESILENT) -f libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/build.make libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=28,29,30,31,32,33,34,35,36 "Built target tmrctr"
+.PHONY : libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/all
+
+# Build rule for subdir invocation for target.
+libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 9
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles 0
+.PHONY : libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/rule
+
+# Convenience name for target.
+tmrctr: libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/rule
+.PHONY : tmrctr
+
+# clean rule for target.
+libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/clean:
+	$(MAKE) $(MAKESILENT) -f libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/build.make libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/clean
+.PHONY : libsrc/tmrctr/src/CMakeFiles/tmrctr.dir/clean
+
+#=============================================================================
 # Target rules for target libsrc/uartlite/src/CMakeFiles/uartlite.dir
 
 # All Build rule for target.
 libsrc/uartlite/src/CMakeFiles/uartlite.dir/all:
 	$(MAKE) $(MAKESILENT) -f libsrc/uartlite/src/CMakeFiles/uartlite.dir/build.make libsrc/uartlite/src/CMakeFiles/uartlite.dir/depend
 	$(MAKE) $(MAKESILENT) -f libsrc/uartlite/src/CMakeFiles/uartlite.dir/build.make libsrc/uartlite/src/CMakeFiles/uartlite.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=21,22,23,24,25,26,27,28 "Built target uartlite"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=37,38,39,40,41,42,43,44 "Built target uartlite"
 .PHONY : libsrc/uartlite/src/CMakeFiles/uartlite.dir/all
 
 # Build rule for subdir invocation for target.
@@ -439,7 +529,7 @@ libsrc/uartlite/src/CMakeFiles/uartlite.dir/clean:
 libsrc/standalone/src/CMakeFiles/xilstandalone.dir/all:
 	$(MAKE) $(MAKESILENT) -f libsrc/standalone/src/CMakeFiles/xilstandalone.dir/build.make libsrc/standalone/src/CMakeFiles/xilstandalone.dir/depend
 	$(MAKE) $(MAKESILENT) -f libsrc/standalone/src/CMakeFiles/xilstandalone.dir/build.make libsrc/standalone/src/CMakeFiles/xilstandalone.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 "Built target xilstandalone"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,81,82 "Built target xilstandalone"
 .PHONY : libsrc/standalone/src/CMakeFiles/xilstandalone.dir/all
 
 # Build rule for subdir invocation for target.
@@ -465,7 +555,7 @@ libsrc/standalone/src/CMakeFiles/xilstandalone.dir/clean:
 libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/all:
 	$(MAKE) $(MAKESILENT) -f libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/build.make libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/depend
 	$(MAKE) $(MAKESILENT) -f libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/build.make libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=67,68,69 "Built target xiltimer"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/CMakeFiles --progress-num=83,84,85 "Built target xiltimer"
 .PHONY : libsrc/xiltimer/src/CMakeFiles/xiltimer.dir/all
 
 # Build rule for subdir invocation for target.

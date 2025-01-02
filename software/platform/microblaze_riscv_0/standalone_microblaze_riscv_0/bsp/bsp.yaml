@@ -176,6 +176,14 @@ drv_info:
     driver: gpio
     ip_name: axi_gpio
     path: /tools/Xilinx/Vitis/2024.1/data/embeddedsw/XilinxProcessorIPLib/drivers/gpio_v4_11
+  axi_quad_spi_0:
+    driver: spi
+    ip_name: axi_quad_spi
+    path: /tools/Xilinx/Vitis/2024.1/data/embeddedsw/XilinxProcessorIPLib/drivers/spi_v4_12
+  axi_timer_0:
+    driver: tmrctr
+    ip_name: axi_timer
+    path: /tools/Xilinx/Vitis/2024.1/data/embeddedsw/XilinxProcessorIPLib/drivers/tmrctr_v4_12
   axi_uartlite_0:
     driver: uartlite
     ip_name: axi_uartlite
@@ -216,4 +224,5 @@ lib_config:
       default: None
       options:
       - None
+      - axi_timer_0
       description: This parameter is used to select specific timer for tick functionality

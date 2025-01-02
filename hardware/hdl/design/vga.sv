@@ -17,7 +17,7 @@ module vga #(
     parameter BLUE_CHANNEL_WIDTH = 2
 ) (
     input logic clk,
-    input logic resetn,
+    input logic reset,
 
     // 3 color channels (RGB)
     input wire [(RED_CHANNEL_WIDTH + GREEN_CHANNEL_WIDTH + BLUE_CHANNEL_WIDTH)-1:0] color,
@@ -41,7 +41,7 @@ module vga #(
         .NUM_BITS(H_NUM_BITS)
         ) h_pxl_counter (
         .clk(clk),
-        .resetn(!(!resetn || h_counter_end)),
+        .reset(reset || h_counter_end),
         .enable(1'b1),
         .count(h_pxl_count)
     );
@@ -53,7 +53,7 @@ module vga #(
         .NUM_BITS(V_NUM_BITS)
         ) v_pxl_counter (
         .clk(clk),
-        .resetn(!(!resetn || (h_counter_end && v_counter_end))),
+        .reset(reset || (h_counter_end && v_counter_end)),
         .enable(h_counter_end),
         .count(v_pxl_count)
     );
@@ -65,7 +65,7 @@ module vga #(
         .WIDTH(H_NUM_BITS + V_NUM_BITS)
     ) delay_pxl_count (
         .clk(clk),
-        .rst(!resetn),
+        .rst(reset),
 
         .in({h_pxl_count, v_pxl_count}),
         .out({delayed_h_pxl_count, delayed_v_pxl_count})

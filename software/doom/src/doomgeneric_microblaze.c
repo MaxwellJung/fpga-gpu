@@ -9,12 +9,12 @@
 XBram_Config *bram_cfg_ptr;
 
 void DG_Init() {
-	xil_printf("Init platform\r\n");
+    xil_printf("Init platform\r\n");
 
-  // Initialize BRAM Device
-  XBram bram_device;
-  bram_cfg_ptr = XBram_LookupConfig(BRAM_DEVICE_ID);
-  XBram_CfgInitialize(&bram_device, bram_cfg_ptr, bram_cfg_ptr->CtrlBaseAddress);
+    // Initialize BRAM Device
+    XBram bram_device;
+    bram_cfg_ptr = XBram_LookupConfig(BRAM_DEVICE_ID);
+    XBram_CfgInitialize(&bram_device, bram_cfg_ptr, bram_cfg_ptr->CtrlBaseAddress);
 }
 
 void DG_DrawFrame() {
