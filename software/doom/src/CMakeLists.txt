@@ -64,111 +64,15 @@ collect(PROJECT_LIB_DEPS xilstandalone;xiltimer;gloss)
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 collect(PROJECT_LIB_DEPS xil)
 collect(PROJECT_LIB_DEPS gcc)
 collect(PROJECT_LIB_DEPS c)
 
 aux_source_directory(${CMAKE_SOURCE_DIR}/doomgeneric/core _doomgeneric_sources)
 set(_sources ${_sources} ${_doomgeneric_sources})
+
+aux_source_directory(${CMAKE_SOURCE_DIR}/sdcard _sdcard_sources)
+set(_sources ${_sources} ${_sdcard_sources})
 
 aux_source_directory(${CMAKE_SOURCE_DIR} _sources)
 foreach (source ${_sources})

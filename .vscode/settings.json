@@ -31,6 +31,20 @@
         "xil_exception.h": "c",
         "xspi.h": "c",
         "xspi_l.h": "c",
-        "spi.h": "c"
+        "spi.h": "c",
+        "xil_printf.h": "c",
+        "xstatus.h": "c",
+        "systick.h": "c",
+        "sd.h": "c",
+        "iosfwd": "c",
+        "sdfatutil.h": "c",
+        "m_config.h": "c",
+        "z_zone.h": "c",
+        "w_wad.h": "c",
+        "i_system.h": "c",
+        "d_iwad.h": "c",
+        "config.h": "c",
+        "m_misc.h": "c",
+        "stdio.h": "c"
     }
 }

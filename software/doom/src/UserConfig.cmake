@@ -26,6 +26,7 @@ set(USER_UNDEFINED_SYMBOLS
 
 set(USER_INCLUDE_DIRECTORIES
 doomgeneric/core
+sdcard
 )
 
 # -----------------------------------------
