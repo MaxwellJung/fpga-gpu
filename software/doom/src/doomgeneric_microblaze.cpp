@@ -44,13 +44,13 @@ void DG_Init() {
     }
 }
 
-uint8_t rgba_to_rrrgggbb(uint32_t rgba) {
-    uint8_t red = (rgba & 0xFF000000) >> 24;
-    uint8_t green = (rgba & 0x00FF0000) >> 16;
-    uint8_t blue = (rgba & 0x0000FF00) >> 8;
+uint8_t rgba_to_rrrgggbb(uint32_t argb) {
+    uint8_t red = (argb & 0x00FF0000) >> 16;
+    uint8_t green = (argb & 0x0000FF00) >> 8;
+    uint8_t blue = (argb & 0x000000FF) >> 0;
 
-    uint8_t rrrgggbb = ((red >> 5) << 5) & \
-                       ((green >> 5) << 2) & \
+    uint8_t rrrgggbb = ((red >> 5) << 5) | \
+                       ((green >> 5) << 2) | \
                        (blue >> 6);
 
     return rrrgggbb;
@@ -60,8 +60,8 @@ void DG_DrawFrame() {
     int pixel_index = 0;
     for (int row = 0; row < VGA_Y_RES; row++) {
         for (int col = 0; col < VGA_X_RES; col++) {
-        pixel_index = VGA_X_RES * row + col;
-        XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, rgba_to_rrrgggbb(DG_ScreenBuffer[DOOMGENERIC_RESX * row + col]));
+            pixel_index = VGA_X_RES * row + col;
+            XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, rgba_to_rrrgggbb(DG_ScreenBuffer[pixel_index]));
         }
     }
 }
