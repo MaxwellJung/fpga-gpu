@@ -44,7 +44,7 @@ void DG_Init() {
     }
 }
 
-uint8_t rgba_to_rrrgggbb(uint32_t argb) {
+uint8_t argb_to_rrrgggbb(uint32_t argb) {
     uint8_t red = (argb & 0x00FF0000) >> 16;
     uint8_t green = (argb & 0x0000FF00) >> 8;
     uint8_t blue = (argb & 0x000000FF) >> 0;
@@ -61,7 +61,7 @@ void DG_DrawFrame() {
     for (int row = 0; row < VGA_Y_RES; row++) {
         for (int col = 0; col < VGA_X_RES; col++) {
             pixel_index = VGA_X_RES * row + col;
-            XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, rgba_to_rrrgggbb(DG_ScreenBuffer[pixel_index]));
+            XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, argb_to_rrrgggbb(DG_ScreenBuffer[pixel_index]));
         }
     }
 }
