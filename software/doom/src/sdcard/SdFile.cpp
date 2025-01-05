@@ -768,7 +768,7 @@ void SdFile::printTwoDigits(uint8_t v) {
    read() called before a file has been opened, corrupt file system
    or an I/O error occurred.
 */
-int16_t SdFile::read(void* buf, uint16_t nbyte) {
+int SdFile::read(void* buf, size_t nbyte) {
   uint8_t* dst = reinterpret_cast<uint8_t*>(buf);
 
   // error if not open or write only
@@ -782,7 +782,7 @@ int16_t SdFile::read(void* buf, uint16_t nbyte) {
   }
 
   // amount left to read
-  uint16_t toRead = nbyte;
+  size_t toRead = nbyte;
   while (toRead > 0) {
     uint32_t block;  // raw device block number
     uint16_t offset = curPosition_ & 0X1FF;  // offset in block
@@ -804,7 +804,7 @@ int16_t SdFile::read(void* buf, uint16_t nbyte) {
       }
       block = vol_->clusterStartBlock(curCluster_) + blockOfCluster;
     }
-    uint16_t n = toRead;
+    size_t n = toRead;
 
     // amount to be read from current block
     if (n > (512 - offset)) {

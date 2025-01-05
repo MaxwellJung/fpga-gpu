@@ -102,7 +102,7 @@ int File::read() {
 }
 
 // buffered read for more efficient, high speed reading
-int File::read(void *buf, uint16_t nbyte) {
+int File::read(void *buf, size_t nbyte) {
   if (_file) {
     return _file->read(buf, nbyte);
   }

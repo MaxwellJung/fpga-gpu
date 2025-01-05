@@ -45,6 +45,9 @@
         "d_iwad.h": "c",
         "config.h": "c",
         "m_misc.h": "c",
-        "stdio.h": "c"
+        "stdio.h": "c",
+        "limits": "cpp",
+        "stop_token": "cpp",
+        "streambuf": "cpp"
     }
 }
