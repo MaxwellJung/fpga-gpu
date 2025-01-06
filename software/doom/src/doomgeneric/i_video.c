@@ -47,7 +47,7 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 
 #include <sys/types.h>
 
-//#define CMAP256
+#define RRRGGGBB
 
 struct FB_BitField
 {
@@ -76,18 +76,17 @@ int fb_scaling = 1;
 int usemouse = 0;
 
 
-#ifdef CMAP256
+#ifdef RRRGGGBB
 
-boolean palette_changed;
-struct color colors[256];
+typedef struct bgr233 color;
 
-#else  // CMAP256
+#else
 
-static struct color colors[256];
+typedef struct bgra8888 color;
 
+#endif
 
-#endif  // CMAP256
-
+static color colors[256];
 
 void I_GetEvent(void);
 
@@ -131,51 +130,9 @@ typedef struct
 
 static uint16_t rgb565_palette[256];
 
-void cmap_to_rgb565(uint16_t * out, uint8_t * in, int in_pixels)
-{
-    int i, j;
-    struct color c;
-    uint16_t r, g, b;
-
-    for (i = 0; i < in_pixels; i++)
-    {
-        c = colors[*in]; 
-        r = ((uint16_t)(c.r >> 3)) << 11;
-        g = ((uint16_t)(c.g >> 2)) << 5;
-        b = ((uint16_t)(c.b >> 3)) << 0;
-        *out = (r | g | b);
-
-        in++;
-        for (j = 0; j < fb_scaling; j++) {
-            out++;
-        }
-    }
-}
-
-void cmap_to_fb(uint8_t * out, uint8_t * in, int in_pixels)
-{
-    int i, j, k;
-    struct color c;
-    uint32_t pix;
-    uint16_t r, g, b;
-
-    for (i = 0; i < in_pixels; i++)
-    {
-        c = colors[*in];  /* R:8 G:8 B:8 format! */
-        r = (uint16_t)(c.r >> (8 - s_Fb.red.length));
-        g = (uint16_t)(c.g >> (8 - s_Fb.green.length));
-        b = (uint16_t)(c.b >> (8 - s_Fb.blue.length));
-        pix = r << s_Fb.red.offset;
-        pix |= g << s_Fb.green.offset;
-        pix |= b << s_Fb.blue.offset;
-
-        for (k = 0; k < fb_scaling; k++) {
-            for (j = 0; j < s_Fb.bits_per_pixel/8; j++) {
-                *out = (pix >> (j*8));
-                out++;
-            }
-        }
-        in++;
+void cmap_to_fb(uint8_t *out, uint8_t *in, int in_pixels) {
+    for (int i = 0; i < in_pixels; i++) {
+        out[i] = *((uint8_t*) &colors[in[i]]);
     }
 }
 
@@ -189,11 +146,11 @@ void I_InitGraphics (void)
 	s_Fb.xres_virtual = s_Fb.xres;
 	s_Fb.yres_virtual = s_Fb.yres;
 
-#ifdef CMAP256
+#ifdef RRRGGGBB
 
 	s_Fb.bits_per_pixel = 8;
 
-#else  // CMAP256
+#else  // RRRGGGBB
 
 	s_Fb.bits_per_pixel = 32;
 
@@ -207,7 +164,7 @@ void I_InitGraphics (void)
 	s_Fb.red.offset = 16;
 	s_Fb.transp.offset = 24;
 	
-#endif  // CMAP256
+#endif  // RRRGGGBB
 
     printf("I_InitGraphics: framebuffer: x_res: %d, y_res: %d, x_virtual: %d, y_virtual: %d, bpp: %d\n",
             s_Fb.xres, s_Fb.yres, s_Fb.xres_virtual, s_Fb.yres_virtual, s_Fb.bits_per_pixel);
@@ -289,7 +246,9 @@ void I_FinishUpdate (void)
         int i;
         for (i = 0; i < fb_scaling; i++) {
             line_out += x_offset;
-#ifdef CMAP256
+#ifdef RRRGGGBB
+            cmap_to_fb((void*)line_out, (void*)line_in, SCREENWIDTH);
+#else
             if (fb_scaling == 1) {
                 memcpy(line_out, line_in, SCREENWIDTH); /* fb_width is bigger than Doom SCREENWIDTH... */
             } else {
@@ -302,9 +261,6 @@ void I_FinishUpdate (void)
                     }
                 }
             }
-#else
-            //cmap_to_rgb565((void*)line_out, (void*)line_in, SCREENWIDTH);
-            cmap_to_fb((void*)line_out, (void*)line_in, SCREENWIDTH);
 #endif
             line_out += (SCREENWIDTH * fb_scaling * (s_Fb.bits_per_pixel/8)) + x_offset_end;
         }
@@ -351,17 +307,17 @@ void I_SetPalette (byte* palette)
      * map to the right pixel format over here! */
 
     for (i=0; i<256; ++i ) {
+        #ifdef RRRGGGBB
+        colors[i].r = (gammatable[usegamma][*palette++] >> 5);
+        colors[i].g = (gammatable[usegamma][*palette++] >> 5);
+        colors[i].b = (gammatable[usegamma][*palette++] >> 6);
+        #else
         colors[i].a = 0;
         colors[i].r = gammatable[usegamma][*palette++];
         colors[i].g = gammatable[usegamma][*palette++];
         colors[i].b = gammatable[usegamma][*palette++];
+        #endif
     }
-
-#ifdef CMAP256
-
-    palette_changed = true;
-
-#endif  // CMAP256
 }
 
 // Given an RGB value, find the closest matching palette index.

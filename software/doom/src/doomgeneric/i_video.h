@@ -138,11 +138,17 @@ void I_EnableLoadingDisk(void);
 
 void I_EndRead (void);
 
-struct color {
+struct bgra8888 {
     uint32_t b:8;
     uint32_t g:8;
     uint32_t r:8;
     uint32_t a:8;
+};
+
+struct bgr233 {
+    uint8_t b:2;
+    uint8_t g:3;
+    uint8_t r:3;
 };
 
 
@@ -164,12 +170,5 @@ extern int aspect_ratio_correct;
 
 extern int show_diskicon;
 extern int diskicon_readbytes;
-
-#ifdef CMAP256
-
-extern boolean palette_changed;
-extern struct color colors[256];
-
-#endif  // CMAP256
 
 #endif

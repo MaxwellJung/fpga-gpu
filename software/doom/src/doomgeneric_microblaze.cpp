@@ -1,3 +1,5 @@
+#include <string.h>
+
 extern "C" {
 #include "doomgeneric.h"
 }
@@ -15,8 +17,6 @@ int initHardware();
 
 // Get device IDs from xparameters.h
 #define BRAM_DEVICE_ID      XPAR_XBRAM_0_BASEADDR
-#define VGA_X_RES 400
-#define VGA_Y_RES 300
 
 XBram_Config *bram_cfg_ptr;
 
@@ -57,13 +57,7 @@ uint8_t argb_to_rrrgggbb(uint32_t argb) {
 }
 
 void DG_DrawFrame() {
-    int pixel_index = 0;
-    for (int row = 0; row < VGA_Y_RES; row++) {
-        for (int col = 0; col < VGA_X_RES; col++) {
-            pixel_index = VGA_X_RES * row + col;
-            XBram_Out8(bram_cfg_ptr->BaseAddress + pixel_index, argb_to_rrrgggbb(DG_ScreenBuffer[pixel_index]));
-        }
-    }
+    memcpy((void*) bram_cfg_ptr->BaseAddress, DG_ScreenBuffer, DOOMGENERIC_RESX * DOOMGENERIC_RESY * sizeof(pixel_t));
 }
 
 void DG_SleepMs(uint32_t ms)
