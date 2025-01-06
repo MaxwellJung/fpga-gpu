@@ -1,0 +1,2 @@
+riscv64-unknown-elf-ar qc libtmrctr.a CMakeFiles/tmrctr.dir/xtmrctr.c.obj CMakeFiles/tmrctr.dir/xtmrctr_g.c.obj CMakeFiles/tmrctr.dir/xtmrctr_intr.c.obj CMakeFiles/tmrctr.dir/xtmrctr_l.c.obj CMakeFiles/tmrctr.dir/xtmrctr_options.c.obj CMakeFiles/tmrctr.dir/xtmrctr_selftest.c.obj CMakeFiles/tmrctr.dir/xtmrctr_sinit.c.obj CMakeFiles/tmrctr.dir/xtmrctr_stats.c.obj
+/tools/Xilinx/Vitis/2024.1/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-ranlib libtmrctr.a

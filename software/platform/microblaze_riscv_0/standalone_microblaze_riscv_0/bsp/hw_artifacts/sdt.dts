@@ -11,7 +11,7 @@
         clock: clocks {
                 #address-cells = <0x1>;
                 #size-cells = <0x0>;
-                phandle = <0xc>;
+                phandle = <0xe>;
 
                 clk_cpu_0: clk_cpu@0 {
                         compatible = "fixed-clock";
@@ -19,7 +19,7 @@
                         clock-frequency = <0x4d7bee1>;
                         clock-output-names = "clk_cpu";
                         #clock-cells = <0x0>;
-                        phandle = <0xd>;
+                        phandle = <0xf>;
                 };
 
                 clk_bus_0: clk_bus_0@1 {
@@ -28,7 +28,7 @@
                         clock-frequency = <0x4d7bee1>;
                         clock-output-names = "clk_bus_0";
                         #clock-cells = <0x0>;
-                        phandle = <0xb>;
+                        phandle = <0xd>;
                 };
         };
 
@@ -37,7 +37,7 @@
                 compatible = "simple-bus";
                 #address-cells = <0x1>;
                 #size-cells = <0x1>;
-                phandle = <0xa>;
+                phandle = <0xc>;
 
                 cpus_microblaze_riscv_0: cpus_microblaze_riscv@0 {
                         #cpu-mask-cells = <0x1>;
@@ -52,10 +52,12 @@
                          <0x40000000 &axi_gpio_0 0x40000000 0x10000>,
                          <0x40010000 &axi_gpio_1 0x40010000 0x10000>,
                          <0x40600000 &axi_uartlite_0 0x40600000 0x10000>,
-                         <0x41200000 &microblaze_riscv_0_axi_intc 0x41200000 0x10000>;
+                         <0x41200000 &microblaze_riscv_0_axi_intc 0x41200000 0x10000>,
+                         <0x41c00000 &axi_timer_0 0x41c00000 0x10000>,
+                         <0x44a00000 &axi_quad_spi_0 0x44a00000 0x10000>;
                         #ranges-address-cells = <0x1>;
                         #ranges-size-cells = <0x1>;
-                        phandle = <0xe>;
+                        phandle = <0x10>;
 
                         microblaze_riscv_0: cpu@0 {
                                 model = "microblaze_riscv,1.0";
@@ -115,7 +117,7 @@
                                 xlnx,branch-target-cache-size = <0x0>;
                                 xlnx,dcache-use-writeback = <0x0>;
                                 xlnx,use-bitman-s = <0x0>;
-                                bus-handle = <0xa>;
+                                bus-handle = <0xc>;
                                 xlnx,icache-line-len = <0x4>;
                                 xlnx,base-vectors = <0x0 0x0>;
                                 xlnx,ecc-use-ce-exception = <0x0>;
@@ -177,14 +179,14 @@
                                 xlnx,imprecise-exceptions = <0x0>;
                                 xlnx,icache-data-width = <0x0>;
                                 xlnx,debug-counter-width = <0x40>;
-                                phandle = <0xf>;
+                                phandle = <0x11>;
                         };
                 };
 
                 microblaze_riscv_0_axi_intc: axi_intc@41200000 {
                         #interrupt-cells = <0x2>;
                         xlnx,sense-of-irq-edge-type = "Rising";
-                        xlnx,kind-of-intr = <0x3>;
+                        xlnx,kind-of-intr = <0x2>;
                         xlnx,kind-of-edge = <0xffffffff>;
                         xlnx,irq-is-level = <0x1>;
                         xlnx,has-ivr = <0x1>;
@@ -219,7 +221,7 @@
                         xlnx,has-fast = <0x1>;
                         xlnx,ivar-rst-val = <0x10>;
                         interrupt-controller;
-                        xlnx,async-intr = <0xffffffff>;
+                        xlnx,async-intr = <0xfffffffe>;
                         xlnx,name = "microblaze_riscv_0_axi_intc";
                         phandle = <0x9>;
                 };
@@ -319,6 +321,78 @@
                         phandle = <0x7>;
                 };
 
+                axi_quad_spi_0: axi_quad_spi@44a00000 {
+                        xlnx,select-xpm = <0x0>;
+                        xlnx,num-ss-bits = <0x1>;
+                        compatible = "xlnx,axi-quad-spi-3.2", "xlnx,xps-spi-2.00.a";
+                        xlnx,lsb-stup = <0x0>;
+                        xlnx,hasfifos = <0x1>;
+                        xlnx,xip-mode = <0x0>;
+                        xlnx,use-startup-ext = <0x0>;
+                        xlnx,s-axi4-addr-width = <0x18>;
+                        xlnx,byte-level-interrupt-en = <0x0>;
+                        num-cs = <0x1>;
+                        xlnx,xip-perf-mode = <0x1>;
+                        xlnx,sck-ratio = <0x10>;
+                        xlnx,s-axi4-id-width = <0x4>;
+                        fifo-size = <0x10>;
+                        xlnx,rable = <0x0>;
+                        xlnx,multiples16 = <0x1>;
+                        xlnx,master-mode = <0x1>;
+                        xlnx,shared-startup = <0x0>;
+                        xlnx,ip-name = "axi_quad_spi";
+                        xlnx,qspi-board-interface = "Custom";
+                        xlnx,new-seq-en = <0x1>;
+                        reg = <0x44a00000 0x10000>;
+                        xlnx,dual-quad-mode = <0x0>;
+                        bits-per-word = <0x8>;
+                        xlnx,num-transfer-bits = <0x8>;
+                        xlnx,spi-memory = <0x1>;
+                        xlnx,s-axi4-data-width = <0x20>;
+                        xlnx,edk-iptype = "PERIPHERAL";
+                        xlnx,slaveonly = <0x0>;
+                        xlnx,use-startup-int = <0x0>;
+                        xlnx,use-startup = <0x0>;
+                        xlnx,type-of-axi4-interface = <0x0>;
+                        xlnx,async-clk = <0x0>;
+                        xlnx,spi-mode = <0x0>;
+                        xlnx,sck-ratio1 = <0x1>;
+                        status = "okay";
+                        xlnx,fifo-depth = <0x10>;
+                        xlnx,uc-family = <0x0>;
+                        xlnx,spi-mem-addr-bits = <0x18>;
+                        xlnx,axi-interface = <0x0>;
+                        xlnx,Axi4-address = <0x0>;
+                        xlnx,sub-family = "artix7";
+                        xlnx,name = "axi_quad_spi_0";
+                        xlnx,fifo-included = <0x1>;
+                        phandle = <0xb>;
+                };
+
+                axi_timer_0: axi_timer@41c00000 {
+                        interrupts = <0x0 0x2>;
+                        compatible = "xlnx,axi-timer-2.0", "xlnx,xps-timer-1.00.a";
+                        xlnx,gen1-assert = <0x1>;
+                        clock-frequency = <0x4d7bee1>;
+                        xlnx,trig0-assert = <0x1>;
+                        interrupt-parent = <&microblaze_riscv_0_axi_intc>;
+                        xlnx,rable = <0x0>;
+                        xlnx,count-width = <0x20>;
+                        xlnx,ip-name = "axi_timer";
+                        xlnx,one-timer-only = <0x0>;
+                        reg = <0x41c00000 0x10000>;
+                        clocks = <&clk_bus_0>;
+                        xlnx,gen0-assert = <0x1>;
+                        xlnx,mode-64bit = <0x0>;
+                        xlnx,edk-iptype = "PERIPHERAL";
+                        xlnx,trig1-assert = <0x1>;
+                        status = "okay";
+                        xlnx,enable-timer2 = <0x1>;
+                        interrupt-names = "interrupt";
+                        xlnx,name = "axi_timer_0";
+                        phandle = <0xa>;
+                };
+
                 axi_uartlite_0: axi_uartlite@40600000 {
                         compatible = "xlnx,axi-uartlite-2.0", "xlnx,xps-uartlite-1.00.a";
                         clock-frequency = <0x4d7bee1>;
@@ -410,7 +484,7 @@
                         xlnx,s-axi-ctrl-data-width = <0x20>;
                         xlnx,bram-awidth = <0x20>;
                         xlnx,lmb-awidth = <0x20>;
-                        phandle = <0x10>;
+                        phandle = <0x12>;
                 };
         };
 
@@ -447,6 +521,7 @@
 
         aliases {
                 serial0 = "/amba_pl/axi_uartlite@40600000";
+                spi0 = "/amba_pl/axi_quad_spi@44a00000";
         };
 
         __symbols__ {
@@ -460,6 +535,8 @@
                 axi_bram_ctrl_0 = "/amba_pl/axi_bram_ctrl@c0000000";
                 axi_gpio_0 = "/amba_pl/axi_gpio@40000000";
                 axi_gpio_1 = "/amba_pl/axi_gpio@40010000";
+                axi_quad_spi_0 = "/amba_pl/axi_quad_spi@44a00000";
+                axi_timer_0 = "/amba_pl/axi_timer@41c00000";
                 axi_uartlite_0 = "/amba_pl/axi_uartlite@40600000";
                 microblaze_riscv_0_local_memory_dlmb_bram_if_cntlr = "/amba_pl/lmb_bram_if_cntlr@0";
                 microblaze_riscv_0_local_memory_ilmb_bram_if_cntlr = "/amba_pl/lmb_bram_if_cntlr@1";

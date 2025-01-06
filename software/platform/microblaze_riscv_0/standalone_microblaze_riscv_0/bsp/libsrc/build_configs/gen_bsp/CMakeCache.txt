@@ -361,6 +361,15 @@ proc_compiler_flags:STRING= -O2 -march=rv32i_zicsr_zifencei_zicbom -mabi=ilp32 -
 //Extra Compiler Flags
 proc_extra_compiler_flags:STRING= -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
 
+//Value Computed by CMake
+spi_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/spi/src
+
+//Value Computed by CMake
+spi_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+spi_SOURCE_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/spi/src
+
 //This option is not supported in the Unified Vitis IDE in this
 // version. Change to the classic IDE if you want to use this option.
 standalone_clocking:STRING=None
@@ -397,6 +406,15 @@ standalone_xpm_support:STRING=None
 
 //Not needed any more in Unified Vitis
 standalone_zynqmp_fsbl_bsp:STRING=None
+
+//Value Computed by CMake
+tmrctr_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/tmrctr/src
+
+//Value Computed by CMake
+tmrctr_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+tmrctr_SOURCE_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/tmrctr/src
 
 //Value Computed by CMake
 uartlite_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/software/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/uartlite/src
@@ -539,7 +557,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=14
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=16
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP
@@ -585,7 +603,7 @@ CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //STRINGS property for variable: XILTIMER_sleep_timer
 XILTIMER_sleep_timer-STRINGS:INTERNAL=Default
 //STRINGS property for variable: XILTIMER_tick_timer
-XILTIMER_tick_timer-STRINGS:INTERNAL=None
+XILTIMER_tick_timer-STRINGS:INTERNAL=None;axi_timer_0
 //STRINGS property for variable: standalone_clocking
 standalone_clocking-STRINGS:INTERNAL=None
 //STRINGS property for variable: standalone_enable_sw_intrusive_profiling

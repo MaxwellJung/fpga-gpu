@@ -15,6 +15,9 @@ module tb_gpu ();
     reg [5:0] data;
     
     gpu_top #(
+        .RED_CHANNEL_WIDTH(3),
+        .GREEN_CHANNEL_WIDTH(3),
+        .BLUE_CHANNEL_WIDTH(3)
     ) dut (
         .vga_clk(clk),
         .resetn(resetn),
