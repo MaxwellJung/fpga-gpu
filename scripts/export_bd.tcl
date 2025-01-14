@@ -1,8 +1,8 @@
-set projectName gpu
-set projectRoot ./build/vivado/$projectName
+set projectName doom
+set projectRoot ./vivado/$projectName
 
 set bdName design_1
-set bdDir ./hardware/block_design
+set bdDir ./block_design
 
 open_project $projectRoot/${projectName}.xpr
 

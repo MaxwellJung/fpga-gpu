@@ -1,0 +1,13 @@
++==============================+==============================+====================================================================+
+| Launch Setup Clock           | Launch Hold Clock            | Pin                                                                |
++==============================+==============================+====================================================================+
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/delayed_bram_addr_reg[0]/D |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[16]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[14]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[15]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[12]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[13]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[11]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[10]/D      |
+| vga_clk_design_1_clk_wiz_0_0 | vga_clk_design_1_clk_wiz_0_0 | design_1_i/gpu/gpu_0/inst/color_palette/pixel_index_reg[9]/D       |
++------------------------------+------------------------------+--------------------------------------------------------------------+

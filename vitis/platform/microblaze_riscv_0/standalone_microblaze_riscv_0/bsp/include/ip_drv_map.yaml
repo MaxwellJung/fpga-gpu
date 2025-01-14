@@ -1,0 +1,21 @@
+axi_gpio_0:
+- axi_gpio
+- gpio
+axi_gpio_1:
+- axi_gpio
+- gpio
+axi_timer_0:
+- axi_timer
+- tmrctr
+axi_uartlite_0:
+- axi_uartlite
+- uartlite
+gpu_axi_bram_ctrl_0:
+- axi_bram_ctrl
+- bram
+microblaze_riscv_0_axi_intc:
+- axi_intc
+- intc
+microsd_axi_quad_spi_0:
+- axi_quad_spi
+- spi

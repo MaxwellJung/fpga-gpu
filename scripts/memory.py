@@ -4,14 +4,20 @@ import numpy as np
 import random
 
 def main():
+    color_palette()
+    # frame_buffer()
     # black_image()
-    index_image()
+    # index_image()
     # random_image()
     # test_image()
+
+def color_palette():
+    for i in range(64):
+        print('{3:08b}{2:08b}{1:08b}{0:08b}'.format(4*i, 4*i+1, 4*i+2, 4*i+3))
     
-def black_image():
-    for i in range(800*600):
-        print('{0:06b}'.format(0))
+def frame_buffer():
+    for i in range(400*300):
+        print('{0:08b}'.format(i%(2**8)))
 
 def index_image():
     for i in range(800*600):

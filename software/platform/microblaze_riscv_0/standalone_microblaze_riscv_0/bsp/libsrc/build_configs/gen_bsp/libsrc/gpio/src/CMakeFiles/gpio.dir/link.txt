@@ -1,2 +1,0 @@
-riscv64-unknown-elf-ar qc libgpio.a CMakeFiles/gpio.dir/xgpio.c.obj CMakeFiles/gpio.dir/xgpio_extra.c.obj CMakeFiles/gpio.dir/xgpio_g.c.obj CMakeFiles/gpio.dir/xgpio_intr.c.obj CMakeFiles/gpio.dir/xgpio_selftest.c.obj CMakeFiles/gpio.dir/xgpio_sinit.c.obj
-/tools/Xilinx/Vitis/2024.1/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-ranlib libgpio.a

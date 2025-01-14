@@ -1,14 +1,14 @@
-set projectName gpu
-set projectRoot ./build/vivado/$projectName
+set projectName doom
+set projectRoot ./vivado/$projectName
 
 set fpgaTarget xc7a100tcsg324-1
 set boardPart digilentinc.com:nexys-a7-100t:part0:1.3
-set constraintsFile ./hardware/constraint/Nexys-A7-100T.xdc
+set constraintsFile ./constraint/Nexys-A7-100T.xdc
 set bdName design_1
-set bdFile ./hardware/block_design/${bdName}.tcl
+set bdFile ./block_design/${bdName}.tcl
 
-set designDir ./hardware/hdl/design
-set simDir ./hardware/hdl/testbench
+set designDir ./hdl/design
+set simDir ./hdl/testbench
 
 create_project $projectName $projectRoot -part $fpgaTarget -force
 set_property board_part $boardPart [current_project]

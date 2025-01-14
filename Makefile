@@ -1,73 +1,42 @@
-SRC_DIRS := ./hardware/hdl
+SRC_DIRS := ./hdl
 BUILD_DIR := ./build
 SIM_DIR := $(BUILD_DIR)/sim
 SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
 
-all: vga_sim counter_sim vivado synthesize implement bitstream
+all: gpu
 
 
 # Vivado
 
-vivado:
+vivado: FORCE
 	vivado -mode batch -source ./scripts/init_vivado.tcl	
 
-block_design:
+block_design: FORCE
 	vivado -mode batch -source ./scripts/export_bd.tcl
 
-synthesize:
+synthesize: FORCE
 	vivado -mode batch -source ./scripts/synthesize.tcl
 
-implement:
+implement: FORCE
 	vivado -mode batch -source ./scripts/implement.tcl
 
-bitstream: 
+bitstream: FORCE
 	vivado -mode batch -source ./scripts/bitstream.tcl
 
 
 # Icarus
 
-sd: FORCE
-	mkdir -p $(BUILD_DIR)
-	iverilog -o $(BUILD_DIR)/sd.vvp -s sdspi $(SRC_FILES)
-
-gpu_sim: $(SIM_DIR)/gpu_sim.vcd
-
-$(SIM_DIR)/gpu_sim.vcd: $(BUILD_DIR)/gpu_sim.vvp
-	vvp $^
-	mkdir -p $(dir $@)
-	mv dump.vcd $@
-
-$(BUILD_DIR)/gpu_sim.vvp: $(SRC_FILES)
-	mkdir -p $(dir $@)
-	iverilog -o $@ -s tb_gpu $^
-
-counter_sim: $(SIM_DIR)/counter_sim.vcd
-
-$(SIM_DIR)/counter_sim.vcd: $(BUILD_DIR)/counter_sim.vvp
-	vvp $^
-	mkdir -p $(dir $@)
-	mv dump.vcd $@
-
-$(BUILD_DIR)/counter_sim.vvp: $(SRC_FILES)
-	mkdir -p $(dir $@)
-	iverilog -o $@ -s tb_counter $^
-
-vga_sim: $(SIM_DIR)/vga_sim.vcd
-
-$(SIM_DIR)/vga_sim.vcd: $(BUILD_DIR)/vga_sim.vvp
-	vvp $^
-	mkdir -p $(dir $@)
-	mv dump.vcd $@
-
-$(BUILD_DIR)/vga_sim.vvp: $(SRC_FILES)
-	mkdir -p $(dir $@)
-	iverilog -o $@ -s tb_vga $^
+gpu: FORCE
+	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)
+	iverilog -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./hdl/testbench/tb_gpu.sv ./hdl/design/gpu.v \
+	./hdl/design/palette.sv ./hdl/design/latency.sv ./hdl/design/vga.sv ./hdl/design/counter.sv \
+	./hdl/design/ram.sv
+	vvp $(BUILD_DIR)/gpu_sim.vvp
+	mkdir -p $(dir $(SIM_DIR)/gpu_sim.vcd)
+	mv dump.vcd $(SIM_DIR)/gpu_sim.vcd
 
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
-
-clean_vivado:
-	rm -r $(BUILD_DIR)/vivado
 
 FORCE: ;

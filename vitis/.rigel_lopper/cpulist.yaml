@@ -1,0 +1,4 @@
+microblaze_riscv_0:
+    ip_name: microblaze_riscv
+    supported_os:
+    - standalone

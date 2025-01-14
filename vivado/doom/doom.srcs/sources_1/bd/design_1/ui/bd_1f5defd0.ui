@@ -1,0 +1,104 @@
+{
+   "ActiveEmotionalView":"Default View",
+   "Default View_ScaleFactor":"0.386965",
+   "Default View_TopLeft":"-140,-31",
+   "ExpandedHierarchyInLayout":"",
+   "guistr":"# # String gsaved with Nlview 7.8.0 2024-04-26 e1825d835c VDI=44 GEI=38 GUI=JA:21.0 TLS
+#  -string -flagsOSRD
+preplace port ddr2_sdram -pg 1 -lvl 9 -x 2840 -y 190 -defaultsOSRD
+preplace port usb_uart -pg 1 -lvl 9 -x 2840 -y 1120 -defaultsOSRD
+preplace port led_16bits -pg 1 -lvl 9 -x 2840 -y 980 -defaultsOSRD
+preplace port rgb_led -pg 1 -lvl 9 -x 2840 -y 1000 -defaultsOSRD
+preplace port dip_switches_16bits -pg 1 -lvl 9 -x 2840 -y 1260 -defaultsOSRD
+preplace port push_buttons_5bits -pg 1 -lvl 9 -x 2840 -y 1280 -defaultsOSRD
+preplace port port-id_CLK100MHZ -pg 1 -lvl 0 -x 0 -y 530 -defaultsOSRD
+preplace port port-id_CPU_RESETN -pg 1 -lvl 0 -x 0 -y 470 -defaultsOSRD
+preplace port port-id_SD_DAT0 -pg 1 -lvl 0 -x 0 -y 1250 -defaultsOSRD
+preplace port port-id_SD_CMD -pg 1 -lvl 9 -x 2840 -y 870 -defaultsOSRD
+preplace port port-id_SD_DAT3 -pg 1 -lvl 9 -x 2840 -y 850 -defaultsOSRD
+preplace port port-id_SD_SCK -pg 1 -lvl 9 -x 2840 -y 830 -defaultsOSRD
+preplace port port-id_SD_RESET -pg 1 -lvl 9 -x 2840 -y 810 -defaultsOSRD
+preplace port port-id_VGA_HS -pg 1 -lvl 9 -x 2840 -y 680 -defaultsOSRD
+preplace port port-id_VGA_VS -pg 1 -lvl 9 -x 2840 -y 700 -defaultsOSRD
+preplace portBus VGA_R -pg 1 -lvl 9 -x 2840 -y 620 -defaultsOSRD
+preplace portBus VGA_G -pg 1 -lvl 9 -x 2840 -y 640 -defaultsOSRD
+preplace portBus VGA_B -pg 1 -lvl 9 -x 2840 -y 660 -defaultsOSRD
+preplace inst mig_7series_0 -pg 1 -lvl 8 -x 2680 -y 230 -defaultsOSRD
+preplace inst util_ds_buf_0 -pg 1 -lvl 1 -x 150 -y 530 -defaultsOSRD
+preplace inst clk_wiz_0 -pg 1 -lvl 2 -x 380 -y 520 -defaultsOSRD
+preplace inst axi_uartlite_0 -pg 1 -lvl 8 -x 2680 -y 1130 -defaultsOSRD
+preplace inst microblaze_riscv_0 -pg 1 -lvl 6 -x 1870 -y 460 -defaultsOSRD
+preplace inst microblaze_riscv_0_local_memory -pg 1 -lvl 7 -x 2340 -y 450 -defaultsOSRD
+preplace inst microblaze_riscv_0_axi_periph -pg 1 -lvl 4 -x 1090 -y 1010 -defaultsOSRD
+preplace inst microblaze_riscv_0_axi_intc -pg 1 -lvl 5 -x 1430 -y 730 -defaultsOSRD
+preplace inst microblaze_riscv_0_xlconcat -pg 1 -lvl 4 -x 1090 -y 690 -defaultsOSRD
+preplace inst mdm_1 -pg 1 -lvl 5 -x 1430 -y 460 -defaultsOSRD
+preplace inst rst_clk_wiz_0_200M -pg 1 -lvl 3 -x 690 -y 460 -defaultsOSRD
+preplace inst ram_interconnect -pg 1 -lvl 7 -x 2340 -y 160 -defaultsOSRD
+preplace inst rst_mig_7series_0_81M -pg 1 -lvl 6 -x 1870 -y 210 -defaultsOSRD
+preplace inst axi_timer_0 -pg 1 -lvl 5 -x 1430 -y 1110 -defaultsOSRD
+preplace inst gpu -pg 1 -lvl 8 -x 2680 -y 660 -defaultsOSRD
+preplace inst axi_gpio_0 -pg 1 -lvl 8 -x 2680 -y 990 -defaultsOSRD
+preplace inst axi_gpio_1 -pg 1 -lvl 8 -x 2680 -y 1270 -defaultsOSRD
+preplace inst microsd -pg 1 -lvl 8 -x 2680 -y 840 -defaultsOSRD
+preplace netloc CLK100MHZ_1 1 0 1 NJ 530
+preplace netloc CPU_RESETN_1 1 0 8 NJ 470 280 620 490 360 NJ 360 1250J 530 1570J 360 NJ 360 2510
+preplace netloc axi_timer_0_interrupt 1 3 3 940 770 1270J 980 1560
+preplace netloc clk_wiz_0_locked 1 2 1 N 500
+preplace netloc clk_wiz_0_vga_clk 1 2 6 480 590 NJ 590 NJ 590 1560J 600 NJ 600 2520J
+preplace netloc gpu_0_VGA_B_o 1 8 1 NJ 660
+preplace netloc gpu_0_VGA_G_o 1 8 1 NJ 640
+preplace netloc gpu_0_VGA_HS_o 1 8 1 NJ 680
+preplace netloc gpu_0_VGA_R_o 1 8 1 NJ 620
+preplace netloc gpu_0_VGA_VS_o 1 8 1 NJ 700
+preplace netloc mdm_1_debug_sys_rst 1 2 4 510 560 890J 550 NJ 550 1560
+preplace netloc micro_sd_0_sd_clk 1 8 1 NJ 830
+preplace netloc micro_sd_0_sd_cmd 1 8 1 NJ 870
+preplace netloc micro_sd_0_sd_dat3 1 8 1 NJ 850
+preplace netloc micro_sd_0_sd_vdd 1 8 1 NJ 810
+preplace netloc microblaze_riscv_0_Clk 1 2 6 500 570 870 610 1290 600 1590 570 2180 810 2550
+preplace netloc microblaze_riscv_0_intr 1 4 1 1270J 690n
+preplace netloc mig_7series_0_mmcm_locked 1 5 4 1610 340 NJ 340 NJ 340 2810
+preplace netloc mig_7series_0_ui_clk 1 5 4 1610 110 2160 330 NJ 330 2820
+preplace netloc mig_7series_0_ui_clk_sync_rst 1 5 4 1600 10 NJ 10 NJ 10 2810
+preplace netloc rst_clk_wiz_0_200M_bus_struct_reset 1 3 4 920 570 NJ 570 1580J 580 2190J
+preplace netloc rst_clk_wiz_0_200M_mb_reset 1 3 3 910 760 1280 620 1610
+preplace netloc rst_clk_wiz_0_200M_peripheral_aresetn 1 3 5 880 620 1250 840 NJ 840 2170 820 2500
+preplace netloc rst_clk_wiz_0_200M_peripheral_reset 1 3 5 900 600 1250J 610 NJ 610 NJ 610 2510
+preplace netloc rst_mig_7series_0_81M_peripheral_aresetn 1 6 2 2130 320 2550J
+preplace netloc sd_dat0_0_1 1 0 8 NJ 1250 NJ 1250 NJ 1250 NJ 1250 1300J 1220 NJ 1220 NJ 1220 2540J
+preplace netloc util_ds_buf_0_BUFG_O 1 1 7 290 310 NJ 310 NJ 310 NJ 310 NJ 310 NJ 310 2500J
+preplace netloc clk_wiz_0_clk_out2 1 2 6 470J 350 NJ 350 NJ 350 NJ 350 NJ 350 2530
+preplace netloc gpu_clk_i_1 1 2 6 470J 580 NJ 580 NJ 580 1570J 590 NJ 590 2550
+preplace netloc axi_gpio_0_GPIO 1 8 1 NJ 980
+preplace netloc axi_gpio_0_GPIO2 1 8 1 NJ 1000
+preplace netloc axi_gpio_1_GPIO 1 8 1 NJ 1260
+preplace netloc axi_gpio_1_GPIO2 1 8 1 NJ 1280
+preplace netloc axi_uartlite_0_UART 1 8 1 NJ 1120
+preplace netloc microblaze_riscv_0_M_AXI_DC 1 6 1 2140 70n
+preplace netloc microblaze_riscv_0_M_AXI_IC 1 6 1 2150 90n
+preplace netloc microblaze_riscv_0_axi_dp 1 3 4 930 560 NJ 560 NJ 560 2130
+preplace netloc microblaze_riscv_0_axi_periph_M01_AXI 1 4 4 N 970 NJ 970 NJ 970 NJ
+preplace netloc microblaze_riscv_0_axi_periph_M02_AXI 1 4 4 NJ 990 NJ 990 NJ 990 2490
+preplace netloc microblaze_riscv_0_axi_periph_M03_AXI 1 4 1 1240 1010n
+preplace netloc microblaze_riscv_0_axi_periph_M04_AXI 1 4 4 1280 850 NJ 850 2190J 800 NJ
+preplace netloc microblaze_riscv_0_axi_periph_M05_AXI 1 4 4 1300J 1000 NJ 1000 NJ 1000 2530
+preplace netloc microblaze_riscv_0_axi_periph_M06_AXI 1 4 4 1240J 1230 NJ 1230 NJ 1230 2490
+preplace netloc microblaze_riscv_0_debug 1 5 1 N 450
+preplace netloc microblaze_riscv_0_dlmb_1 1 6 1 N 420
+preplace netloc microblaze_riscv_0_ilmb_1 1 6 1 N 440
+preplace netloc microblaze_riscv_0_intc_axi 1 4 1 1260 680n
+preplace netloc microblaze_riscv_0_interrupt 1 5 1 1600 430n
+preplace netloc mig_7series_0_DDR2 1 8 1 NJ 190
+preplace netloc ram_interconnect_M00_AXI 1 7 1 2500 160n
+levelinfo -pg 1 0 150 380 690 1090 1430 1870 2340 2680 2840
+pagesize -pg 1 -db -bbox -sgen -150 0 3040 1350
+"
+}
+{
+   "da_axi4_cnt":"11",
+   "da_board_cnt":"2",
+   "da_bram_cntlr_cnt":"2",
+   "da_clkrst_cnt":"12",
+   "da_microblaze_riscv_cnt":"3"
+}

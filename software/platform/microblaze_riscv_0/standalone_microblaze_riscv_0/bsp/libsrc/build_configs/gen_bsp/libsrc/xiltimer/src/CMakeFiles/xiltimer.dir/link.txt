@@ -1,2 +1,0 @@
-riscv64-unknown-elf-ar qc libxiltimer.a CMakeFiles/xiltimer.dir/core/default_timer/microblaze_riscv_sleep.c.obj CMakeFiles/xiltimer.dir/xiltimer.c.obj
-/tools/Xilinx/Vitis/2024.1/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-ranlib libxiltimer.a
