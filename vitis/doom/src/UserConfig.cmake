@@ -25,8 +25,8 @@ set(USER_UNDEFINED_SYMBOLS
 # Example 3: Adding ${CMAKE_SOURCE_DIR}/data/include to add data/include from this project.
 
 set(USER_INCLUDE_DIRECTORIES
-doomgeneric
-sdcard
+"doomgeneric"
+"sdcard"
 )
 set(USER_COMPILE_SOURCES
 "doomgeneric_microblaze.cpp"
@@ -123,46 +123,48 @@ set(USER_COMPILE_SOURCES
 "doomgeneric/p_sight.c"
 "doomgeneric/p_mobj.c"
 "doomgeneric/d_main.c"
+"gpu.c"
+"platform.cpp"
 )
 
 # -----------------------------------------
 
 # Turn on all optional warnings (-Wall)
-set(USER_COMPILE_WARNINGS_ALL -Wall)
+set(USER_COMPILE_WARNINGS_ALL "-Wall")
 
 # Enable extra warning flags (-Wextra)
-set(USER_COMPILE_WARNINGS_EXTRA -Wextra)
+set(USER_COMPILE_WARNINGS_EXTRA "-Wextra")
 
 # Make all warnings into hard errors (-Werror)
-set(USER_COMPILE_WARNINGS_AS_ERRORS )
+set(USER_COMPILE_WARNINGS_AS_ERRORS "")
 
 # Check the code for syntax errors, but don't do anything beyond that. (-fsyntax-only)
-set(USER_COMPILE_WARNINGS_CHECK_SYNTAX_ONLY )
+set(USER_COMPILE_WARNINGS_CHECK_SYNTAX_ONLY "")
 
 # Issue all the mandatory diagnostics listed in the C standard (-pedantic)
-set(USER_COMPILE_WARNINGS_PEDANTIC )
+set(USER_COMPILE_WARNINGS_PEDANTIC "")
 
 # Issue all the mandatory diagnostics, and make all mandatory diagnostics into errors. (-pedantic-errors)
-set(USER_COMPILE_WARNINGS_PEDANTIC_AS_ERRORS )
+set(USER_COMPILE_WARNINGS_PEDANTIC_AS_ERRORS "")
 
 # Suppress all warnings (-w)
-set(USER_COMPILE_WARNINGS_INHIBIT_ALL -w)
+set(USER_COMPILE_WARNINGS_INHIBIT_ALL "-w")
 
 # -----------------------------------------
 
 # Optimization level   "-O0" [None] , "-O1" [Optimize] , "-O2" [Optimize More], "-O3" [Optimize Most] or "-Os" [Optimize Size]
-set(USER_COMPILE_OPTIMIZATION_LEVEL -O0)
+set(USER_COMPILE_OPTIMIZATION_LEVEL "-O0")
 
 # Other flags related to optimization
-set(USER_COMPILE_OPTIMIZATION_OTHER_FLAGS )
+set(USER_COMPILE_OPTIMIZATION_OTHER_FLAGS "")
 
 # -----------------------------------------
 
 # Debug level "" [None], "-g1" [Minimum], "g2" [Default], "g3" [Maximim]
-set(USER_COMPILE_DEBUG_LEVEL -g3)
+set(USER_COMPILE_DEBUG_LEVEL "-g3")
 
 # Other flags releated to debugging
-set(USER_COMPILE_DEBUG_OTHER_FLAGS )
+set(USER_COMPILE_DEBUG_OTHER_FLAGS "")
 
 # -----------------------------------------
 
@@ -172,30 +174,30 @@ set(USER_COMPILE_DEBUG_OTHER_FLAGS )
 # -----------------------------------------
 
 # Verbose (-v)
-set(USER_COMPILE_VERBOSE )
+set(USER_COMPILE_VERBOSE "")
 
 # Support ANSI_PROGRAM (-ansi)
-set(USER_COMPILE_ANSI )
+set(USER_COMPILE_ANSI "")
 
 # Add any compiler options that are not covered by the above variables, they will be added as extra compiler options
 # To enable profiling -pg [ for gprof ]  or -p [ for prof information ]
-set(USER_COMPILE_OTHER_FLAGS )
+set(USER_COMPILE_OTHER_FLAGS "")
 
 # -----------------------------------------
 
 # Linker options
 # Do not use the standard system startup files when linking.
 # The standard system libraries are used normally, unless -nostdlib or -nodefaultlibs is used. (-nostartfiles)
-set(USER_LINK_NO_START_FILES )
+set(USER_LINK_NO_START_FILES "")
 
 # Do not use the standard system libraries when linking. (-nodefaultlibs)
-set(USER_LINK_NO_DEFAULT_LIBS )
+set(USER_LINK_NO_DEFAULT_LIBS "")
 
 # Do not use the standard system startup files or libraries when linking. (-nostdlib)
-set(USER_LINK_NO_STDLIB )
+set(USER_LINK_NO_STDLIB "")
 
 # Omit all symbol information (-s)
-set(USER_LINK_OMIT_ALL_SYMBOL_INFO )
+set(USER_LINK_OMIT_ALL_SYMBOL_INFO "")
 
 
 # -----------------------------------------

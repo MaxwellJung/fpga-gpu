@@ -56,7 +56,7 @@ disable_caches()
 void
 init_uart()
 {
-#ifdef STDOUT_IS_16550
+#ifdef STDOUT_IS_16550STDOUT_IS_16550
     XUartNs550_SetBaud(STDOUT_BASEADDR, XPAR_XUARTNS550_CLOCK_HZ, UART_BAUD);
     XUartNs550_SetLineControlReg(STDOUT_BASEADDR, XUN_LCR_8_DATA_BITS);
 #endif

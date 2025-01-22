@@ -158,7 +158,6 @@ struct bgr233 {
     uint8_t r:3;
 };
 
-
 extern char *video_driver;
 extern boolean screenvisible;
 

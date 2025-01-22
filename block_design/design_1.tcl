@@ -404,6 +404,7 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   create_bd_pin -dir I SD_DAT0
   create_bd_pin -dir I -type clk s_axi_aclk
   create_bd_pin -dir I -type rst s_axi_aresetn
+  create_bd_pin -dir O -type intr ip2intc_irpt
 
   # Create instance: micro_sd_0, and set properties
   set block_name micro_sd
@@ -419,7 +420,7 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   # Create instance: axi_quad_spi_0, and set properties
   set axi_quad_spi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_quad_spi:3.2 axi_quad_spi_0 ]
   set_property -dict [list \
-    CONFIG.Multiples16 {1} \
+    CONFIG.C_SCK_RATIO {8} \
     CONFIG.QSPI_BOARD_INTERFACE {Custom} \
     CONFIG.USE_BOARD_FLOW {true} \
   ] $axi_quad_spi_0
@@ -431,6 +432,8 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   # Create port connections
   connect_bd_net -net axi_quad_spi_0_io0_o  [get_bd_pins axi_quad_spi_0/io0_o] \
   [get_bd_pins micro_sd_0/mosi]
+  connect_bd_net -net axi_quad_spi_0_ip2intc_irpt  [get_bd_pins axi_quad_spi_0/ip2intc_irpt] \
+  [get_bd_pins ip2intc_irpt]
   connect_bd_net -net axi_quad_spi_0_sck_o  [get_bd_pins axi_quad_spi_0/sck_o] \
   [get_bd_pins micro_sd_0/sck]
   connect_bd_net -net axi_quad_spi_0_ss_o  [get_bd_pins axi_quad_spi_0/ss_o] \
@@ -751,26 +754,30 @@ proc create_root_design { parentCell } {
   # Create instance: clk_wiz_0, and set properties
   set clk_wiz_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:clk_wiz:6.0 clk_wiz_0 ]
   set_property -dict [list \
-    CONFIG.CLKOUT1_JITTER {130.958} \
-    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {100} \
-    CONFIG.CLKOUT2_JITTER {114.829} \
-    CONFIG.CLKOUT2_PHASE_ERROR {98.575} \
+    CONFIG.CLKOUT1_JITTER {139.594} \
+    CONFIG.CLKOUT1_PHASE_ERROR {132.063} \
+    CONFIG.CLKOUT1_REQUESTED_OUT_FREQ {150} \
+    CONFIG.CLKOUT2_JITTER {132.221} \
+    CONFIG.CLKOUT2_PHASE_ERROR {132.063} \
     CONFIG.CLKOUT2_REQUESTED_OUT_FREQ {200} \
     CONFIG.CLKOUT2_USED {true} \
-    CONFIG.CLKOUT3_JITTER {159.371} \
-    CONFIG.CLKOUT3_PHASE_ERROR {98.575} \
+    CONFIG.CLKOUT3_JITTER {182.402} \
+    CONFIG.CLKOUT3_PHASE_ERROR {132.063} \
     CONFIG.CLKOUT3_REQUESTED_OUT_FREQ {40} \
     CONFIG.CLKOUT3_USED {true} \
-    CONFIG.CLKOUT4_JITTER {114.829} \
-    CONFIG.CLKOUT4_PHASE_ERROR {98.575} \
+    CONFIG.CLKOUT4_JITTER {132.221} \
+    CONFIG.CLKOUT4_PHASE_ERROR {132.063} \
     CONFIG.CLKOUT4_USED {true} \
     CONFIG.CLK_OUT1_PORT {cpu_clk} \
     CONFIG.CLK_OUT2_PORT {ddr_clk} \
     CONFIG.CLK_OUT3_PORT {vga_clk} \
-    CONFIG.MMCM_CLKOUT0_DIVIDE_F {10.000} \
-    CONFIG.MMCM_CLKOUT1_DIVIDE {5} \
-    CONFIG.MMCM_CLKOUT2_DIVIDE {25} \
-    CONFIG.MMCM_CLKOUT3_DIVIDE {5} \
+    CONFIG.MMCM_CLKFBOUT_MULT_F {6.000} \
+    CONFIG.MMCM_CLKIN1_PERIOD {10.0} \
+    CONFIG.MMCM_CLKIN2_PERIOD {10.0} \
+    CONFIG.MMCM_CLKOUT0_DIVIDE_F {4.000} \
+    CONFIG.MMCM_CLKOUT1_DIVIDE {3} \
+    CONFIG.MMCM_CLKOUT2_DIVIDE {15} \
+    CONFIG.MMCM_CLKOUT3_DIVIDE {3} \
     CONFIG.NUM_OUT_CLKS {4} \
     CONFIG.PRIM_SOURCE {No_buffer} \
     CONFIG.RESET_PORT {resetn} \
@@ -812,6 +819,8 @@ proc create_root_design { parentCell } {
 
   # Create instance: microblaze_riscv_0_xlconcat, and set properties
   set microblaze_riscv_0_xlconcat [ create_bd_cell -type ip -vlnv xilinx.com:ip:xlconcat:2.1 microblaze_riscv_0_xlconcat ]
+  set_property CONFIG.NUM_PORTS {3} $microblaze_riscv_0_xlconcat
+
 
   # Create instance: mdm_1, and set properties
   set mdm_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:mdm_riscv:1.0 mdm_1 ]
@@ -844,6 +853,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_gpio_0, and set properties
   set axi_gpio_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_0 ]
   set_property -dict [list \
+    CONFIG.C_INTERRUPT_PRESENT {0} \
     CONFIG.GPIO2_BOARD_INTERFACE {rgb_led} \
     CONFIG.GPIO_BOARD_INTERFACE {led_16bits} \
     CONFIG.USE_BOARD_FLOW {true} \
@@ -853,6 +863,7 @@ proc create_root_design { parentCell } {
   # Create instance: axi_gpio_1, and set properties
   set axi_gpio_1 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_gpio:2.0 axi_gpio_1 ]
   set_property -dict [list \
+    CONFIG.C_INTERRUPT_PRESENT {1} \
     CONFIG.GPIO2_BOARD_INTERFACE {push_buttons_5bits} \
     CONFIG.GPIO_BOARD_INTERFACE {dip_switches_16bits} \
     CONFIG.USE_BOARD_FLOW {true} \
@@ -892,6 +903,8 @@ proc create_root_design { parentCell } {
   [get_bd_pins mig_7series_0/sys_rst] \
   [get_bd_pins clk_wiz_0/resetn] \
   [get_bd_pins rst_clk_wiz_0_200M/ext_reset_in]
+  connect_bd_net -net axi_gpio_1_ip2intc_irpt  [get_bd_pins axi_gpio_1/ip2intc_irpt] \
+  [get_bd_pins microblaze_riscv_0_xlconcat/In1]
   connect_bd_net -net axi_timer_0_interrupt  [get_bd_pins axi_timer_0/interrupt] \
   [get_bd_pins microblaze_riscv_0_xlconcat/In0]
   connect_bd_net -net clk_wiz_0_clk_out2  [get_bd_pins clk_wiz_0/ddr_clk] \
@@ -948,6 +961,8 @@ proc create_root_design { parentCell } {
   [get_bd_pins gpu/s_axi_aclk]
   connect_bd_net -net microblaze_riscv_0_intr  [get_bd_pins microblaze_riscv_0_xlconcat/dout] \
   [get_bd_pins microblaze_riscv_0_axi_intc/intr]
+  connect_bd_net -net microsd_ip2intc_irpt  [get_bd_pins microsd/ip2intc_irpt] \
+  [get_bd_pins microblaze_riscv_0_xlconcat/In2]
   connect_bd_net -net mig_7series_0_mmcm_locked  [get_bd_pins mig_7series_0/mmcm_locked] \
   [get_bd_pins rst_mig_7series_0_81M/dcm_locked]
   connect_bd_net -net mig_7series_0_ui_clk  [get_bd_pins mig_7series_0/ui_clk] \

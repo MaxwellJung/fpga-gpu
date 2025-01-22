@@ -2,10 +2,10 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
--- Date        : Mon Jan 13 00:09:12 2025
+-- Date        : Tue Jan 21 22:48:13 2025
 -- Host        : mint-ssd running 64-bit Linux Mint 21.1
--- Command     : write_vhdl -force -mode funcsim -rename_top design_1_ram_interconnect_imp_auto_us_0 -prefix
---               design_1_ram_interconnect_imp_auto_us_0_ design_1_ram_interconnect_imp_auto_us_0_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim
+--               /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.gen/sources_1/bd/design_1/ip/design_1_ram_interconnect_imp_auto_us_0/design_1_ram_interconnect_imp_auto_us_0_sim_netlist.vhdl
 -- Design      : design_1_ram_interconnect_imp_auto_us_0
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -83,6 +83,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_r_up
     D : in STD_LOGIC_VECTOR ( 3 downto 0 );
     \current_word_1_reg[3]_2\ : in STD_LOGIC_VECTOR ( 3 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_r_upsizer : entity is "axi_dwidth_converter_v2_1_33_r_upsizer";
 end design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_r_upsizer;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_r_upsizer is
@@ -2671,6 +2673,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_w_up
     \WORD_LANE[3].USE_ALWAYS_PACKER.BYTE_LANE[3].USE_RTL_DATA.USE_REGISTER.M_AXI_WDATA_I_reg[127]_0\ : in STD_LOGIC_VECTOR ( 0 to 0 );
     \WORD_LANE[3].USE_ALWAYS_PACKER.BYTE_LANE[3].USE_RTL_DATA.USE_REGISTER.M_AXI_WDATA_I_reg[127]_1\ : in STD_LOGIC_VECTOR ( 7 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_w_upsizer : entity is "axi_dwidth_converter_v2_1_33_w_upsizer";
 end design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_w_upsizer;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_w_upsizer is
@@ -5999,6 +6003,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axic_r
     s_ready_i_reg_2 : in STD_LOGIC;
     \m_payload_i_reg[61]_2\ : in STD_LOGIC_VECTOR ( 60 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axic_register_slice : entity is "axi_register_slice_v2_1_33_axic_register_slice";
 end design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axic_register_slice;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axic_register_slice is
@@ -14425,6 +14431,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_generic_baseblocks_v2_1_2_command
     m_axi_awready : in STD_LOGIC;
     \in\ : in STD_LOGIC_VECTOR ( 32 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_generic_baseblocks_v2_1_2_command_fifo : entity is "generic_baseblocks_v2_1_2_command_fifo";
 end design_1_ram_interconnect_imp_auto_us_0_generic_baseblocks_v2_1_2_command_fifo;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_generic_baseblocks_v2_1_2_command_fifo is
@@ -19687,6 +19695,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_a_up
     m_axi_awready : in STD_LOGIC;
     \in\ : in STD_LOGIC_VECTOR ( 32 downto 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_a_upsizer : entity is "axi_dwidth_converter_v2_1_33_a_upsizer";
 end design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_a_upsizer;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_a_upsizer is
@@ -20025,6 +20035,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axi_re
     s_ready_i_reg_0 : in STD_LOGIC;
     E : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axi_register_slice : entity is "axi_register_slice_v2_1_33_axi_register_slice";
 end design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axi_register_slice;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_register_slice_v2_1_33_axi_register_slice is
@@ -20218,6 +20230,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_axi_
     m_axi_arready : in STD_LOGIC;
     m_axi_rvalid : in STD_LOGIC
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_axi_upsizer : entity is "axi_dwidth_converter_v2_1_33_axi_upsizer";
 end design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_axi_upsizer;
 
 architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_axi_upsizer is
@@ -21431,6 +21445,8 @@ entity design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_top 
   attribute C_S_AXI_ID_WIDTH of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_top : entity is 1;
   attribute DowngradeIPIdentifiedWarnings : string;
   attribute DowngradeIPIdentifiedWarnings of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_top : entity is "yes";
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_top : entity is "axi_dwidth_converter_v2_1_33_top";
   attribute P_AXI3 : integer;
   attribute P_AXI3 of design_1_ram_interconnect_imp_auto_us_0_axi_dwidth_converter_v2_1_33_top : entity is 1;
   attribute P_AXI4 : integer;
@@ -21697,7 +21713,7 @@ architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0 is
   attribute X_INTERFACE_MODE : string;
   attribute X_INTERFACE_MODE of s_axi_aclk : signal is "slave";
   attribute X_INTERFACE_PARAMETER : string;
-  attribute X_INTERFACE_PARAMETER of s_axi_aclk : signal is "XIL_INTERFACENAME SI_CLK, ASSOCIATED_BUSIF S_AXI:M_AXI, ASSOCIATED_RESET S_AXI_ARESETN, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of s_axi_aclk : signal is "XIL_INTERFACENAME SI_CLK, ASSOCIATED_BUSIF S_AXI:M_AXI, ASSOCIATED_RESET S_AXI_ARESETN, FREQ_HZ 150000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s_axi_aresetn : signal is "xilinx.com:signal:reset:1.0 SI_RST RST";
   attribute X_INTERFACE_MODE of s_axi_aresetn : signal is "slave";
   attribute X_INTERFACE_PARAMETER of s_axi_aresetn : signal is "XIL_INTERFACENAME SI_RST, POLARITY ACTIVE_LOW, INSERT_VIP 0, TYPE INTERCONNECT";
@@ -21724,7 +21740,7 @@ architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0 is
   attribute X_INTERFACE_INFO of m_axi_arsize : signal is "xilinx.com:interface:aximm:1.0 M_AXI ARSIZE";
   attribute X_INTERFACE_INFO of m_axi_awaddr : signal is "xilinx.com:interface:aximm:1.0 M_AXI AWADDR";
   attribute X_INTERFACE_MODE of m_axi_awaddr : signal is "master";
-  attribute X_INTERFACE_PARAMETER of m_axi_awaddr : signal is "XIL_INTERFACENAME M_AXI, DATA_WIDTH 128, PROTOCOL AXI4, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 2, NUM_WRITE_OUTSTANDING 32, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of m_axi_awaddr : signal is "XIL_INTERFACENAME M_AXI, DATA_WIDTH 128, PROTOCOL AXI4, FREQ_HZ 150000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 2, NUM_WRITE_OUTSTANDING 32, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of m_axi_awburst : signal is "xilinx.com:interface:aximm:1.0 M_AXI AWBURST";
   attribute X_INTERFACE_INFO of m_axi_awcache : signal is "xilinx.com:interface:aximm:1.0 M_AXI AWCACHE";
   attribute X_INTERFACE_INFO of m_axi_awlen : signal is "xilinx.com:interface:aximm:1.0 M_AXI AWLEN";
@@ -21749,7 +21765,7 @@ architecture STRUCTURE of design_1_ram_interconnect_imp_auto_us_0 is
   attribute X_INTERFACE_INFO of s_axi_arsize : signal is "xilinx.com:interface:aximm:1.0 S_AXI ARSIZE";
   attribute X_INTERFACE_INFO of s_axi_awaddr : signal is "xilinx.com:interface:aximm:1.0 S_AXI AWADDR";
   attribute X_INTERFACE_MODE of s_axi_awaddr : signal is "slave";
-  attribute X_INTERFACE_PARAMETER of s_axi_awaddr : signal is "XIL_INTERFACENAME S_AXI, DATA_WIDTH 32, PROTOCOL AXI4, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 1, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 2, NUM_WRITE_OUTSTANDING 32, MAX_BURST_LENGTH 4, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of s_axi_awaddr : signal is "XIL_INTERFACENAME S_AXI, DATA_WIDTH 32, PROTOCOL AXI4, FREQ_HZ 150000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 1, HAS_LOCK 1, HAS_PROT 1, HAS_CACHE 1, HAS_QOS 1, HAS_REGION 1, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 2, NUM_WRITE_OUTSTANDING 32, MAX_BURST_LENGTH 4, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s_axi_awburst : signal is "xilinx.com:interface:aximm:1.0 S_AXI AWBURST";
   attribute X_INTERFACE_INFO of s_axi_awcache : signal is "xilinx.com:interface:aximm:1.0 S_AXI AWCACHE";
   attribute X_INTERFACE_INFO of s_axi_awlen : signal is "xilinx.com:interface:aximm:1.0 S_AXI AWLEN";

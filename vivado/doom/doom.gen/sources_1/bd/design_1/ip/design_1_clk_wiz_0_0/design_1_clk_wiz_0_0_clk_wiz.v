@@ -53,10 +53,10 @@
 //  Output     Output      Phase    Duty Cycle   Pk-to-Pk     Phase
 //   Clock     Freq (MHz)  (degrees)    (%)     Jitter (ps)  Error (ps)
 //----------------------------------------------------------------------------
-// _cpu_clk__100.00000______0.000______50.0______130.958_____98.575
-// _ddr_clk__200.00000______0.000______50.0______114.829_____98.575
-// _vga_clk__40.00000______0.000______50.0______159.371_____98.575
-// _gpu_clk__200.00000______0.000______50.0______114.829_____98.575
+// _cpu_clk__150.00000______0.000______50.0______139.594____132.063
+// _ddr_clk__200.00000______0.000______50.0______132.221____132.063
+// _vga_clk__40.00000______0.000______50.0______182.402____132.063
+// _gpu_clk__200.00000______0.000______50.0______132.221____132.063
 //
 //----------------------------------------------------------------------------
 // Input Clock   Freq (MHz)    Input Jitter (UI)
@@ -126,26 +126,26 @@ wire clk_in2_design_1_clk_wiz_0_0;
     .COMPENSATION         ("ZHOLD"),
     .STARTUP_WAIT         ("FALSE"),
     .DIVCLK_DIVIDE        (1),
-    .CLKFBOUT_MULT_F      (10.000),
+    .CLKFBOUT_MULT_F      (6.000),
     .CLKFBOUT_PHASE       (0.000),
     .CLKFBOUT_USE_FINE_PS ("FALSE"),
-    .CLKOUT0_DIVIDE_F     (10.000),
+    .CLKOUT0_DIVIDE_F     (4.000),
     .CLKOUT0_PHASE        (0.000),
     .CLKOUT0_DUTY_CYCLE   (0.500),
     .CLKOUT0_USE_FINE_PS  ("FALSE"),
-    .CLKOUT1_DIVIDE       (5),
+    .CLKOUT1_DIVIDE       (3),
     .CLKOUT1_PHASE        (0.000),
     .CLKOUT1_DUTY_CYCLE   (0.500),
     .CLKOUT1_USE_FINE_PS  ("FALSE"),
-    .CLKOUT2_DIVIDE       (25),
+    .CLKOUT2_DIVIDE       (15),
     .CLKOUT2_PHASE        (0.000),
     .CLKOUT2_DUTY_CYCLE   (0.500),
     .CLKOUT2_USE_FINE_PS  ("FALSE"),
-    .CLKOUT3_DIVIDE       (5),
+    .CLKOUT3_DIVIDE       (3),
     .CLKOUT3_PHASE        (0.000),
     .CLKOUT3_DUTY_CYCLE   (0.500),
     .CLKOUT3_USE_FINE_PS  ("FALSE"),
-    .CLKIN1_PERIOD        (10.000))
+    .CLKIN1_PERIOD        (10.0))
   mmcm_adv_inst
     // Output clocks
    (

@@ -139,7 +139,7 @@ proc_config:
       name: proc_extra_compiler_flags
       permission: read_write
       type: string
-      value: ' -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns'
+      value: -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
       default: ' -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns'
       options: []
       description: Extra Compiler Flags used in BSP and library generation

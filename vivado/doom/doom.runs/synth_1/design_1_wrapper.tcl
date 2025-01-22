@@ -56,7 +56,6 @@ if {$::dispatch::connected} {
 }
 
 OPTRACE "synth_1" START { ROLLUP_AUTO }
-set_param chipscope.maxJobs 4
 set_param synth.elaboration.rodinMoreOptions {rt::set_parameter var_size_limit 4194304}
 OPTRACE "Creating in-memory project" START { }
 create_project -in_memory -part xc7a100tcsg324-1
@@ -72,8 +71,6 @@ set_property default_lib xil_defaultlib [current_project]
 set_property target_language Verilog [current_project]
 set_property board_part_repo_paths {/home/maxwelljung/programming/vivado-boards/new/board_files} [current_project]
 set_property board_part digilentinc.com:nexys-a7-100t:part0:1.3 [current_project]
-set_property ip_repo_paths /home/maxwelljung/programming/fpga-gpu/vivado/ip_repo [current_project]
-update_ip_catalog
 set_property ip_output_repo /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.cache/ip [current_project]
 set_property ip_cache_permissions {read write} [current_project]
 OPTRACE "Creating in-memory project" END { }

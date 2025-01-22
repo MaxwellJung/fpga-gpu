@@ -244,8 +244,8 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 //Path to a program.
 CMAKE_STRIP:FILEPATH=/tools/Xilinx/Vitis/2024.2/gnu/riscv/lin/riscv64-unknown-elf/bin/riscv64-unknown-elf-strip
 
-//The CMake toolchain file
-CMAKE_TOOLCHAIN_FILE:FILEPATH=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/microblaze_riscv_toolchain.cmake
+//No help, variable specified on the command line.
+CMAKE_TOOLCHAIN_FILE:UNINITIALIZED=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/microblaze_riscv_toolchain.cmake
 
 //If this value is on, makefiles will be generated without the
 // .SILENT directive, and all commands will be echoed to the console
@@ -255,9 +255,6 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=ON
 
 //Device Id
 DEVICE_ID:STRING=7a100t
-
-//Number of slrs
-NUMBER_OF_SLRS:STRING=0x1
 
 //The directory containing a CMake configuration file for SCUGIC.
 SCUGIC_DIR:PATH=SCUGIC_DIR-NOTFOUND
@@ -364,7 +361,7 @@ proc_compiler:STRING=riscv64-unknown-elf-gcc
 proc_compiler_flags:STRING= -O2 -march=rv32imac_zicsr_zifencei_zicbom -mabi=ilp32 -DSDT;-c
 
 //Extra Compiler Flags used in BSP and library generation
-proc_extra_compiler_flags:STRING= -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
+proc_extra_compiler_flags:STRING=-g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
 
 //Value Computed by CMake
 spi_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/spi/src

@@ -23,7 +23,6 @@
 //-----------------------------------------------------------------------------
 
 #include "xparameters.h"
-#include "xbram.h"
 
 static const char
 rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
@@ -49,6 +48,8 @@ rcsid[] = "$Id: i_x.c,v 1.6 1997/02/03 22:45:10 b1 Exp $";
 #include <stdarg.h>
 
 #include <sys/types.h>
+
+#include "../gpu.h"
 
 #define INDEXED_COLOR
 
@@ -300,7 +301,7 @@ void I_SetPalette (byte* palette)
         colors[i].r = gammatable[usegamma][*palette++] >> 4;
         colors[i].g = gammatable[usegamma][*palette++] >> 4;
         colors[i].b = gammatable[usegamma][*palette++] >> 4;
-        XBram_Out16(XPAR_XBRAM_0_BASEADDR + 2*i, *((u_int16_t*) &(colors[i])));
+        writeColorPallete(i, *((u_int16_t*) &(colors[i])));
         #else
         colors[i].a = 0;
         colors[i].r = gammatable[usegamma][*palette++];

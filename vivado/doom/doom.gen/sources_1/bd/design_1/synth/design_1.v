@@ -2,7 +2,7 @@
 //Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 //--------------------------------------------------------------------------------
 //Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
-//Date        : Mon Jan 13 15:36:56 2025
+//Date        : Tue Jan 21 22:46:44 2025
 //Host        : mint-ssd running 64-bit Linux Mint 21.1
 //Command     : generate_target design_1.bd
 //Design      : design_1
@@ -89,6 +89,7 @@ module design_1
   wire VGA_HS;
   wire [3:0]VGA_R;
   wire VGA_VS;
+  wire axi_gpio_1_ip2intc_irpt;
   wire axi_timer_0_interrupt;
   wire clk_wiz_0_clk_out2;
   wire clk_wiz_0_locked;
@@ -343,7 +344,8 @@ module design_1
   wire [0:1]microblaze_riscv_0_interrupt_ACK;
   wire [31:0]microblaze_riscv_0_interrupt_ADDRESS;
   wire microblaze_riscv_0_interrupt_INTERRUPT;
-  wire [1:0]microblaze_riscv_0_intr;
+  wire [2:0]microblaze_riscv_0_intr;
+  wire microsd_ip2intc_irpt;
   wire mig_7series_0_mmcm_locked;
   wire mig_7series_0_ui_clk;
   wire mig_7series_0_ui_clk_sync_rst;
@@ -420,6 +422,7 @@ module design_1
   design_1_axi_gpio_1_1 axi_gpio_1
        (.gpio2_io_i(push_buttons_5bits_tri_i),
         .gpio_io_i(dip_switches_16bits_tri_i),
+        .ip2intc_irpt(axi_gpio_1_ip2intc_irpt),
         .s_axi_aclk(microblaze_riscv_0_Clk),
         .s_axi_araddr(microblaze_riscv_0_axi_periph_M06_AXI_ARADDR[8:0]),
         .s_axi_aresetn(rst_clk_wiz_0_200M_peripheral_aresetn),
@@ -878,7 +881,8 @@ module design_1
         .SYS_Rst(rst_clk_wiz_0_200M_bus_struct_reset));
   design_1_microblaze_riscv_0_xlconcat_2 microblaze_riscv_0_xlconcat
        (.In0(axi_timer_0_interrupt),
-        .In1(1'b0),
+        .In1(axi_gpio_1_ip2intc_irpt),
+        .In2(microsd_ip2intc_irpt),
         .dout(microblaze_riscv_0_intr));
   microsd_imp_MOJDFN microsd
        (.AXI_LITE_araddr(microblaze_riscv_0_axi_periph_M04_AXI_ARADDR),
@@ -903,6 +907,7 @@ module design_1
         .SD_DAT3(SD_DAT3),
         .SD_RESET(SD_RESET),
         .SD_SCK(SD_SCK),
+        .ip2intc_irpt(microsd_ip2intc_irpt),
         .reset(rst_clk_wiz_0_200M_peripheral_reset),
         .s_axi_aclk(microblaze_riscv_0_Clk),
         .s_axi_aresetn(rst_clk_wiz_0_200M_peripheral_aresetn));
@@ -4418,6 +4423,7 @@ module microsd_imp_MOJDFN
     SD_DAT3,
     SD_RESET,
     SD_SCK,
+    ip2intc_irpt,
     reset,
     s_axi_aclk,
     s_axi_aresetn);
@@ -4443,6 +4449,7 @@ module microsd_imp_MOJDFN
   output SD_DAT3;
   output SD_RESET;
   output SD_SCK;
+  output ip2intc_irpt;
   input reset;
   input s_axi_aclk;
   input s_axi_aresetn;
@@ -4472,6 +4479,7 @@ module microsd_imp_MOJDFN
   wire axi_quad_spi_0_io0_o;
   wire axi_quad_spi_0_sck_o;
   wire [0:0]axi_quad_spi_0_ss_o;
+  wire ip2intc_irpt;
   wire micro_sd_0_miso;
   wire reset;
   wire s_axi_aclk;
@@ -4482,6 +4490,7 @@ module microsd_imp_MOJDFN
         .io0_i(1'b0),
         .io0_o(axi_quad_spi_0_io0_o),
         .io1_i(micro_sd_0_miso),
+        .ip2intc_irpt(ip2intc_irpt),
         .s_axi_aclk(s_axi_aclk),
         .s_axi_araddr(AXI_LITE_araddr[6:0]),
         .s_axi_aresetn(s_axi_aresetn),

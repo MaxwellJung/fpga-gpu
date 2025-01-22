@@ -2,11 +2,10 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
--- Date        : Mon Jan 13 00:08:46 2025
+-- Date        : Tue Jan 21 22:47:40 2025
 -- Host        : mint-ssd running 64-bit Linux Mint 21.1
--- Command     : write_vhdl -force -mode funcsim -rename_top design_1_microblaze_riscv_0_axi_periph_imp_xbar_2 -prefix
---               design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_
---               design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim
+--               /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.gen/sources_1/bd/design_1/ip/design_1_microblaze_riscv_0_axi_periph_imp_xbar_2/design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_sim_netlist.vhdl
 -- Design      : design_1_microblaze_riscv_0_axi_periph_imp_xbar_2
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -91,6 +90,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_ad
     mi_wready : in STD_LOGIC_VECTOR ( 0 to 0 );
     mi_bvalid : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_addr_arbiter_sasd : entity is "axi_crossbar_v2_1_34_addr_arbiter_sasd";
 end design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_addr_arbiter_sasd;
 
 architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_addr_arbiter_sasd is
@@ -2046,6 +2047,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_de
     mi_awvalid_en : in STD_LOGIC;
     p_4_in : in STD_LOGIC
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_decerr_slave : entity is "axi_crossbar_v2_1_34_decerr_slave";
 end design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_decerr_slave;
 
 architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_decerr_slave is
@@ -2277,6 +2280,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_sp
     \m_ready_d_reg[0]_0\ : in STD_LOGIC_VECTOR ( 0 to 0 );
     aclk : in STD_LOGIC
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_splitter : entity is "axi_crossbar_v2_1_34_splitter";
 end design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_splitter;
 
 architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_splitter is
@@ -2582,6 +2587,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_register_slice_v2_1
     SR : in STD_LOGIC_VECTOR ( 0 to 0 );
     E : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_register_slice_v2_1_33_axic_register_slice : entity is "axi_register_slice_v2_1_33_axic_register_slice";
 end design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_register_slice_v2_1_33_axic_register_slice;
 
 architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_register_slice_v2_1_33_axic_register_slice is
@@ -5177,6 +5184,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_cr
     s_axi_awaddr : in STD_LOGIC_VECTOR ( 31 downto 0 );
     s_axi_awvalid : in STD_LOGIC_VECTOR ( 0 to 0 )
   );
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_crossbar_sasd : entity is "axi_crossbar_v2_1_34_crossbar_sasd";
 end design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_crossbar_sasd;
 
 architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_crossbar_sasd is
@@ -5814,6 +5823,8 @@ entity design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_ax
   attribute C_S_AXI_WRITE_ACCEPTANCE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_axi_crossbar : entity is 1;
   attribute DowngradeIPIdentifiedWarnings : string;
   attribute DowngradeIPIdentifiedWarnings of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_axi_crossbar : entity is "yes";
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_axi_crossbar : entity is "axi_crossbar_v2_1_34_axi_crossbar";
   attribute P_ADDR_DECODE : integer;
   attribute P_ADDR_DECODE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2_axi_crossbar_v2_1_34_axi_crossbar : entity is 1;
   attribute P_AXI3 : integer;
@@ -6565,7 +6576,7 @@ architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2 is
   attribute X_INTERFACE_MODE : string;
   attribute X_INTERFACE_MODE of aclk : signal is "slave";
   attribute X_INTERFACE_PARAMETER : string;
-  attribute X_INTERFACE_PARAMETER of aclk : signal is "XIL_INTERFACENAME CLKIF, ASSOCIATED_BUSIF M00_AXI:M01_AXI:M02_AXI:M03_AXI:M04_AXI:M05_AXI:M06_AXI:M07_AXI:M08_AXI:M09_AXI:M10_AXI:M11_AXI:M12_AXI:M13_AXI:M14_AXI:M15_AXI:S00_AXI:S01_AXI:S02_AXI:S03_AXI:S04_AXI:S05_AXI:S06_AXI:S07_AXI:S08_AXI:S09_AXI:S10_AXI:S11_AXI:S12_AXI:S13_AXI:S14_AXI:S15_AXI, ASSOCIATED_RESET aresetn, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of aclk : signal is "XIL_INTERFACENAME CLKIF, ASSOCIATED_BUSIF M00_AXI:M01_AXI:M02_AXI:M03_AXI:M04_AXI:M05_AXI:M06_AXI:M07_AXI:M08_AXI:M09_AXI:M10_AXI:M11_AXI:M12_AXI:M13_AXI:M14_AXI:M15_AXI:S00_AXI:S01_AXI:S02_AXI:S03_AXI:S04_AXI:S05_AXI:S06_AXI:S07_AXI:S08_AXI:S09_AXI:S10_AXI:S11_AXI:S12_AXI:S13_AXI:S14_AXI:S15_AXI, ASSOCIATED_RESET aresetn, FREQ_HZ 150000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of aresetn : signal is "xilinx.com:signal:reset:1.0 RSTIF RST";
   attribute X_INTERFACE_MODE of aresetn : signal is "slave";
   attribute X_INTERFACE_PARAMETER of aresetn : signal is "XIL_INTERFACENAME RSTIF, POLARITY ACTIVE_LOW, INSERT_VIP 0, TYPE INTERCONNECT";
@@ -6575,7 +6586,7 @@ architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2 is
   attribute X_INTERFACE_INFO of m_axi_arvalid : signal is "xilinx.com:interface:aximm:1.0 M00_AXI ARVALID [0:0] [0:0], xilinx.com:interface:aximm:1.0 M01_AXI ARVALID [0:0] [1:1], xilinx.com:interface:aximm:1.0 M02_AXI ARVALID [0:0] [2:2], xilinx.com:interface:aximm:1.0 M03_AXI ARVALID [0:0] [3:3], xilinx.com:interface:aximm:1.0 M04_AXI ARVALID [0:0] [4:4], xilinx.com:interface:aximm:1.0 M05_AXI ARVALID [0:0] [5:5], xilinx.com:interface:aximm:1.0 M06_AXI ARVALID [0:0] [6:6]";
   attribute X_INTERFACE_INFO of m_axi_awaddr : signal is "xilinx.com:interface:aximm:1.0 M00_AXI AWADDR [31:0] [31:0], xilinx.com:interface:aximm:1.0 M01_AXI AWADDR [31:0] [63:32], xilinx.com:interface:aximm:1.0 M02_AXI AWADDR [31:0] [95:64], xilinx.com:interface:aximm:1.0 M03_AXI AWADDR [31:0] [127:96], xilinx.com:interface:aximm:1.0 M04_AXI AWADDR [31:0] [159:128], xilinx.com:interface:aximm:1.0 M05_AXI AWADDR [31:0] [191:160], xilinx.com:interface:aximm:1.0 M06_AXI AWADDR [31:0] [223:192]";
   attribute X_INTERFACE_MODE of m_axi_awaddr : signal is "master M06_AXI";
-  attribute X_INTERFACE_PARAMETER of m_axi_awaddr : signal is "XIL_INTERFACENAME M06_AXI, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of m_axi_awaddr : signal is "XIL_INTERFACENAME M06_AXI, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 150000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of m_axi_awprot : signal is "xilinx.com:interface:aximm:1.0 M00_AXI AWPROT [2:0] [2:0], xilinx.com:interface:aximm:1.0 M01_AXI AWPROT [2:0] [5:3], xilinx.com:interface:aximm:1.0 M02_AXI AWPROT [2:0] [8:6], xilinx.com:interface:aximm:1.0 M03_AXI AWPROT [2:0] [11:9], xilinx.com:interface:aximm:1.0 M04_AXI AWPROT [2:0] [14:12], xilinx.com:interface:aximm:1.0 M05_AXI AWPROT [2:0] [17:15], xilinx.com:interface:aximm:1.0 M06_AXI AWPROT [2:0] [20:18]";
   attribute X_INTERFACE_INFO of m_axi_awready : signal is "xilinx.com:interface:aximm:1.0 M00_AXI AWREADY [0:0] [0:0], xilinx.com:interface:aximm:1.0 M01_AXI AWREADY [0:0] [1:1], xilinx.com:interface:aximm:1.0 M02_AXI AWREADY [0:0] [2:2], xilinx.com:interface:aximm:1.0 M03_AXI AWREADY [0:0] [3:3], xilinx.com:interface:aximm:1.0 M04_AXI AWREADY [0:0] [4:4], xilinx.com:interface:aximm:1.0 M05_AXI AWREADY [0:0] [5:5], xilinx.com:interface:aximm:1.0 M06_AXI AWREADY [0:0] [6:6]";
   attribute X_INTERFACE_INFO of m_axi_awvalid : signal is "xilinx.com:interface:aximm:1.0 M00_AXI AWVALID [0:0] [0:0], xilinx.com:interface:aximm:1.0 M01_AXI AWVALID [0:0] [1:1], xilinx.com:interface:aximm:1.0 M02_AXI AWVALID [0:0] [2:2], xilinx.com:interface:aximm:1.0 M03_AXI AWVALID [0:0] [3:3], xilinx.com:interface:aximm:1.0 M04_AXI AWVALID [0:0] [4:4], xilinx.com:interface:aximm:1.0 M05_AXI AWVALID [0:0] [5:5], xilinx.com:interface:aximm:1.0 M06_AXI AWVALID [0:0] [6:6]";
@@ -6596,7 +6607,7 @@ architecture STRUCTURE of design_1_microblaze_riscv_0_axi_periph_imp_xbar_2 is
   attribute X_INTERFACE_INFO of s_axi_arvalid : signal is "xilinx.com:interface:aximm:1.0 S00_AXI ARVALID";
   attribute X_INTERFACE_INFO of s_axi_awaddr : signal is "xilinx.com:interface:aximm:1.0 S00_AXI AWADDR";
   attribute X_INTERFACE_MODE of s_axi_awaddr : signal is "slave";
-  attribute X_INTERFACE_PARAMETER of s_axi_awaddr : signal is "XIL_INTERFACENAME S00_AXI, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 100000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
+  attribute X_INTERFACE_PARAMETER of s_axi_awaddr : signal is "XIL_INTERFACENAME S00_AXI, DATA_WIDTH 32, PROTOCOL AXI4LITE, FREQ_HZ 150000000, ID_WIDTH 0, ADDR_WIDTH 32, AWUSER_WIDTH 0, ARUSER_WIDTH 0, WUSER_WIDTH 0, RUSER_WIDTH 0, BUSER_WIDTH 0, READ_WRITE_MODE READ_WRITE, HAS_BURST 0, HAS_LOCK 0, HAS_PROT 1, HAS_CACHE 0, HAS_QOS 0, HAS_REGION 0, HAS_WSTRB 1, HAS_BRESP 1, HAS_RRESP 1, SUPPORTS_NARROW_BURST 0, NUM_READ_OUTSTANDING 1, NUM_WRITE_OUTSTANDING 1, MAX_BURST_LENGTH 1, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, NUM_READ_THREADS 1, NUM_WRITE_THREADS 1, RUSER_BITS_PER_BYTE 0, WUSER_BITS_PER_BYTE 0, INSERT_VIP 0";
   attribute X_INTERFACE_INFO of s_axi_awprot : signal is "xilinx.com:interface:aximm:1.0 S00_AXI AWPROT";
   attribute X_INTERFACE_INFO of s_axi_awready : signal is "xilinx.com:interface:aximm:1.0 S00_AXI AWREADY";
   attribute X_INTERFACE_INFO of s_axi_awvalid : signal is "xilinx.com:interface:aximm:1.0 S00_AXI AWVALID";

@@ -117,8 +117,6 @@ OPTRACE "create in-memory project" END { }
 OPTRACE "set parameters" START { }
   set_property webtalk.parent_dir /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.cache/wt [current_project]
   set_property parent.project_path /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.xpr [current_project]
-  set_property ip_repo_paths /home/maxwelljung/programming/fpga-gpu/vivado/ip_repo [current_project]
-  update_ip_catalog
   set_property ip_output_repo /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.cache/ip [current_project]
   set_property ip_cache_permissions {read write} [current_project]
   set_property XPM_LIBRARIES {XPM_CDC XPM_FIFO XPM_MEMORY} [current_project]

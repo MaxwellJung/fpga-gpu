@@ -409,16 +409,19 @@
         "inst_hier_path": "clk_wiz_0",
         "parameters": {
           "CLKOUT1_JITTER": {
-            "value": "130.958"
+            "value": "139.594"
+          },
+          "CLKOUT1_PHASE_ERROR": {
+            "value": "132.063"
           },
           "CLKOUT1_REQUESTED_OUT_FREQ": {
-            "value": "100"
+            "value": "150"
           },
           "CLKOUT2_JITTER": {
-            "value": "114.829"
+            "value": "132.221"
           },
           "CLKOUT2_PHASE_ERROR": {
-            "value": "98.575"
+            "value": "132.063"
           },
           "CLKOUT2_REQUESTED_OUT_FREQ": {
             "value": "200"
@@ -427,10 +430,10 @@
             "value": "true"
           },
           "CLKOUT3_JITTER": {
-            "value": "159.371"
+            "value": "182.402"
           },
           "CLKOUT3_PHASE_ERROR": {
-            "value": "98.575"
+            "value": "132.063"
           },
           "CLKOUT3_REQUESTED_OUT_FREQ": {
             "value": "40"
@@ -439,10 +442,10 @@
             "value": "true"
           },
           "CLKOUT4_JITTER": {
-            "value": "114.829"
+            "value": "132.221"
           },
           "CLKOUT4_PHASE_ERROR": {
-            "value": "98.575"
+            "value": "132.063"
           },
           "CLKOUT4_USED": {
             "value": "true"
@@ -456,17 +459,26 @@
           "CLK_OUT3_PORT": {
             "value": "vga_clk"
           },
+          "MMCM_CLKFBOUT_MULT_F": {
+            "value": "6.000"
+          },
+          "MMCM_CLKIN1_PERIOD": {
+            "value": "10.0"
+          },
+          "MMCM_CLKIN2_PERIOD": {
+            "value": "10.0"
+          },
           "MMCM_CLKOUT0_DIVIDE_F": {
-            "value": "10.000"
+            "value": "4.000"
           },
           "MMCM_CLKOUT1_DIVIDE": {
-            "value": "5"
+            "value": "3"
           },
           "MMCM_CLKOUT2_DIVIDE": {
-            "value": "25"
+            "value": "15"
           },
           "MMCM_CLKOUT3_DIVIDE": {
-            "value": "5"
+            "value": "3"
           },
           "NUM_OUT_CLKS": {
             "value": "4"
@@ -1646,7 +1658,12 @@
         "ip_revision": "6",
         "xci_name": "design_1_microblaze_riscv_0_xlconcat_2",
         "xci_path": "ip/design_1_microblaze_riscv_0_xlconcat_2/design_1_microblaze_riscv_0_xlconcat_2.xci",
-        "inst_hier_path": "microblaze_riscv_0_xlconcat"
+        "inst_hier_path": "microblaze_riscv_0_xlconcat",
+        "parameters": {
+          "NUM_PORTS": {
+            "value": "3"
+          }
+        }
       },
       "mdm_1": {
         "vlnv": "xilinx.com:ip:mdm_riscv:1.0",
@@ -2537,6 +2554,9 @@
         "xci_path": "ip/design_1_axi_gpio_0_3/design_1_axi_gpio_0_3.xci",
         "inst_hier_path": "axi_gpio_0",
         "parameters": {
+          "C_INTERRUPT_PRESENT": {
+            "value": "0"
+          },
           "GPIO2_BOARD_INTERFACE": {
             "value": "rgb_led"
           },
@@ -2555,6 +2575,9 @@
         "xci_path": "ip/design_1_axi_gpio_1_1/design_1_axi_gpio_1_1.xci",
         "inst_hier_path": "axi_gpio_1",
         "parameters": {
+          "C_INTERRUPT_PRESENT": {
+            "value": "1"
+          },
           "GPIO2_BOARD_INTERFACE": {
             "value": "push_buttons_5bits"
           },
@@ -2602,6 +2625,10 @@
           "s_axi_aresetn": {
             "type": "rst",
             "direction": "I"
+          },
+          "ip2intc_irpt": {
+            "type": "intr",
+            "direction": "O"
           }
         },
         "components": {
@@ -2670,8 +2697,8 @@
             "xci_path": "ip/design_1_axi_quad_spi_0_0/design_1_axi_quad_spi_0_0.xci",
             "inst_hier_path": "microsd/axi_quad_spi_0",
             "parameters": {
-              "Multiples16": {
-                "value": "1"
+              "C_SCK_RATIO": {
+                "value": "8"
               },
               "QSPI_BOARD_INTERFACE": {
                 "value": "Custom"
@@ -2695,6 +2722,12 @@
             "ports": [
               "axi_quad_spi_0/io0_o",
               "micro_sd_0/mosi"
+            ]
+          },
+          "axi_quad_spi_0_ip2intc_irpt": {
+            "ports": [
+              "axi_quad_spi_0/ip2intc_irpt",
+              "ip2intc_irpt"
             ]
           },
           "axi_quad_spi_0_sck_o": {
@@ -2910,6 +2943,12 @@
           "rst_clk_wiz_0_200M/ext_reset_in"
         ]
       },
+      "axi_gpio_1_ip2intc_irpt": {
+        "ports": [
+          "axi_gpio_1/ip2intc_irpt",
+          "microblaze_riscv_0_xlconcat/In1"
+        ]
+      },
       "axi_timer_0_interrupt": {
         "ports": [
           "axi_timer_0/interrupt",
@@ -3032,6 +3071,12 @@
         "ports": [
           "microblaze_riscv_0_xlconcat/dout",
           "microblaze_riscv_0_axi_intc/intr"
+        ]
+      },
+      "microsd_ip2intc_irpt": {
+        "ports": [
+          "microsd/ip2intc_irpt",
+          "microblaze_riscv_0_xlconcat/In2"
         ]
       },
       "mig_7series_0_mmcm_locked": {

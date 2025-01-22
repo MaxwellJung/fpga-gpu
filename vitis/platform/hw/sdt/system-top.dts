@@ -6,7 +6,6 @@
 	device_id = "7a100t";
 	#address-cells = <1>;
 	#size-cells = <1>;
-	slrcount = <1>;
 	family = "microblaze_riscv";
 	gpu_axi_bram_ctrl_0_memory: memory@c0000000 {
 		compatible = "xlnx,axi-bram-ctrl-4.1";

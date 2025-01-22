@@ -2,10 +2,10 @@
 -- Copyright 2022-2024 Advanced Micro Devices, Inc. All Rights Reserved.
 -- --------------------------------------------------------------------------------
 -- Tool Version: Vivado v.2024.2 (lin64) Build 5239630 Fri Nov 08 22:34:34 MST 2024
--- Date        : Mon Jan 13 00:08:41 2025
+-- Date        : Tue Jan 21 22:47:32 2025
 -- Host        : mint-ssd running 64-bit Linux Mint 21.1
--- Command     : write_vhdl -force -mode funcsim -rename_top design_1_dlmb_bram_if_cntlr_2 -prefix
---               design_1_dlmb_bram_if_cntlr_2_ design_1_dlmb_bram_if_cntlr_2_sim_netlist.vhdl
+-- Command     : write_vhdl -force -mode funcsim
+--               /home/maxwelljung/programming/fpga-gpu/vivado/doom/doom.gen/sources_1/bd/design_1/ip/design_1_dlmb_bram_if_cntlr_2/design_1_dlmb_bram_if_cntlr_2_sim_netlist.vhdl
 -- Design      : design_1_dlmb_bram_if_cntlr_2
 -- Purpose     : This VHDL netlist is a functional simulation representation of the design and should not be modified or
 --               synthesized. This netlist cannot be used for SDF annotated simulation.
@@ -199,6 +199,8 @@ entity design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr is
   attribute C_UE_FAILING_REGISTERS of design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr : entity is 0;
   attribute C_WRITE_ACCESS : integer;
   attribute C_WRITE_ACCESS of design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr : entity is 2;
+  attribute ORIG_REF_NAME : string;
+  attribute ORIG_REF_NAME of design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr : entity is "lmb_bram_if_cntlr";
 end design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr;
 
 architecture STRUCTURE of design_1_dlmb_bram_if_cntlr_2_lmb_bram_if_cntlr is
@@ -785,7 +787,7 @@ architecture STRUCTURE of design_1_dlmb_bram_if_cntlr_2 is
   attribute x_interface_info of LMB_AddrStrobe : signal is "xilinx.com:interface:lmb:1.0 SLMB ADDRSTROBE";
   attribute x_interface_info of LMB_Clk : signal is "xilinx.com:signal:clock:1.0 CLK.LMB_Clk CLK";
   attribute x_interface_mode of LMB_Clk : signal is "slave CLK.LMB_Clk";
-  attribute x_interface_parameter of LMB_Clk : signal is "XIL_INTERFACENAME CLK.LMB_Clk, ASSOCIATED_BUSIF SLMB:SLMB1:SLMB2:SLMB3:SLMB4:SLMB5:SLMB6:SLMB7, ASSOCIATED_RESET LMB_Rst, FREQ_HZ 100000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
+  attribute x_interface_parameter of LMB_Clk : signal is "XIL_INTERFACENAME CLK.LMB_Clk, ASSOCIATED_BUSIF SLMB:SLMB1:SLMB2:SLMB3:SLMB4:SLMB5:SLMB6:SLMB7, ASSOCIATED_RESET LMB_Rst, FREQ_HZ 150000000, FREQ_TOLERANCE_HZ 0, PHASE 0.0, CLK_DOMAIN design_1_CLK100MHZ, INSERT_VIP 0";
   attribute x_interface_info of LMB_ReadStrobe : signal is "xilinx.com:interface:lmb:1.0 SLMB READSTROBE";
   attribute x_interface_info of LMB_Rst : signal is "xilinx.com:signal:reset:1.0 RST.LMB_Rst RST";
   attribute x_interface_mode of LMB_Rst : signal is "slave RST.LMB_Rst";
