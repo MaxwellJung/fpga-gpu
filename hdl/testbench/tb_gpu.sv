@@ -7,47 +7,51 @@ module tb_gpu ();
     logic gpu_clk;
     logic vga_clk;
     logic reset;
+    logic enable;
 
-    logic set_color_palette;
+    logic [11:0] VGA_RGB;
+    logic VGA_HS, VGA_VS;
 
-    wire [3:0] VGA_R, VGA_G, VGA_B;
-
-    wire VGA_HS;
-    wire VGA_VS;
-
-    wire bram_en;
-    wire [31:0] bram_addr, bram_data;
-
-    Ram #(
-        .INIT_FILE("data/32bit_ram_init.mem"),
-        .WIDTH(32),
-        .ADDR_BITS(8)
-    ) bram (
-        .write_clk_i(gpu_clk),
-        .read_clk_i(gpu_clk),
-        
-        .read_enable_i(bram_en),
-        .read_addr_i(bram_addr),
-        .read_data_o(bram_data)
-    );
-    
-    gpu dut (
-        .gpu_clk_i(gpu_clk),
-        .reset_i(reset),
-
-        .bram_en_o(bram_en),
-        .bram_addr_o(bram_addr),
-        .bram_dout_i(bram_data),
-
-        .vga_clk_i(vga_clk),
-
-        .VGA_R_o(VGA_R),
-        .VGA_G_o(VGA_G),
-        .VGA_B_o(VGA_B),
-
-        .VGA_HS_o(VGA_HS),
-        .VGA_VS_o(VGA_VS)
-    );
+    gpu dut
+    (.S_AXI_araddr(S_AXI_araddr),
+    .S_AXI_arburst(S_AXI_arburst),
+    .S_AXI_arcache(S_AXI_arcache),
+    .S_AXI_arlen(S_AXI_arlen),
+    .S_AXI_arlock(S_AXI_arlock),
+    .S_AXI_arprot(S_AXI_arprot),
+    .S_AXI_arready(S_AXI_arready),
+    .S_AXI_arsize(S_AXI_arsize),
+    .S_AXI_arvalid(S_AXI_arvalid),
+    .S_AXI_awaddr(S_AXI_awaddr),
+    .S_AXI_awburst(S_AXI_awburst),
+    .S_AXI_awcache(S_AXI_awcache),
+    .S_AXI_awlen(S_AXI_awlen),
+    .S_AXI_awlock(S_AXI_awlock),
+    .S_AXI_awprot(S_AXI_awprot),
+    .S_AXI_awready(S_AXI_awready),
+    .S_AXI_awsize(S_AXI_awsize),
+    .S_AXI_awvalid(S_AXI_awvalid),
+    .S_AXI_bready(S_AXI_bready),
+    .S_AXI_bresp(S_AXI_bresp),
+    .S_AXI_bvalid(S_AXI_bvalid),
+    .S_AXI_rdata(S_AXI_rdata),
+    .S_AXI_rlast(S_AXI_rlast),
+    .S_AXI_rready(S_AXI_rready),
+    .S_AXI_rresp(S_AXI_rresp),
+    .S_AXI_rvalid(S_AXI_rvalid),
+    .S_AXI_wdata(S_AXI_wdata),
+    .S_AXI_wlast(S_AXI_wlast),
+    .S_AXI_wready(S_AXI_wready),
+    .S_AXI_wstrb(S_AXI_wstrb),
+    .S_AXI_wvalid(S_AXI_wvalid),
+    .VGA_HS(VGA_HS),
+    .VGA_RGB(VGA_RGB),
+    .VGA_VS(VGA_VS),
+    .gpu_clk_i(gpu_clk),
+    .reset_i(reset),
+    .s_axi_aclk(s_axi_aclk),
+    .s_axi_aresetn(s_axi_aresetn),
+    .vga_clk_i(vga_clk));
 
     initial gpu_clk = 0;
     always #(GPU_CLK_PERIOD / 2.0)
@@ -60,18 +64,18 @@ module tb_gpu ();
     initial begin
         $dumpvars(0, tb_gpu);
 
-        set_color_palette <= 0;
-        // hold reset for 10 ns
+        enable <= 1;
+        // hold reset for 3 VGA clock
         reset <= 1;
-        #(VGA_CLK_PERIOD)
+        #(3*VGA_CLK_PERIOD)
         reset <= 0;
+
+        // wait 5 vga clock before starting
+        // #(VGA_CLK_PERIOD*5)
+        // enable <= 1;
 
         // simulate 3 frames
         #(VGA_CLK_PERIOD*1056*628*1)
-
-        set_color_palette <= 1;
-        #(VGA_CLK_PERIOD*5)
-        set_color_palette <= 0;
 
         #(VGA_CLK_PERIOD*1056*628*2)
 

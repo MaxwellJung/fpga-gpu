@@ -8,7 +8,7 @@ module Counter #(
     output logic [NUM_BITS-1:0] count_o
 );
 
-    always @(posedge clk_i) begin
+    always_ff @(posedge clk_i) begin
         if (reset_i) begin
             count_o <= 0;
         end else if (enable_i) begin

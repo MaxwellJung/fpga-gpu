@@ -28,9 +28,9 @@ bitstream: FORCE
 
 gpu: FORCE
 	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)
-	iverilog -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./hdl/testbench/tb_gpu.sv ./hdl/design/gpu.v \
+	iverilog -g2005-sv -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./hdl/testbench/tb_gpu.sv ./hdl/design/gpu.sv \
 	./hdl/design/palette.sv ./hdl/design/latency.sv ./hdl/design/vga.sv ./hdl/design/counter.sv \
-	./hdl/design/ram.sv
+	./hdl/design/framebuffer.sv ./hdl/design/GpuController.sv
 	vvp $(BUILD_DIR)/gpu_sim.vvp
 	mkdir -p $(dir $(SIM_DIR)/gpu_sim.vcd)
 	mv dump.vcd $(SIM_DIR)/gpu_sim.vcd

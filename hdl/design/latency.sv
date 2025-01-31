@@ -6,7 +6,7 @@ module Latency #(
     parameter WIDTH = 8 // width of input/output data
 ) (
     input  wire clk_i,
-    input  wire rst_i,
+    input  wire reset_i,
 
     input  wire [WIDTH-1:0] data_i,
     output wire [WIDTH-1:0] data_o
@@ -15,7 +15,7 @@ module Latency #(
     integer i;
     
     always @(posedge clk_i) begin
-        if(rst_i) begin
+        if(reset_i) begin
             for (i = 0; i < LENGTH; i=i+1) begin
                 ff_chain[i] <= {WIDTH {1'b0}};
             end
