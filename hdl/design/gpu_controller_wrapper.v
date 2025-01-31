@@ -40,11 +40,15 @@ module GpuControllerWrapper #(
     output wire pxl_fifo_wr_clk_o,
     output wire pxl_fifo_wr_en_o,
     output wire [$clog2(PALETTE_LENGTH)-1:0] pxl_fifo_write_data_o,
+    input wire pxl_fifo_prog_full_i,
+    input wire pxl_fifo_almost_full_i,
     input wire pxl_fifo_full_i,
 
     output wire pxl_fifo_rd_clk_o,
     output wire pxl_fifo_rd_en_o,
     input wire [$clog2(PALETTE_LENGTH)-1:0] pxl_fifo_read_data_i,
+    input wire pxl_fifo_prog_empty_i,
+    input wire pxl_fifo_almost_empty_i,
     input wire pxl_fifo_empty_i,
 
     output wire [COLOR_BITS-1:0] VGA_RGB,
@@ -90,14 +94,18 @@ module GpuControllerWrapper #(
         .pxl_fifo_reset_o(pxl_fifo_reset_o),
 
         .pxl_fifo_wr_clk_o(pxl_fifo_wr_clk_o),
-        .pxl_fifo_write_data_o(pxl_fifo_write_data_o),
-        .pxl_fifo_full_i(pxl_fifo_full_i),
         .pxl_fifo_wr_en_o(pxl_fifo_wr_en_o),
+        .pxl_fifo_write_data_o(pxl_fifo_write_data_o),
+        .pxl_fifo_prog_full_i(pxl_fifo_prog_full_i),
+        .pxl_fifo_almost_full_i(pxl_fifo_almost_full_i),
+        .pxl_fifo_full_i(pxl_fifo_full_i),
 
         .pxl_fifo_rd_clk_o(pxl_fifo_rd_clk_o),
-        .pxl_fifo_read_data_i(pxl_fifo_read_data_i),
-        .pxl_fifo_empty_i(pxl_fifo_empty_i),
         .pxl_fifo_rd_en_o(pxl_fifo_rd_en_o),
+        .pxl_fifo_read_data_i(pxl_fifo_read_data_i),
+        .pxl_fifo_prog_empty_i(pxl_fifo_prog_empty_i),
+        .pxl_fifo_almost_empty_i(pxl_fifo_almost_empty_i),
+        .pxl_fifo_empty_i(pxl_fifo_empty_i),
 
         .VGA_RGB(VGA_RGB),
         .VGA_HS(VGA_HS),

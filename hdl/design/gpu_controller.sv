@@ -40,11 +40,15 @@ module GpuController #(
     output logic pxl_fifo_wr_clk_o,
     output logic pxl_fifo_wr_en_o,
     output logic [$clog2(PALETTE_LENGTH)-1:0] pxl_fifo_write_data_o,
+    input logic pxl_fifo_prog_full_i,
+    input logic pxl_fifo_almost_full_i,
     input logic pxl_fifo_full_i,
 
     output logic pxl_fifo_rd_clk_o,
     output logic pxl_fifo_rd_en_o,
     input logic [$clog2(PALETTE_LENGTH)-1:0] pxl_fifo_read_data_i,
+    input logic pxl_fifo_prog_empty_i,
+    input logic pxl_fifo_almost_empty_i,
     input logic pxl_fifo_empty_i,
 
     output logic [COLOR_BITS-1:0] VGA_RGB,
@@ -107,14 +111,18 @@ module GpuController #(
             IDLE: begin
                 if (palette_index < PALETTE_LENGTH) begin
                     next_state = RD_PT;
-                end else if (!pxl_fifo_full_i && (vga_index < H_VIS_AREA_PXL*V_VIS_AREA_PXL)) begin
-                    next_state = RD_FB;
+                end else if (!pxl_fifo_prog_full_i && pxl_fifo_prog_empty_i) begin
+                    if (vga_index < H_VIS_AREA_PXL*V_VIS_AREA_PXL) begin
+                        next_state = RD_FB;
+                    end else begin
+                        next_state = IDLE;
+                    end
                 end else begin
                     next_state = IDLE;
                 end
             end RD_FB: begin
-                if (pxl_fifo_full_i) begin
-                    // FIFO full
+                if (pxl_fifo_prog_full_i) begin
+                    // FIFO is almost full
                     if (palette_index < PALETTE_LENGTH) begin
                         next_state = RD_PT;
                     end else begin
@@ -131,7 +139,7 @@ module GpuController #(
                     next_state = RD_FB;
                 end
             end RD_PT: begin
-                if (!pxl_fifo_full_i) begin
+                if (!pxl_fifo_prog_full_i && pxl_fifo_prog_empty_i) begin
                     if (vga_index < H_VIS_AREA_PXL*V_VIS_AREA_PXL) begin
                         next_state = RD_FB;
                     end else if (palette_index < PALETTE_LENGTH) begin
@@ -150,11 +158,8 @@ module GpuController #(
         endcase
     end
 
-    // define FIFO write fail as pushing data when it's full
-    logic fifo_wr_fail;
-    assign fifo_wr_fail = pxl_fifo_full_i && pxl_fifo_wr_en_o;
-    logic [$clog2(H_VIS_AREA_PXL)-1:0] vga_x_index, old_vga_x_index;
-    logic [$clog2(V_VIS_AREA_PXL)-1:0] vga_y_index, old_vga_y_index;
+    logic [$clog2(H_VIS_AREA_PXL)-1:0] vga_x_index;
+    logic [$clog2(V_VIS_AREA_PXL)-1:0] vga_y_index;
     logic [$clog2(H_VIS_AREA_PXL*V_VIS_AREA_PXL)-1:0] vga_index;
     logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] pxl_index;
     assign vga_index = H_VIS_AREA_PXL * vga_y_index + vga_x_index;
@@ -163,22 +168,10 @@ module GpuController #(
         if (reset_i || frame_end) begin
             vga_x_index <= '0;
             vga_y_index <= '0;
-            old_vga_x_index <= '0;
-            old_vga_y_index <= '0;
         end else if (state == RD_FB) begin
-            // track previous pixel
-            old_vga_x_index <= vga_x_index;
-            old_vga_y_index <= vga_y_index;
-
-            if (fifo_wr_fail) begin
-                // go back to previous pixel if rejected by FIFO
-                vga_x_index <= old_vga_x_index;
-                vga_y_index <= old_vga_y_index;
-            end else begin
-                // proceed to next pixel
-                vga_x_index <= (vga_x_index < H_VIS_AREA_PXL - 1) ? vga_x_index + 1 : '0;
-                vga_y_index <= (vga_x_index >= H_VIS_AREA_PXL - 1) ? vga_y_index + 1 : vga_y_index;
-            end
+            // proceed to next pixel
+            vga_x_index <= (vga_x_index < H_VIS_AREA_PXL - 1) ? vga_x_index + 1 : '0;
+            vga_y_index <= (vga_x_index >= H_VIS_AREA_PXL - 1) ? vga_y_index + 1 : vga_y_index;
         end
     end
 
