@@ -70,6 +70,9 @@ module GpuController #(
     localparam PALETTE_SIZE = PALETTE_LENGTH*BYTES_PER_COLOR;
     localparam FRAMEBUFFER_BASE_ADDR = PALETTE_SIZE;
 
+    logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] pxl_index;
+    logic [$clog2(PALETTE_LENGTH):0] palette_index;
+
     logic h_visible, v_visible, frame_end;
     VgaTimingGenerator #(
         .H_VIS_AREA_PXL(H_VIS_AREA_PXL),
@@ -112,7 +115,7 @@ module GpuController #(
                 if (palette_index < PALETTE_LENGTH) begin
                     next_state = RD_PT;
                 end else if (!pxl_fifo_prog_full_i && pxl_fifo_prog_empty_i) begin
-                    if (vga_index < H_VIS_AREA_PXL*V_VIS_AREA_PXL) begin
+                    if (pxl_index < RESOLUTION_X*RESOLUTION_Y) begin
                         next_state = RD_FB;
                     end else begin
                         next_state = IDLE;
@@ -128,7 +131,7 @@ module GpuController #(
                     end else begin
                         next_state = IDLE;
                     end
-                end else if (vga_index >= H_VIS_AREA_PXL*V_VIS_AREA_PXL) begin
+                end else if (pxl_index >= RESOLUTION_X*RESOLUTION_Y) begin
                     // done reading framebuffer
                     if (palette_index < PALETTE_LENGTH) begin
                         next_state = RD_PT;
@@ -140,7 +143,7 @@ module GpuController #(
                 end
             end RD_PT: begin
                 if (!pxl_fifo_prog_full_i && pxl_fifo_prog_empty_i) begin
-                    if (vga_index < H_VIS_AREA_PXL*V_VIS_AREA_PXL) begin
+                    if (pxl_index < RESOLUTION_X*RESOLUTION_Y) begin
                         next_state = RD_FB;
                     end else if (palette_index < PALETTE_LENGTH) begin
                         next_state = RD_PT;
@@ -158,22 +161,53 @@ module GpuController #(
         endcase
     end
 
-    logic [$clog2(H_VIS_AREA_PXL)-1:0] vga_x_index;
-    logic [$clog2(V_VIS_AREA_PXL)-1:0] vga_y_index;
-    logic [$clog2(H_VIS_AREA_PXL*V_VIS_AREA_PXL)-1:0] vga_index;
-    logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] pxl_index;
-    assign vga_index = H_VIS_AREA_PXL * vga_y_index + vga_x_index;
-    assign pxl_index = RESOLUTION_X * (vga_y_index/DOWNSCALE_FACTOR) + (vga_x_index/DOWNSCALE_FACTOR);
+    logic [$clog2(DOWNSCALE_FACTOR)-1:0] h_dup_cnt, v_dup_cnt;
+    logic [$clog2(RESOLUTION_X)-1:0] x_index;
     always_ff @(posedge gpu_clk_i) begin
-        if (reset_i || frame_end) begin
-            vga_x_index <= '0;
-            vga_y_index <= '0;
-        end else if (state == RD_FB) begin
-            // proceed to next pixel
-            vga_x_index <= (vga_x_index < H_VIS_AREA_PXL - 1) ? vga_x_index + 1 : '0;
-            vga_y_index <= (vga_x_index >= H_VIS_AREA_PXL - 1) ? vga_y_index + 1 : vga_y_index;
-        end
-    end
+       if (reset_i || frame_end) begin
+           h_dup_cnt <= '0;
+           v_dup_cnt <= '0;
+           x_index <= '0;
+           pxl_index <= '0;
+       end else if (state == RD_FB) begin
+           // proceed to next pixel
+           if (h_dup_cnt < DOWNSCALE_FACTOR - 1) begin
+               h_dup_cnt <= h_dup_cnt + 1;
+           end else begin
+               h_dup_cnt <= '0;
+           end
+
+           if (x_index >= RESOLUTION_X - 1 && (h_dup_cnt >= DOWNSCALE_FACTOR - 1)) begin
+               if (v_dup_cnt < DOWNSCALE_FACTOR - 1) begin
+                   v_dup_cnt <= v_dup_cnt + 1;
+               end else begin
+                   v_dup_cnt <= '0;
+               end
+           end else begin
+               v_dup_cnt <= v_dup_cnt;
+           end
+
+           if (h_dup_cnt >= DOWNSCALE_FACTOR - 1) begin
+               if (x_index >= RESOLUTION_X - 1) begin
+                   x_index <= '0;
+               end else begin
+                   x_index <= x_index + 1;
+               end
+           end
+
+           if (h_dup_cnt >= DOWNSCALE_FACTOR - 1) begin
+               if (x_index >= RESOLUTION_X - 1) begin
+                   if (v_dup_cnt < DOWNSCALE_FACTOR - 1) begin
+                       pxl_index <= pxl_index + 1 - RESOLUTION_X;
+                   end else begin
+                       pxl_index <= pxl_index + 1;
+                   end
+               end else begin
+                   pxl_index <= pxl_index + 1;
+               end
+           end
+       end
+   end
 
     assign bram_clk_o = gpu_clk_i;
     assign bram_rst_o = reset_i;
@@ -221,7 +255,6 @@ module GpuController #(
     assign pxl_fifo_rd_clk_o = vga_clk_i;
     assign pxl_fifo_rd_en_o = h_visible && v_visible;
 
-    logic [$clog2(PALETTE_LENGTH):0] palette_index;
     always_ff @(posedge gpu_clk_i) begin
         if (reset_i || frame_end) begin
             palette_index <= '0;

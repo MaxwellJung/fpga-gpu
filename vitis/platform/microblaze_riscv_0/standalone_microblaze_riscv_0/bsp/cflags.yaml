@@ -1,0 +1,3 @@
+cflags: -march=rv32imac_zicsr_zifencei_zicbom -mabi=ilp32
+libpath: riscv64-unknown-elf/riscv32-xilinx-elf/usr/lib/rv32imac/ilp32/
+linkflags: -march=rv32imac
