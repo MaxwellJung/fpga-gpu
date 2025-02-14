@@ -30,7 +30,7 @@ int initGPU() {
         rrr = (i&0b11100000)>>5;
         ggg = (i&0b11100)>>2;
         bb = i&0b11;
-        rrrgggbb = (rrr<<9) | (ggg<<5) | (bb<<2) | 0b000100010011;
+        rrrgggbb = (rrr<<9) | (ggg<<5) | (bb<<2);
         writeColorPallete(i, rrrgggbb);
     }
     
