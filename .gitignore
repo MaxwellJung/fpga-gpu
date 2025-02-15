@@ -2,6 +2,9 @@ build/
 sim/
 *.xsa
 .vscode/
+dump.vcd
+vivado/
+a.out
 
 # gitignore template for Xilinx Vivado Design Suite
 # website: https://www.xilinx.com/support/download.html

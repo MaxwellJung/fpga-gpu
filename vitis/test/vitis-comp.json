@@ -1,7 +1,7 @@
 {
   "name": "test",
   "type": "HOST",
-  "platform": "platform",
+  "platform": "test-platform",
   "domain": "standalone_microblaze_riscv_0",
   "cpuInstance": "microblaze_riscv_0",
   "cpuType": "microblaze_riscv",

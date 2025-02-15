@@ -1,0 +1,51 @@
+{
+  "name": "test-platform",
+  "type": "PLATFORM",
+  "configuration": {
+    "description": "",
+    "xsa": "/home/maxwelljung/programming/fpga-gpu/xsa/test.xsa",
+    "xsaPathInPlatform": "test-platform/hw/test.xsa",
+    "emulationXsa": "",
+    "emulationXsaPathInPlatform": "",
+    "isCustomFSBL": false,
+    "fsblPath": "",
+    "pmufwElf": "",
+    "flow": "EMBEDDED",
+    "processorsMap": {
+      "microblaze_riscv_0": "microblaze_riscv"
+    },
+    "supportedFamily": "fpga",
+    "stdGenHookList": [
+      {
+        "key": "VITIS_SDT_REPO",
+        "value": ""
+      },
+      {
+        "key": "VITIS_SDT_BOARD_DTS",
+        "value": ""
+      },
+      {
+        "key": "VITIS_SDT_INCLUDE_DTS",
+        "value": ""
+      }
+    ],
+    "componentType": "PLATFORM",
+    "domains": [
+      {
+        "name": "standalone_microblaze_riscv_0",
+        "displayName": "standalone_microblaze_riscv_0",
+        "processor": "microblaze_riscv_0",
+        "cpuType": "microblaze_riscv",
+        "cpuInstance": "microblaze_riscv_0",
+        "os": "standalone",
+        "appTemplate": "empty_application",
+        "isBootDomain": false,
+        "qemuData": "",
+        "qemuArgsFile": "",
+        "pmcQemuArgsFile": "",
+        "isBSPGenReq": false
+      }
+    ],
+    "emptyToolchainConfiguration": []
+  }
+}
