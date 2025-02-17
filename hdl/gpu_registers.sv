@@ -16,9 +16,9 @@ module GpuRegisters #(
     input logic [WIDTH-1:0] din_i,
     input logic [BYTES_PER_REG-1:0] we_i,
 
-    output logic [WIDTH-1:0] gpu_cp_x_o,
-    output logic [WIDTH-1:0] gpu_cp_y_o,
-    output logic [WIDTH-1:0] gpu_index_o,
+    output logic [WIDTH-1:0] gpu_reg_cp_x_o,
+    output logic [WIDTH-1:0] gpu_reg_cp_y_o,
+    output logic [WIDTH-1:0] gpu_reg_index_o,
     output logic [WIDTH-1:0] gpu_reg_3_o
 );
     logic [WIDTH-1:0] gpu_reg [REG_COUNT];
@@ -42,9 +42,9 @@ module GpuRegisters #(
     end
 
     always_comb begin
-        gpu_cp_x_o = gpu_reg[0];
-        gpu_cp_y_o = gpu_reg[1];
-        gpu_index_o = gpu_reg[2];
+        gpu_reg_cp_x_o = gpu_reg[0];
+        gpu_reg_cp_y_o = gpu_reg[1];
+        gpu_reg_index_o = gpu_reg[2];
         gpu_reg_3_o = gpu_reg[3];
     end
 

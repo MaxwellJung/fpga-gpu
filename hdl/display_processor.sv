@@ -6,13 +6,13 @@ module DisplayProcessor #(
     input logic clk_i,
     input logic reset_i,
 
-    input logic [$clog2(RESOLUTION_X)-1:0] x_i,
-    input logic [$clog2(RESOLUTION_Y)-1:0] y_i,
+    input logic [$clog2(RESOLUTION_X)-1:0] cp_x_i,
+    input logic [$clog2(RESOLUTION_Y)-1:0] cp_y_i,
     input logic [$clog2(PALETTE_LENGTH)-1:0] index_i,
 
-    output logic [$clog2(RESOLUTION_X)-1:0] cp_x_o,
-    output logic [$clog2(RESOLUTION_Y)-1:0] cp_y_o,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] index_o
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x_o,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y_o,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index_o
 );
     typedef struct {
         logic [$clog2(RESOLUTION_X)-1:0] x;
@@ -27,13 +27,13 @@ module DisplayProcessor #(
             current_pos <= '{'0, '0};
             index <= '0;
         end else begin
-            current_pos <= '{x_i, y_i};
+            current_pos <= '{cp_x_i, cp_y_i};
             index <= index_i;
         end
     end
 
-    assign cp_x_o = current_pos.x;
-    assign cp_y_o = current_pos.y;
-    assign index_o = index;
+    assign fb_wr_x_o = current_pos.x;
+    assign fb_wr_y_o = current_pos.y;
+    assign fb_wr_index_o = index;
 
 endmodule

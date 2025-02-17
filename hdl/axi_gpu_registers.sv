@@ -42,9 +42,9 @@ module AxiGpuRegisters #(
     input logic s_axi_aresetn,
     
     // registers
-    output logic [31:0] gpu_cp_x_o,
-    output logic [31:0] gpu_cp_y_o,
-    output logic [31:0] gpu_index_o,
+    output logic [31:0] gpu_reg_cp_x_o,
+    output logic [31:0] gpu_reg_cp_y_o,
+    output logic [31:0] gpu_reg_index_o,
     output logic [31:0] gpu_reg_3_o
 );
     logic [11:0] reg_addr;
@@ -56,6 +56,9 @@ module AxiGpuRegisters #(
     logic [3:0] reg_we;
 
     AxiBramController AxiBramController_0 (
+        .s_axi_aclk(s_axi_aclk),
+        .s_axi_aresetn(s_axi_aresetn),
+
         .S_AXI_araddr(S_AXI_araddr),
         .S_AXI_arburst(S_AXI_arburst),
         .S_AXI_arcache(S_AXI_arcache),
@@ -87,8 +90,6 @@ module AxiGpuRegisters #(
         .S_AXI_wready(S_AXI_wready),
         .S_AXI_wstrb(S_AXI_wstrb),
         .S_AXI_wvalid(S_AXI_wvalid),
-        .s_axi_aclk(s_axi_aclk),
-        .s_axi_aresetn(s_axi_aresetn),
 
         .BRAM_PORTA_addr(reg_addr),
         .BRAM_PORTA_clk(reg_clk),
@@ -108,9 +109,9 @@ module AxiGpuRegisters #(
         .din_i(reg_din),
         .we_i(reg_we),
 
-        .gpu_cp_x_o(gpu_cp_x_o),
-        .gpu_cp_y_o(gpu_cp_y_o),
-        .gpu_index_o(gpu_index_o)
+        .gpu_reg_cp_x_o(gpu_reg_cp_x_o),
+        .gpu_reg_cp_y_o(gpu_reg_cp_y_o),
+        .gpu_reg_index_o(gpu_reg_index_o)
     );
 
 endmodule

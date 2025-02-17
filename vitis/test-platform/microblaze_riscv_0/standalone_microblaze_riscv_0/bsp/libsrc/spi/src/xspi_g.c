@@ -13,7 +13,7 @@ XSpi_Config XSpi_ConfigTable[] __attribute__ ((section (".drvcfg_sec"))) = {
 		0x0, /* xlnx,axi-interface */
 		0x0, /* xlnx,Axi4-address */
 		0x0, /* xlnx,xip-mode */
-		0x1, /* xlnx,startup-block */
+		0x0, /* xlnx,startup-block */
 		0x10, /* fifo-size */
 		0x2, /* interrupts */
 		0x41200001 /* interrupt-parent */

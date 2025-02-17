@@ -438,7 +438,7 @@
                         bits-per-word = <0x8>;
                         xlnx,spi-memory = <0x1>;
                         xlnx,type-of-axi4-interface = <0x0>;
-                        xlnx,use-startup-int = <0x1>;
+                        xlnx,use-startup-int = <0x0>;
                         xlnx,slaveonly = <0x0>;
                         xlnx,spi-mode = <0x0>;
                         interrupt-names = "ip2intc_irpt";
@@ -447,7 +447,6 @@
                         xlnx,s-axi4-addr-width = <0x18>;
                         xlnx,sck-ratio = <0x8>;
                         interrupt-parent = <&microblaze_riscv_0_axi_intc>;
-                        xlnx,startup-block;
                         xlnx,async-clk = <0x0>;
                         status = "okay";
                         xlnx,sck-ratio1 = <0x1>;
@@ -471,11 +470,11 @@
                         xlnx,dual-quad-mode = <0x0>;
                         xlnx,num-transfer-bits = <0x8>;
                         xlnx,s-axi4-data-width = <0x20>;
-                        xlnx,use-startup = <0x1>;
+                        xlnx,use-startup = <0x0>;
                         xlnx,spi-mem-addr-bits = <0x18>;
                         xlnx,uc-family = <0x0>;
-                        xlnx,Axi4-address = <0x0>;
                         xlnx,sub-family = "artix7";
+                        xlnx,Axi4-address = <0x0>;
                         phandle = <0x9>;
                 };
         };

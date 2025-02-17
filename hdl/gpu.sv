@@ -50,7 +50,7 @@ module Gpu #(
     output logic S_AXI_wready,
     input logic [3:0]S_AXI_wstrb,
     input logic S_AXI_wvalid,
-    
+
     input logic s_axi_aclk,
     input logic s_axi_aresetn,
 
@@ -61,11 +61,12 @@ module Gpu #(
     output logic [GREEN_BITS-1:0] vga_g_o,
     output logic [BLUE_BITS-1:0] vga_b_o
 );
-    logic [31:0] gpu_cp_x;
-    logic [31:0] gpu_cp_y;
-    logic [31:0] gpu_index;
+    logic [31:0] gpu_reg_cp_x, gpu_reg_cp_y, gpu_reg_index;
 
     AxiGpuRegisters #() axi_gpu_registers(
+        .s_axi_aclk(s_axi_aclk),
+        .s_axi_aresetn(s_axi_aresetn),
+
         .S_AXI_araddr(S_AXI_araddr),
         .S_AXI_arburst(S_AXI_arburst),
         .S_AXI_arcache(S_AXI_arcache),
@@ -97,17 +98,29 @@ module Gpu #(
         .S_AXI_wready(S_AXI_wready),
         .S_AXI_wstrb(S_AXI_wstrb),
         .S_AXI_wvalid(S_AXI_wvalid),
-        .s_axi_aclk(s_axi_aclk),
-        .s_axi_aresetn(s_axi_aresetn),
 
-        .gpu_cp_x_o(gpu_cp_x),
-        .gpu_cp_y_o(gpu_cp_y),
-        .gpu_index_o(gpu_index)
+        .gpu_reg_cp_x_o(gpu_reg_cp_x),
+        .gpu_reg_cp_y_o(gpu_reg_cp_y),
+        .gpu_reg_index_o(gpu_reg_index)
     );
 
-    logic [$clog2(RESOLUTION_X)-1:0] cp_x;
-    logic [$clog2(RESOLUTION_Y)-1:0] cp_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] index;
+    // handle clock domain crossing (s_axi_aclk -> gpu_clk_i)
+    logic [31:0] cp_x, cp_y, index;
+
+    Latency #(
+        .LENGTH(2),
+        .WIDTH(3*32)
+    ) gpu_reg_synchronizer (
+        .clk_i(gpu_clk_i),
+        .reset_i(reset_i),
+
+        .data_i({gpu_reg_cp_x, gpu_reg_cp_y, gpu_reg_index}),
+        .data_o({cp_x, cp_y, index})
+    );
+
+    logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x;
+    logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y;
+    logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index;
 
     DisplayProcessor #(
         .RESOLUTION_X(RESOLUTION_X),
@@ -117,13 +130,13 @@ module Gpu #(
         .clk_i(gpu_clk_i),
         .reset_i(reset_i),
 
-        .x_i(gpu_cp_x),
-        .y_i(gpu_cp_y),
-        .index_i(gpu_index),
+        .cp_x_i(cp_x),
+        .cp_y_i(cp_y),
+        .index_i(index),
 
-        .cp_x_o(cp_x),
-        .cp_y_o(cp_y),
-        .index_o(index)
+        .fb_wr_x_o(fb_wr_x),
+        .fb_wr_y_o(fb_wr_y),
+        .fb_wr_index_o(fb_wr_index)
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
@@ -146,9 +159,9 @@ module Gpu #(
 
         .wr_clk_i(gpu_clk_i),
         .we_i('1),
-        .wr_pxl_x_i(cp_x),
-        .wr_pxl_y_i(cp_y),
-        .wr_palette_index_i(index)
+        .wr_pxl_x_i(fb_wr_x),
+        .wr_pxl_y_i(fb_wr_y),
+        .wr_palette_index_i(fb_wr_index)
     );
 
     Palette #(

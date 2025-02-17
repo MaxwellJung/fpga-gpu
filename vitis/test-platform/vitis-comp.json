@@ -3,8 +3,8 @@
   "type": "PLATFORM",
   "configuration": {
     "description": "",
-    "xsa": "/home/maxwelljung/programming/fpga-gpu/xsa/test.xsa",
-    "xsaPathInPlatform": "test-platform/hw/test.xsa",
+    "xsa": "/home/maxwelljung/programming/fpga-gpu/vivado/doom/design_1_wrapper.xsa",
+    "xsaPathInPlatform": "test-platform/hw/design_1_wrapper.xsa",
     "emulationXsa": "",
     "emulationXsaPathInPlatform": "",
     "isCustomFSBL": false,
