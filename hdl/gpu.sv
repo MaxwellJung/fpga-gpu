@@ -125,7 +125,8 @@ module Gpu #(
     DisplayProcessor #(
         .RESOLUTION_X(RESOLUTION_X),
         .RESOLUTION_Y(RESOLUTION_Y),
-        .PALETTE_LENGTH(PALETTE_LENGTH)
+        .PALETTE_LENGTH(PALETTE_LENGTH),
+        .COLOR_BITS(COLOR_BITS)
     ) display_processor (
         .clk_i(gpu_clk_i),
         .reset_i(reset_i),
@@ -136,7 +137,11 @@ module Gpu #(
         .fb_wr_x_o(fb_wr_x),
         .fb_wr_y_o(fb_wr_y),
         .fb_wr_index_o(fb_wr_index),
-        .fb_wr_en_o(fb_wr_en)
+        .fb_wr_en_o(fb_wr_en),
+
+        .palette_wr_index_o(),
+        .palette_wr_color_o(),
+        .palette_wr_en_o()
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;

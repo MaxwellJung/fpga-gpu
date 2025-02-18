@@ -57,7 +57,25 @@ module axi_vip_mst_stimulus();
         mtestWBurstLength = 0;
         mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
         mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
-        mtestWData = 32'd299;
+        mtestWData = 1<<23;
+
+        wr_trans = agent.wr_driver.create_transaction("write transaction");
+        wr_trans.set_write_cmd(
+            mtestWADDR, mtestWBurstType, mtestWID, 
+            mtestWBurstLength, mtestWDataSize
+        );
+        wr_trans.set_data_block(mtestWData);
+        agent.wr_driver.send(wr_trans);
+
+        agent.wait_drivers_idle();
+
+        // write to gpu control register
+        mtestWID = $urandom_range(0,(1<<(0)-1)); 
+        mtestWADDR = 64'h4;
+        mtestWBurstLength = 0;
+        mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
+        mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
+        mtestWData = 0<<23;
 
         wr_trans = agent.wr_driver.create_transaction("write transaction");
         wr_trans.set_write_cmd(
