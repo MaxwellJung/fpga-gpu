@@ -33,7 +33,7 @@ module axi_vip_mst_stimulus();
         agent = new("master vip agent", DUT.axi_vip_0.inst.IF);
         agent.start_master(); 
         
-        // write to x pos
+        // try writing to gpu status register (no effect)
         mtestWID = $urandom_range(0,(1<<(0)-1)); 
         mtestWADDR = 64'h0;
         mtestWBurstLength = 0;
@@ -51,7 +51,7 @@ module axi_vip_mst_stimulus();
 
         agent.wait_drivers_idle(); 
 
-        // write to y pos
+        // write to gpu control register
         mtestWID = $urandom_range(0,(1<<(0)-1)); 
         mtestWADDR = 64'h4;
         mtestWBurstLength = 0;
@@ -69,7 +69,7 @@ module axi_vip_mst_stimulus();
 
         agent.wait_drivers_idle(); 
 
-        // write to index pos
+        // write to out of bounds register (no effect)
         mtestWID = $urandom_range(0,(1<<(0)-1)); 
         mtestWADDR = 64'h8;
         mtestWBurstLength = 0;
@@ -87,6 +87,7 @@ module axi_vip_mst_stimulus();
 
         agent.wait_drivers_idle(); 
 
+        // read gpu status
         mtestRID = $urandom_range(0,(1<<(0)-1)); 
         mtestRADDR = 64'h0;
         mtestRBurstLength = 0;

@@ -6,34 +6,45 @@ module DisplayProcessor #(
     input logic clk_i,
     input logic reset_i,
 
-    input logic [$clog2(RESOLUTION_X)-1:0] cp_x_i,
-    input logic [$clog2(RESOLUTION_Y)-1:0] cp_y_i,
-    input logic [$clog2(PALETTE_LENGTH)-1:0] index_i,
+    output logic [31:0] status_o,
+    input logic [31:0] control_i,
 
     output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x_o,
     output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y_o,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index_o
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index_o,
+    output logic fb_wr_en_o
 );
-    typedef struct {
+    logic [31:0] status;
+    struct {
         logic [$clog2(RESOLUTION_X)-1:0] x;
         logic [$clog2(RESOLUTION_Y)-1:0] y;
-    } Point;
-
-    Point current_pos;
+    } current_position;
+    logic [31:0] fill;
     logic [$clog2(PALETTE_LENGTH)-1:0] index;
+    logic [31:0] wmode;
+    logic [31:0] mask;
+    logic [31:0] pattern;
 
     always_ff @(posedge clk_i) begin
         if (reset_i) begin
-            current_pos <= '{'0, '0};
+            status <= 32'h00000010;
+            current_position.x <= '0;
+            current_position.y <= '0;
+            fill <= '0;
             index <= '0;
+            wmode <= '0;
+            mask <= '0;
+            pattern <= '0;
         end else begin
-            current_pos <= '{cp_x_i, cp_y_i};
-            index <= index_i;
+
         end
     end
 
-    assign fb_wr_x_o = current_pos.x;
-    assign fb_wr_y_o = current_pos.y;
+    assign status_o = status;
+
+    assign fb_wr_x_o = current_position.x;
+    assign fb_wr_y_o = current_position.y;
     assign fb_wr_index_o = index;
+    assign fb_wr_en_o = '1;
 
 endmodule

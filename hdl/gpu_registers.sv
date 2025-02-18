@@ -7,45 +7,52 @@ module GpuRegisters #(
 ) (
     input logic clk_i,
     input logic rst_i,
+
     input logic en_i,
-
     input logic [ADDR_BITS-1:0] addr_i,
-
     output logic [WIDTH-1:0] dout_o,
-
     input logic [WIDTH-1:0] din_i,
     input logic [BYTES_PER_REG-1:0] we_i,
 
-    output logic [WIDTH-1:0] gpu_reg_cp_x_o,
-    output logic [WIDTH-1:0] gpu_reg_cp_y_o,
-    output logic [WIDTH-1:0] gpu_reg_index_o,
-    output logic [WIDTH-1:0] gpu_reg_3_o
+    input logic [31:0] gpu_status_i,
+    output logic [31:0] gpu_control_o
 );
-    logic [WIDTH-1:0] gpu_reg [REG_COUNT];
+    logic [31:0] gpu_status; // address 0x0 - write only
+    logic [31:0] gpu_control; // address 0x4 - read/write
     logic [ADDR_BITS-$clog2(BYTES_PER_REG)-1:0] reg_addr;
     assign reg_addr = addr_i >> $clog2(BYTES_PER_REG);
 
-    int i, j;
+    int byte_i;
     always @(posedge clk_i) begin
         if (rst_i) begin
-            for (i = 0; i < REG_COUNT; i++) begin
-                gpu_reg[i] = '0;
-            end
+            gpu_control <= '0;
         end else if (en_i) begin
-            for (j = 0; j < BYTES_PER_REG; j++) begin
-                if (we_i[j]) begin
-                    gpu_reg[reg_addr][j*8 +: 8] <= din_i[j*8 +: 8];
+            // read
+            case (reg_addr)
+                0: dout_o <= gpu_status;
+                1: dout_o <= gpu_control;
+                default: dout_o <= '0;
+            endcase
+
+            // write
+            for (byte_i = 0; byte_i < BYTES_PER_REG; byte_i++) begin
+                if (we_i[byte_i]) begin
+                    case (reg_addr)
+                        0: ;
+                        1: gpu_control[byte_i*8 +: 8] <= din_i[byte_i*8 +: 8];
+                        default: ;
+                    endcase
                 end
             end
-            dout_o <= gpu_reg[reg_addr];
         end
     end
 
+    always @(posedge clk_i) begin
+        gpu_status <= gpu_status_i;
+    end
+
     always_comb begin
-        gpu_reg_cp_x_o = gpu_reg[0];
-        gpu_reg_cp_y_o = gpu_reg[1];
-        gpu_reg_index_o = gpu_reg[2];
-        gpu_reg_3_o = gpu_reg[3];
+        gpu_control_o = gpu_control;
     end
 
 endmodule

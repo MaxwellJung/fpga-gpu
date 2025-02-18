@@ -42,10 +42,8 @@ module AxiGpuRegisters #(
     input logic s_axi_aresetn,
     
     // registers
-    output logic [31:0] gpu_reg_cp_x_o,
-    output logic [31:0] gpu_reg_cp_y_o,
-    output logic [31:0] gpu_reg_index_o,
-    output logic [31:0] gpu_reg_3_o
+    input logic [31:0] gpu_status_i,
+    output logic [31:0] gpu_control_o
 );
     logic [11:0] reg_addr;
     logic reg_clk;
@@ -109,9 +107,8 @@ module AxiGpuRegisters #(
         .din_i(reg_din),
         .we_i(reg_we),
 
-        .gpu_reg_cp_x_o(gpu_reg_cp_x_o),
-        .gpu_reg_cp_y_o(gpu_reg_cp_y_o),
-        .gpu_reg_index_o(gpu_reg_index_o)
+        .gpu_status_i(gpu_status_i),
+        .gpu_control_o(gpu_control_o)
     );
 
 endmodule
