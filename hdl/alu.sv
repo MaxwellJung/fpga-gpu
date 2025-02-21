@@ -3,13 +3,16 @@ module Alu (
     input logic [31:0] src_b_i,
     input logic [2:0] control_i,
 
-    output logic [31:0] result_o
+    output logic [31:0] result_o,
+    output logic zero_o
 );
 
     always_comb begin
         case (control_i)
             // add
-            3'b000: result_o = src_a_i + src_b_i;
+            3'b000: begin
+                result_o = src_a_i + src_b_i;
+            end
             // sub
             3'b001: result_o = src_a_i - src_b_i;
             // and
@@ -20,6 +23,8 @@ module Alu (
             3'b101: result_o = (src_a_i < src_b_i) ? 1 : 0;
             default: result_o = '0; // undefined
         endcase
+
+        zero_o = (src_a_i == src_b_i) ? 1 : 0;
     end
     
 endmodule
