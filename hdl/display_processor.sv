@@ -55,14 +55,62 @@ module DisplayProcessor #(
     assign fb_wr_index_o = index;
     assign fb_wr_en_o = '1;
 
+    logic pc_write;
+    logic adr_src;
+    logic mem_write;
+    logic ir_write;
+    logic [1:0] result_src;
+    logic [2:0] alu_control;
+    logic [2:0] alu_src_a;
+    logic [2:0] alu_src_b;
+    logic [1:0] imm_src;
+    logic reg_write;
+
+    logic [6:0] op;
+    logic [2:0] funct3;
+    logic funct7;
+    logic zero;
+
     Datapath datapath (
         .clk_i(clk_i),
-        .reset_i(reset_i || ctl_rst)
+        .reset_i(reset_i || ctl_rst),
+
+        .pc_write_i(pc_write),
+        .adr_src_i(adr_src),
+        .mem_write_i(mem_write),
+        .ir_write_i(ir_write),
+        .result_src_i(result_src),
+        .alu_control_i(alu_control),
+        .alu_src_a_i(alu_src_a),
+        .alu_src_b_i(alu_src_b),
+        .imm_src_i(imm_src),
+        .reg_write_i(reg_write),
+
+        .op_o(op),
+        .funct3_o(funct3),
+        .funct7_o(funct7),
+        .zero_o(zero)
     );
 
     Control control (
         .clk_i(clk_i),
-        .reset_i(reset_i || ctl_rst)
+        .reset_i(reset_i || ctl_rst),
+
+        .pc_write_o(pc_write),
+        .adr_src_o(adr_src),
+        .mem_write_o(mem_write),
+        .ir_write_o(ir_write),
+        .result_src_o(result_src),
+        .alu_control_o(alu_control),
+        .alu_src_a_o(alu_src_a),
+        .alu_src_b_o(alu_src_b),
+        .imm_src_o(imm_src),
+        .reg_write_o(reg_write),
+
+        .op_i(op),
+        .funct3_i(funct3),
+        .funct7_i(funct7),
+        .zero_i(zero)
     );
 
 endmodule
