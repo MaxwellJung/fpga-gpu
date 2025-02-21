@@ -18,9 +18,16 @@ module RegisterFile #(
 
     logic [REG_WIDTH-1:0] registers [REG_COUNT];
 
+    int i;
     always_ff @(posedge clk_i) begin
-        if (wr_en_i) begin
-            registers[address_3_i] <= wr_data_i;
+        if (reset_i) begin
+            for (i = 0; i < REG_COUNT; i=i+1) begin
+                registers[i] <= '0;
+            end
+        end else begin
+            if (wr_en_i) begin
+                registers[address_3_i] <= wr_data_i;
+            end
         end
     end
 

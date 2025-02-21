@@ -45,7 +45,7 @@ module Datapath(
     logic [31:0] gpu_mem_rd_data;
     logic [31:0] write_data;
     GpuMemory gpu_memory (
-        .clk_i(gpu_clk_i),
+        .clk_i(clk_i),
         .reset_i(reset_i),
 
         .address_i(gpu_mem_address),
@@ -56,7 +56,7 @@ module Datapath(
 
     logic [31:0] instruction;
     logic [31:0] old_program_counter;
-    always_ff @(posedge gpu_clk_i) begin
+    always_ff @(posedge clk_i) begin
         if (reset_i) begin
             instruction <= '0;
             old_program_counter <= '0;
@@ -69,7 +69,7 @@ module Datapath(
     end
 
     logic [31:0] data;
-    always_ff @(posedge gpu_clk_i) begin
+    always_ff @(posedge clk_i) begin
         if (reset_i) begin
             data <= '0;
         end else begin
@@ -84,7 +84,7 @@ module Datapath(
     logic [31:0] gpu_rf_rd_data_1;
     logic [31:0] gpu_rf_rd_data_2;
     RegisterFile register_file (
-        .clk_i(gpu_clk_i),
+        .clk_i(clk_i),
         .reset_i(reset_i),
 
         .address_1_i(instruction[19:15]),
@@ -99,7 +99,7 @@ module Datapath(
     );
 
     logic [31:0] a;
-    always_ff @(posedge gpu_clk_i) begin
+    always_ff @(posedge clk_i) begin
         if (reset_i) begin
             a <= '0;
             write_data <= '0;
@@ -147,7 +147,7 @@ module Datapath(
     );
 
     logic [31:0] alu_out;
-    always_ff @(posedge gpu_clk_i) begin
+    always_ff @(posedge clk_i) begin
         if (reset_i) begin
             alu_out <= '0;
         end else begin

@@ -27,11 +27,17 @@ bitstream: FORCE
 # Icarus
 
 display-processor: FORCE
-	iverilog -g2005-sv -s DisplayProcessor \
+	mkdir -p $(dir $(BUILD_DIR)/display_processor_sim.vvp)
+	iverilog -g2005-sv -o $(BUILD_DIR)/display_processor_sim.vvp \
+		-s TbDisplayProcessor \
+		./testbench/tb_display_processor.sv\
 		./hdl/display_processor.sv ./hdl/datapath.sv \
 		./hdl/control.sv ./hdl/control_fsm.sv ./hdl/alu_decoder.sv ./hdl/inst_decoder.sv \
 		./hdl/gpu_memory.sv ./hdl/register_file.sv \
-		./hdl/alu.sv ./hdl/sign_extend.sv \
+		./hdl/alu.sv ./hdl/sign_extend.sv
+	vvp $(BUILD_DIR)/display_processor_sim.vvp
+	mkdir -p $(dir $(SIM_DIR)/display_processor_sim.vcd)
+	mv dump.vcd $(SIM_DIR)/display_processor_sim.vcd
 
 gpu: FORCE
 	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)

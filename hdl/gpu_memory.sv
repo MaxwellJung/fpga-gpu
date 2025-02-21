@@ -14,10 +14,10 @@ module GpuMemory #(
     input logic wr_en_i
 );
     logic [WORD_BITS-1:0] ram [WORD_COUNT];
-    initial $readmemb(INIT_FILE, ram);
+    initial $readmemh(INIT_FILE, ram);
 
     logic [$clog2(WORD_COUNT)-1:0] word_addr;
-    assign word_addr = address_i << $clog2(BYTES_PER_WORD);
+    assign word_addr = address_i >> $clog2(BYTES_PER_WORD);
 
     always_ff @(posedge clk_i) begin
         if (wr_en_i) begin
