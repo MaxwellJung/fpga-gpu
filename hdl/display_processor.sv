@@ -55,7 +55,12 @@ module DisplayProcessor #(
     assign fb_wr_index_o = index;
     assign fb_wr_en_o = '1;
 
-    Datapath datapath(
+    Datapath datapath (
+        .clk_i(clk_i),
+        .reset_i(reset_i || ctl_rst)
+    );
+
+    Control control (
         .clk_i(clk_i),
         .reset_i(reset_i || ctl_rst)
     );

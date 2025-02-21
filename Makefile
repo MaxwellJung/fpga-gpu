@@ -29,6 +29,7 @@ bitstream: FORCE
 display-processor: FORCE
 	iverilog -g2005-sv -s DisplayProcessor \
 		./hdl/display_processor.sv ./hdl/datapath.sv \
+		./hdl/control.sv \
 		./hdl/gpu_memory.sv ./hdl/register_file.sv \
 		./hdl/alu.sv ./hdl/sign_extend.sv \
 
