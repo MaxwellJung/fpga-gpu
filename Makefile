@@ -26,6 +26,11 @@ bitstream: FORCE
 
 # Icarus
 
+display-processor: FORCE
+	iverilog -g2005-sv -s DisplayProcessor \
+		./hdl/display_processor.sv ./hdl/gpu_memory.sv ./hdl/register_file.sv \
+		./hdl/alu.sv ./hdl/sign_extend.sv \
+
 gpu: FORCE
 	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)
 	iverilog -g2005-sv -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./testbench/tb_gpu.sv $(SRC_FILES)

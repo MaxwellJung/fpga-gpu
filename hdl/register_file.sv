@@ -16,19 +16,17 @@ module RegisterFile #(
     input logic wr_en_i
 );
 
-    logic [REG_WIDTH-1:0] ram [REG_COUNT];
+    logic [REG_WIDTH-1:0] registers [REG_COUNT];
 
     always_ff @(posedge clk_i) begin
-        if (reset_i) begin
-            rd_data_1_o <= '0;
-            rd_data_2_o <= '0;
-        end else begin
-            rd_data_1_o <= ram[address_1_i];
-            rd_data_2_o <= ram[address_2_i];
-            if (wr_en_i) begin
-                ram[address_3_i] <= wr_data_i;
-            end
+        if (wr_en_i) begin
+            registers[address_3_i] <= wr_data_i;
         end
+    end
+
+    always_comb begin
+        rd_data_1_o = registers[address_1_i];
+        rd_data_2_o = registers[address_2_i];
     end
 
 endmodule
