@@ -1,7 +1,9 @@
 SRC_DIRS := ./hdl
+PROCESSOR_SRC_DIRS := ${SRC_DIRS}/processor
 BUILD_DIR := ./build
 SIM_DIR := $(BUILD_DIR)/sim
 SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
+PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name '*.v')
 
 all: gpu
 
@@ -26,11 +28,19 @@ bitstream: FORCE
 
 # Icarus
 
+display-processor: FORCE
+	mkdir -p $(dir $(BUILD_DIR)/display_processor_sim.vvp)
+	iverilog -g2005-sv -o $(BUILD_DIR)/display_processor_sim.vvp \
+		-s TbDisplayProcessor \
+		./testbench/tb_display_processor.sv \
+		$(PROCESSOR_SRC_FILES)
+	vvp $(BUILD_DIR)/display_processor_sim.vvp
+	mkdir -p $(dir $(SIM_DIR)/display_processor_sim.vcd)
+	mv dump.vcd $(SIM_DIR)/display_processor_sim.vcd
+
 gpu: FORCE
 	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)
-	iverilog -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./hdl/testbench/tb_gpu.sv ./hdl/design/gpu.v \
-	./hdl/design/palette.sv ./hdl/design/latency.sv ./hdl/design/vga.sv ./hdl/design/counter.sv \
-	./hdl/design/ram.sv
+	iverilog -g2005-sv -o $(BUILD_DIR)/gpu_sim.vvp -s tb_gpu ./testbench/tb_gpu.sv $(SRC_FILES)
 	vvp $(BUILD_DIR)/gpu_sim.vvp
 	mkdir -p $(dir $(SIM_DIR)/gpu_sim.vcd)
 	mv dump.vcd $(SIM_DIR)/gpu_sim.vcd

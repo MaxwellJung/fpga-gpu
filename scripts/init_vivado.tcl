@@ -7,8 +7,8 @@ set constraintsFile ./constraint/Nexys-A7-100T.xdc
 set bdName design_1
 set bdFile ./block_design/${bdName}.tcl
 
-set designDir ./hdl/design
-set simDir ./hdl/testbench
+set designDir ./hdl
+set simDir ./testbench
 
 create_project $projectName $projectRoot -part $fpgaTarget -force
 set_property board_part $boardPart [current_project]

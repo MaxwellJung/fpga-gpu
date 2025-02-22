@@ -14,6 +14,10 @@ extern XBram bram_device;
 int initGPU();
 void writeFramebuffer(pixel_t* newFrame);
 void writeColorPallete(int palette_index, u16 color);
+void clearDisplay();
+void drawIndexImage();
+void drawHStripes();
+void drawVStripes();
 
 #ifdef __cplusplus
 }
