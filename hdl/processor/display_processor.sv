@@ -1,3 +1,6 @@
+`include "./hdl/processor/alu.sv"
+`include "./hdl/processor/sign_extend.sv"
+
 module DisplayProcessor #(
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
@@ -63,16 +66,16 @@ module DisplayProcessor #(
     assign palette_wr_en_o = '0;
 
 
-    logic [1:0] imm_src_d;
+    imm_src_t imm_src_d;
     logic alu_src_e;
-    logic [2:0] alu_control_e;
+    alu_control_t alu_control_e;
     logic pc_src_e;
     logic mem_write_m;
     logic [1:0] result_src_w;
     logic reg_write_w;
     logic [6:0] op;
     logic [2:0] funct3;
-    logic funct7;
+    logic [6:0] funct7;
     logic zero_e;
 
     logic stall_f;

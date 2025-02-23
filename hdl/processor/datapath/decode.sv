@@ -1,3 +1,5 @@
+`include "./hdl/processor/sign_extend.sv"
+
 module Decode (
     input logic clk_i,
     input logic reset_i,
@@ -8,7 +10,7 @@ module Decode (
 
     input logic stall_d_i,
     input logic flush_d_i,
-    input logic [1:0] imm_src_d_i,
+    input imm_src_t imm_src_d_i,
 
     input logic [4:0] rd_w_i,
     input logic [31:0] result_w_i,
@@ -16,7 +18,7 @@ module Decode (
 
     output logic [6:0] op_o,
     output logic [2:0] funct3_o,
-    output logic funct7_o,
+    output logic [6:0] funct7_o,
 
     output logic [31:0] rd1_d_o,
     output logic [31:0] rd2_d_o,
@@ -41,19 +43,14 @@ module Decode (
         end
     end
 
-    logic [6:0] op;
-    logic [2:0] funct3;
-    logic funct7;
-    logic [4:0] rs1_d;
+    logic [6:0] funct7;
     logic [4:0] rs2_d;
+    logic [4:0] rs1_d;
+    logic [2:0] funct3;
     logic [4:0] rd_d;
+    logic [6:0] op;
     always_comb begin
-        op = instruction_d[6:0];
-        funct3 = instruction_d[14:12];
-        funct7 = instruction_d[30];
-        rs1_d = instruction_d[19:15];
-        rs2_d = instruction_d[24:20];
-        rd_d = instruction_d[11:7];
+        {funct7, rs2_d, rs1_d, funct3, rd_d, op} = instruction_d;
     end
 
     logic [31:0] rd1_d;

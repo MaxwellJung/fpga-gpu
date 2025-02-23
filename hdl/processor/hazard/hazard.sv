@@ -49,7 +49,6 @@ module Hazard(
         lw_stall = result_src_e_i[0] & ((rs1_d_i == rd_e_i) || (rs2_d_i == rd_e_i));
         stall_f = lw_stall;
         stall_d = lw_stall;
-        flush_e = lw_stall;
 
         flush_d = pc_src_e_i;
         flush_e = lw_stall || pc_src_e_i;

@@ -1,18 +1,21 @@
+`include "./hdl/processor/alu.sv"
+`include "./hdl/processor/sign_extend.sv"
+
 module Datapath(
     input logic clk_i,
     input logic reset_i,
 
     // control
-    input logic [1:0] imm_src_d_i,
+    input imm_src_t imm_src_d_i,
     input logic alu_src_e_i,
-    input logic [2:0] alu_control_e_i,
+    input alu_control_t alu_control_e_i,
     input logic pc_src_e_i,
     input logic mem_write_m_i,
     input logic [1:0] result_src_w_i,
     input logic reg_write_w_i,
     output logic [6:0] op_o,
     output logic [2:0] funct3_o,
-    output logic funct7_o,
+    output logic [6:0] funct7_o,
     output logic zero_e_o,
 
     // hazard
@@ -54,7 +57,7 @@ module Datapath(
 
     logic [6:0] op;
     logic [2:0] funct3;
-    logic funct7;
+    logic [6:0] funct7;
 
     logic [31:0] rd1_d;
     logic [31:0] rd2_d;

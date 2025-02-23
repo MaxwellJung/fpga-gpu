@@ -1,3 +1,6 @@
+`ifndef WRITEBACK_H
+`define WRITEBACK_H
+
 module Writeback (
     input logic clk_i,
     input logic reset_i,
@@ -41,3 +44,5 @@ module Writeback (
     end
 
 endmodule
+
+`endif // WRITEBACK_H

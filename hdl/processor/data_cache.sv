@@ -16,17 +16,17 @@ module DataCache #(
     logic [WORD_BITS-1:0] ram [WORD_COUNT];
     initial $readmemh(INIT_FILE, ram);
 
-    logic [$clog2(WORD_COUNT)-1:0] word_addr;
-    assign word_addr = address_i >> $clog2(BYTES_PER_WORD);
+    logic [$clog2(WORD_COUNT)-1:0] word_index;
+    assign word_index = address_i[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
 
     always_ff @(posedge clk_i) begin
         if (wr_en_i) begin
-            ram[word_addr] <= wr_data_i;
+            ram[word_index] <= wr_data_i;
         end
     end
 
     always_comb begin
-        rd_data_o = ram[word_addr];
+        rd_data_o = ram[word_index];
     end
 
 endmodule

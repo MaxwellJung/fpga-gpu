@@ -1,3 +1,5 @@
+`include "./hdl/processor/alu.sv"
+
 module Execute (
     input logic clk_i,
     input logic reset_i,
@@ -19,7 +21,7 @@ module Execute (
     input logic [1:0] forward_a_e_i,
     input logic [1:0] forward_b_e_i,
     input logic alu_src_e_i,
-    input logic [2:0] alu_control_e_i,
+    input alu_control_t alu_control_e_i,
     output logic [4:0] rs1_e_o,
     output logic [4:0] rs2_e_o,
     output logic [31:0] pc_target_e_o,

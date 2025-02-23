@@ -1,10 +1,12 @@
+`include "./hdl/processor/sign_extend.sv"
+
 module InstDecoder (
     input logic [6:0] op_i,
     output logic [1:0] result_src_o,
     output logic mem_write_o,
     output logic branch_o, alu_src_o,
     output logic reg_write_o, jump_o,
-    output logic [1:0] imm_src_o,
+    output imm_src_t imm_src_o,
     output logic [1:0] alu_op_o
 );
     logic [10:0] controls;
