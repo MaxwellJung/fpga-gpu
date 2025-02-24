@@ -44,6 +44,7 @@ module TbDisplayProcessor();
     initial begin
         $dumpvars(0, TbDisplayProcessor);
 
+        gpu_control <= 0;
         // hold gpu_reset for 22 ns
         gpu_reset <= 1; # 22; gpu_reset <= 0;
 
