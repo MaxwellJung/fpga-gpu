@@ -1,5 +1,4 @@
-`include "./hdl/processor/alu.sv"
-`include "./hdl/processor/sign_extend.sv"
+`include "./hdl/processor/defines.svh"
 
 module DisplayProcessor #(
     parameter RESOLUTION_X = 400,
@@ -67,16 +66,17 @@ module DisplayProcessor #(
 
 
     imm_src_t imm_src_d;
-    logic alu_src_e;
+    alu_src_t alu_src_e;
     alu_control_t alu_control_e;
+    logic invert_condition_e;
     logic pc_src_e;
     logic mem_write_m;
     logic [1:0] result_src_w;
     logic reg_write_w;
-    logic [6:0] op;
+    opcode_t op;
     logic [2:0] funct3;
     logic [6:0] funct7;
-    logic zero_e;
+    logic take_branch_e;
 
     logic stall_f;
     logic stall_d;
@@ -99,6 +99,7 @@ module DisplayProcessor #(
         .imm_src_d_i        (imm_src_d),
         .alu_src_e_i        (alu_src_e),
         .alu_control_e_i    (alu_control_e),
+        .invert_condition_e_i (invert_condition_e),
         .pc_src_e_i         (pc_src_e),
         .mem_write_m_i      (mem_write_m),
         .result_src_w_i     (result_src_w),
@@ -106,7 +107,7 @@ module DisplayProcessor #(
         .op_o               (op),
         .funct3_o           (funct3),
         .funct7_o           (funct7),
-        .zero_e_o           (zero_e),
+        .take_branch_e_o     (take_branch_e),
         // hazard
         .stall_f_i          (stall_f),
         .stall_d_i          (stall_d),
@@ -125,24 +126,25 @@ module DisplayProcessor #(
 
     logic [1:0] result_src_e;
     Controlpath controlpath (
-        .clk_i              (clk_i),
-        .reset_i            (reset_i || ctl_rst),
-        .op_i               (op),
-        .funct3_i           (funct3),
-        .funct7_i           (funct7),
-        .zero_e_i           (zero_e),
-        .flush_e_i          (flush_e_i),
+        .clk_i                (clk_i),
+        .reset_i              (reset_i || ctl_rst),
+        .op_i                 (op),
+        .funct3_i             (funct3),
+        .funct7_i             (funct7),
+        .take_branch_e_i      (take_branch_e),
+        .flush_e_i            (flush_e_i),
         // output to datapath
-        .imm_src_d_o        (imm_src_d),
-        .alu_src_e_o        (alu_src_e),
-        .alu_control_e_o    (alu_control_e),
-        .pc_src_e_o         (pc_src_e),
-        .mem_write_m_o      (mem_write_m),
-        .reg_write_m_o      (reg_write_m),
-        .result_src_w_o     (result_src_w),
-        .reg_write_w_o      (reg_write_w),
+        .imm_src_d_o          (imm_src_d),
+        .alu_src_e_o          (alu_src_e),
+        .alu_control_e_o      (alu_control_e),
+        .invert_condition_e_o (invert_condition_e),
+        .pc_src_e_o           (pc_src_e),
+        .mem_write_m_o        (mem_write_m),
+        .reg_write_m_o        (reg_write_m),
+        .result_src_w_o       (result_src_w),
+        .reg_write_w_o        (reg_write_w),
         // output to hazard
-        .result_src_e_o     (result_src_e)
+        .result_src_e_o       (result_src_e)
     );
 
     Hazard hazard (

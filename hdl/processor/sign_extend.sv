@@ -1,13 +1,4 @@
-`ifndef SIGN_EXTEND_H
-`define SIGN_EXTEND_H
-
-typedef enum logic [2:0] {
-    IMM_I, // I−type
-    IMM_S, // S−type (stores)
-    IMM_B, // B−type (branches)
-    IMM_J, // J−type (jal)
-    IMM_U // U-type (lui)
-} imm_src_t;
+`include "./hdl/processor/defines.svh"
 
 module SignExtend (
     input logic [31:7] instr_i,
@@ -31,5 +22,3 @@ module SignExtend (
     end
 
 endmodule
-
-`endif // SIGN_EXTEND_H

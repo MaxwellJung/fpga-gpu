@@ -1,5 +1,4 @@
-`include "./hdl/processor/alu.sv"
-`include "./hdl/processor/sign_extend.sv"
+`include "./hdl/processor/defines.svh"
 
 module Datapath(
     input logic clk_i,
@@ -7,16 +6,17 @@ module Datapath(
 
     // control
     input imm_src_t imm_src_d_i,
-    input logic alu_src_e_i,
+    input alu_src_t alu_src_e_i,
     input alu_control_t alu_control_e_i,
+    input logic invert_condition_e_i,
     input logic pc_src_e_i,
     input logic mem_write_m_i,
     input logic [1:0] result_src_w_i,
     input logic reg_write_w_i,
-    output logic [6:0] op_o,
+    output opcode_t op_o,
     output logic [2:0] funct3_o,
     output logic [6:0] funct7_o,
-    output logic zero_e_o,
+    output logic take_branch_e_o,
 
     // hazard
     input logic stall_f_i,
@@ -55,7 +55,7 @@ module Datapath(
     logic [4:0] rd_w;
     logic [31:0] result_w;
 
-    logic [6:0] op;
+    opcode_t op;
     logic [2:0] funct3;
     logic [6:0] funct7;
 
@@ -100,7 +100,7 @@ module Datapath(
     logic [31:0] alu_result_m;
     logic [4:0] rs1_e;
     logic [4:0] rs2_e;
-    logic zero_e;
+    logic take_branch_e;
 
     logic [31:0] alu_result_e;
     logic [31:0] write_data_e;
@@ -128,10 +128,11 @@ module Datapath(
         .forward_b_e_i(forward_b_e_i),
         .alu_src_e_i(alu_src_e_i),
         .alu_control_e_i(alu_control_e_i),
+        .invert_condition_e_i(invert_condition_e_i),
         .rs1_e_o(rs1_e),
         .rs2_e_o(rs2_e),
         .pc_target_e_o(pc_target_e),
-        .zero_e_o(zero_e),
+        .take_branch_e_o(take_branch_e),
 
         .alu_result_e_o(alu_result_e),
         .write_data_e_o(write_data_e),
@@ -179,7 +180,7 @@ module Datapath(
         op_o = op;
         funct3_o = funct3;
         funct7_o = funct7;
-        zero_e_o = zero_e;
+        take_branch_e_o = take_branch_e;
     end
 
     // output to hazard

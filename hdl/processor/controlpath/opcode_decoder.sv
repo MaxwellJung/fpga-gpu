@@ -1,11 +1,11 @@
-`include "./hdl/processor/sign_extend.sv"
+`include "./hdl/processor/defines.svh"
 
 module OpcodeDecoder (
-    input logic [6:0] op_i,
+    input opcode_t op_i,
 
     output logic reg_write_o,
     output imm_src_t imm_src_o,
-    output logic alu_src_o,
+    output alu_src_t alu_src_o,
     output logic mem_write_o,
     output logic [1:0] result_src_o,
     output logic branch_o,
@@ -16,14 +16,22 @@ module OpcodeDecoder (
     always_comb
         case(op_i)
             // RegWrite_ImmSrc_ALUSrc_MemWrite_ResultSrc_Branch_ALUOp_Jump
-            7'b0000011: controls = {1'b1, IMM_I, 8'b1_0_01_0_00_0}; // lw
-            7'b0100011: controls = {1'b0, IMM_S, 8'b1_1_00_0_00_0}; // sw
-            7'b0110011: controls = {1'b1, IMM_I, 8'b0_0_00_0_10_0}; // R–type
-            7'b1100011: controls = {1'b0, IMM_B, 8'b0_0_00_1_01_0}; // beq
-            7'b0010011: controls = {1'b1, IMM_I, 8'b1_0_00_0_10_0}; // I–type ALU
-            7'b1101111: controls = {1'b1, IMM_J, 8'b0_0_10_0_00_1}; // jal
-            7'b0110111: controls = {1'b1, IMM_U, 8'b1_0_00_0_11_0}; // lui
-            default: controls = '0; // ???
+            OP_LOAD:
+                controls = {1'b1, IMM_I, ALU_SRC_IMM, 7'b0_01_0_00_0}; // lw
+            OP_STORE:
+                controls = {1'b0, IMM_S, ALU_SRC_IMM, 7'b1_00_0_00_0}; // sw
+            OP_ALU_R:
+                controls = {1'b1, IMM_I, ALU_SRC_REG, 7'b0_00_0_10_0}; // R–type
+            OP_BRANCH:
+                controls = {1'b0, IMM_B, ALU_SRC_REG, 7'b0_00_1_01_0}; // beq
+            OP_ALU_I:
+                controls = {1'b1, IMM_I, ALU_SRC_IMM, 7'b0_00_0_10_0}; // I–type ALU
+            OP_JUMP:
+                controls = {1'b1, IMM_J, ALU_SRC_REG, 7'b0_10_0_00_1}; // jal
+            OP_LUI:
+                controls = {1'b1, IMM_U, ALU_SRC_IMM, 7'b0_00_0_11_0}; // lui
+            default:
+                controls = '0; // ???
         endcase
 
     assign {reg_write_o, imm_src_o, alu_src_o, mem_write_o,

@@ -4,9 +4,22 @@ BUILD_DIR := ./build
 SIM_DIR := $(BUILD_DIR)/sim
 SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
 PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name '*.v')
+ASM_DIR := ./asm
+DATA_DIR := ./data
 
-all: gpu
+all: riscvtest display-processor
 
+riscvtest: riscvtest.mem
+
+riscvtest.mem: riscvtest.bin riscvtest.out
+	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
+
+riscvtest.bin: riscvtest.out
+	riscv64-unknown-elf-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin
+
+riscvtest.out: ${ASM_DIR}/riscvtest.asm
+	mkdir -p $(BUILD_DIR)
+	riscv64-unknown-elf-as ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
 
 # Vivado
 

@@ -1,4 +1,4 @@
-`include "./hdl/processor/alu.sv"
+`include "./hdl/processor/defines.svh"
 
 module Execute (
     input logic clk_i,
@@ -20,12 +20,13 @@ module Execute (
     input logic flush_e_i,
     input logic [1:0] forward_a_e_i,
     input logic [1:0] forward_b_e_i,
-    input logic alu_src_e_i,
+    input alu_src_t alu_src_e_i,
     input alu_control_t alu_control_e_i,
+    input logic invert_condition_e_i,
     output logic [4:0] rs1_e_o,
     output logic [4:0] rs2_e_o,
     output logic [31:0] pc_target_e_o,
-    output logic zero_e_o,
+    output logic take_branch_e_o,
 
     output logic [31:0] alu_result_e_o,
     output logic [31:0] write_data_e_o,
@@ -72,21 +73,22 @@ module Execute (
     logic [31:0] src_b_e;
     always_comb begin
         case (alu_src_e_i)
-            1'b0: src_b_e = write_data_e;
-            1'b1: src_b_e = imm_ext_e;
+            ALU_SRC_REG: src_b_e = write_data_e;
+            ALU_SRC_IMM: src_b_e = imm_ext_e;
             default: src_b_e = '0;
         endcase
     end
 
     logic [31:0] alu_result_e;
-    logic zero_e;
+    logic take_branch_e;
     Alu alu (
         .src_a_i(src_a_e),
         .src_b_i(src_b_e),
         .control_i(alu_control_e_i),
+        .invert_condition_i(invert_condition_e_i),
 
         .result_o(alu_result_e),
-        .zero_o(zero_e)
+        .take_branch_o(take_branch_e)
     );
 
     logic [31:0] pc_target_e;
@@ -98,7 +100,7 @@ module Execute (
         rs1_e_o = rs1_e;
         rs2_e_o = rs2_e;
         pc_target_e_o = pc_target_e;
-        zero_e_o = zero_e;
+        take_branch_e_o = take_branch_e;
     end
 
     always_comb begin

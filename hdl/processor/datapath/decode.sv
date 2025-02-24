@@ -1,4 +1,4 @@
-`include "./hdl/processor/sign_extend.sv"
+`include "./hdl/processor/defines.svh"
 
 module Decode (
     input logic clk_i,
@@ -16,7 +16,7 @@ module Decode (
     input logic [31:0] result_w_i,
     input logic reg_write_w_i,
 
-    output logic [6:0] op_o,
+    output opcode_t op_o,
     output logic [2:0] funct3_o,
     output logic [6:0] funct7_o,
 
@@ -48,7 +48,7 @@ module Decode (
     logic [4:0] rs1_d;
     logic [2:0] funct3;
     logic [4:0] rd_d;
-    logic [6:0] op;
+    opcode_t op;
     always_comb begin
         {funct7, rs2_d, rs1_d, funct3, rd_d, op} = instruction_d;
     end

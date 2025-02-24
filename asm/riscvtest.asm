@@ -1,3 +1,5 @@
+# Below test code is originally from 
+# Digital Design and Computer Architecture RISC-V Edition
 # riscvtest.s
 # Sarah.Harris@unlv.edu
 # David_Harris@hmc.edu
