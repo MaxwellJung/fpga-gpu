@@ -2,8 +2,15 @@
 
 module RISCVCore (
     input logic clk_i,
-    input logic reset_i
+    input logic reset_i,
+    
+    // memory bus
+    output logic [31:0] addr_o,
+    input logic [31:0] rd_data_i,
+    output logic [31:0] wr_data_o,
+    output logic wr_en_o
 );
+    // control wires
     imm_src_t imm_src_d;
     alu_src_t alu_src_e;
     alu_control_t alu_control_e;
@@ -18,6 +25,7 @@ module RISCVCore (
     logic [6:0] funct7;
     logic take_branch_e;
 
+    // hazard wires
     logic stall_f;
     logic stall_d;
     logic flush_d;
@@ -35,6 +43,11 @@ module RISCVCore (
     Datapath datapath (
         .clk_i              (clk_i),
         .reset_i            (reset_i),
+        // memory bus
+        .addr_o             (addr_o),
+        .rd_data_i          (rd_data_i),
+        .wr_data_o          (wr_data_o),
+        .wr_en_o            (wr_en_o),
         // control
         .imm_src_d_i        (imm_src_d),
         .alu_src_e_i        (alu_src_e),
@@ -69,6 +82,7 @@ module RISCVCore (
     Controlpath controlpath (
         .clk_i                (clk_i),
         .reset_i              (reset_i),
+        // input from datapath
         .op_i                 (op),
         .funct3_i             (funct3),
         .funct7_i             (funct7),

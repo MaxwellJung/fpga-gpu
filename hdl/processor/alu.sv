@@ -14,7 +14,7 @@ module Alu (
     logic take_branch;
     always_comb begin
         case (control_i)
-            ALU_NOOP:  result = '0;
+            ALU_NOOP:  result = src_a_i + src_b_i;
             ALU_A:     result = src_a_i;
             ALU_B:     result = src_b_i;
             ALU_ADD:   result = src_a_i + src_b_i;

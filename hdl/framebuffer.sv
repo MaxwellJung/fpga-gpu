@@ -17,13 +17,11 @@ module Framebuffer #(
     input logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y_i,
     input logic [$clog2(PALETTE_LENGTH)-1:0] wr_palette_index_i
 );
-    logic [$clog2(PALETTE_LENGTH)-1:0] pixels[RESOLUTION_Y*RESOLUTION_X];
+    logic [RESOLUTION_Y*RESOLUTION_X-1:0][$clog2(PALETTE_LENGTH)-1:0] pixels;
 
     always_ff @(posedge wr_clk_i) begin 
         if (reset_i) begin
-            // disable because vivado can't synthesize 
-            // resetting large array for some reason
-            // pixels <= '{default:'0};
+            pixels <= '0;
         end else if (we_i) begin
             pixels[RESOLUTION_X*wr_pxl_y_i + wr_pxl_x_i] <= wr_palette_index_i;
         end

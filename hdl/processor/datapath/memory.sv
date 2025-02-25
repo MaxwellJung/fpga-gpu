@@ -2,13 +2,22 @@ module Memory (
     input logic clk_i,
     input logic reset_i,
 
+    // input from previous pipeline
     input logic [31:0] alu_result_e_i,
     input logic [31:0] write_data_e_i,
     input logic [4:0] rd_e_i,
     input logic [31:0] pc_plus_4_e_i,
 
+    // control
     input logic mem_write_m_i,
 
+    // memory bus
+    output logic [31:0] addr_o,
+    input logic [31:0] rd_data_i,
+    output logic [31:0] wr_data_o,
+    output logic wr_en_o,
+
+    // output to next pipeline
     output logic [31:0] alu_result_m_o,
     output logic [31:0] read_data_m_o,
     output logic [4:0] rd_m_o,
@@ -28,15 +37,12 @@ module Memory (
     end
 
     logic [31:0] read_data_m;
-    DataCache data_cache (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
-
-        .address_i(alu_result_m),
-        .rd_data_o(read_data_m),
-        .wr_data_i(write_data_m),
-        .wr_en_i(mem_write_m_i)
-    );
+    always_comb begin
+        addr_o = alu_result_m;
+        read_data_m = rd_data_i;
+        wr_data_o = write_data_m;
+        wr_en_o = mem_write_m_i;
+    end
 
     always_comb begin
         alu_result_m_o = alu_result_m;

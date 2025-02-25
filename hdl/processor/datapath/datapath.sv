@@ -4,6 +4,12 @@ module Datapath(
     input logic clk_i,
     input logic reset_i,
 
+    // memory bus
+    output logic [31:0] addr_o,
+    input logic [31:0] rd_data_i,
+    output logic [31:0] wr_data_o,
+    output logic wr_en_o,
+
     // control
     input imm_src_t imm_src_d_i,
     input alu_src_t alu_src_e_i,
@@ -146,20 +152,25 @@ module Datapath(
     logic [4:0] rd_m;
     logic [31:0] pc_plus_4_m;
     Memory memory (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
-
-        .alu_result_e_i(alu_result_e),
-        .write_data_e_i(write_data_e),
-        .rd_e_i(rd_e),
-        .pc_plus_4_e_i(pc_plus_4_e),
-
-        .mem_write_m_i(mem_write_m_i),
-
-        .alu_result_m_o(alu_result_m),
-        .read_data_m_o(read_data_m),
-        .rd_m_o(rd_m),
-        .pc_plus_4_m_o(pc_plus_4_m)
+        .clk_i             (clk_i),
+        .reset_i           (reset_i),
+        // input from previous pipeline
+        .alu_result_e_i    (alu_result_e),
+        .write_data_e_i    (write_data_e),
+        .rd_e_i            (rd_e),
+        .pc_plus_4_e_i     (pc_plus_4_e),
+        // control
+        .mem_write_m_i     (mem_write_m_i),
+        // memory bus
+        .addr_o            (addr_o),
+        .rd_data_i         (rd_data_i),
+        .wr_data_o         (wr_data_o),
+        .wr_en_o           (wr_en_o),
+        // output to next pipeline
+        .alu_result_m_o    (alu_result_m),
+        .read_data_m_o     (read_data_m),
+        .rd_m_o            (rd_m),
+        .pc_plus_4_m_o     (pc_plus_4_m)
     );
 
     Writeback writeback (

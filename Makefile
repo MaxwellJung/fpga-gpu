@@ -19,7 +19,8 @@ riscvtest.bin: riscvtest.out
 
 riscvtest.out: ${ASM_DIR}/riscvtest.asm
 	mkdir -p $(BUILD_DIR)
-	riscv64-unknown-elf-as ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
+	riscv64-unknown-elf-as -march=rv32i ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
+	riscv64-unknown-elf-objdump -d ${BUILD_DIR}/riscvtest.out > ${BUILD_DIR}/riscvtest-objdump.txt
 
 # Vivado
 

@@ -16,14 +16,11 @@ module RegisterFile #(
     input logic wr_en_i
 );
 
-    logic [REG_WIDTH-1:0] registers [REG_COUNT];
+    logic [REG_COUNT-1:0][REG_WIDTH-1:0] registers;
 
-    int i;
     always_ff @(negedge clk_i) begin
         if (reset_i) begin
-            for (i = 0; i < REG_COUNT; i=i+1) begin
-                registers[i] <= '0;
-            end
+            registers <= '0;
         end else begin
             if (wr_en_i) begin
                 registers[address_3_i] <= wr_data_i;

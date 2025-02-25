@@ -1,5 +1,5 @@
 module InstructionCache #(
-    parameter INIT_FILE = "data/gpu_inst_init.mem",
+    parameter INIT_FILE = "build/riscvtest.mem",
     parameter WORD_COUNT = 64,
     parameter WORD_BITS = 32,
     localparam BYTES_PER_WORD = WORD_BITS/8,
@@ -8,7 +8,7 @@ module InstructionCache #(
     input logic [ADDR_BITS-1:0] address_i,
     output logic [WORD_BITS-1:0] rd_data_o
 );
-    logic [WORD_BITS-1:0] ram [WORD_COUNT];
+    logic [WORD_BITS-1:0] ram[WORD_COUNT];
     initial $readmemh(INIT_FILE, ram);
 
     logic [$clog2(WORD_COUNT)-1:0] word_index;

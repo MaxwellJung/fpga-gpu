@@ -14,15 +14,11 @@ module Palette #(
     input logic [$clog2(PALETTE_LENGTH)-1:0] wr_index_i,
     input logic [COLOR_BITS-1:0] wr_color_i
 );
-    logic [COLOR_BITS-1:0] colors[PALETTE_LENGTH];
+    logic [PALETTE_LENGTH-1:0][COLOR_BITS-1:0] colors;
 
-    int i;
     always_ff @(posedge wr_clk_i) begin
         if (reset_i) begin
-            for (i = 0; i < PALETTE_LENGTH; i = i+1) begin
-                // colors[i] <= '0;
-                colors[i] <= {i[7:5], 1'b0, i[4:2], 1'b0, i[1:0], 2'b00}; // for testing
-            end
+            colors <= '0;
         end else if (wr_en_i) begin
             colors[wr_index_i] <= wr_color_i;
         end
