@@ -9,11 +9,12 @@ typedef enum logic [6:0] {
     OP_ALU_R    = 7'b0110011, // (51)
     OP_LUI      = 7'b0110111, // (55)
     OP_BRANCH   = 7'b1100011, // (99)
-    OP_JUMP_I   = 7'b1100111, // (103)
-    OP_JUMP     = 7'b1101111  // (111)
+    OP_JALR   = 7'b1100111, // (103)
+    OP_JAL     = 7'b1101111  // (111)
 } opcode_t;
 
 typedef enum {
+    ALU_NOOP,
     ALU_A,
     ALU_B,
     ALU_ADD,
@@ -40,5 +41,10 @@ typedef enum logic {
     ALU_SRC_REG,
     ALU_SRC_IMM
 } alu_src_t;
+
+typedef enum logic {
+    JUMP_SRC_PC, // JTA/BTA = PC + immediate
+    JUMP_SRC_REG // JTA/BTA = rs1 + immediate
+} jump_src_t;
 
 `endif // DEFINES_H

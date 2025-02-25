@@ -13,17 +13,17 @@ module Control (
     output alu_control_t alu_control_o,
     output alu_src_t alu_src_o,
     output imm_src_t imm_src_o,
-    output logic invert_condition_o
+    output logic invert_cond_o,
+    output jump_src_t jump_src_o
 );
     logic reg_write;
-    logic [1:0] result_src;
-    logic mem_write;
-    logic jump;
-    logic branch;
-    alu_src_t alu_src;
     imm_src_t imm_src;
-    logic [1:0] alu_op;
-
+    alu_src_t alu_src;
+    logic mem_write;
+    logic [1:0] result_src;
+    logic branch;
+    logic jump;
+    jump_src_t jump_src;
     OpcodeDecoder opcode_decoder (
         .op_i            (op_i),
 
@@ -33,19 +33,18 @@ module Control (
         .mem_write_o     (mem_write),
         .result_src_o    (result_src),
         .branch_o        (branch),
-        .alu_op_o        (alu_op),
-        .jump_o          (jump)
+        .jump_o          (jump),
+        .jump_src_o      (jump_src)
     );
 
     alu_control_t alu_control;
-    logic invert_condition;
+    logic invert_cond;
     AluDecoder alu_decoder (
         .op_i(op_i),
         .funct3_i(funct3_i),
         .funct7_i(funct7_i),
-        .alu_op_i(alu_op),
         .alu_control_o(alu_control),
-        .invert_condition_o(invert_condition)
+        .invert_cond_o(invert_cond)
     );
 
     always_comb begin
@@ -57,7 +56,8 @@ module Control (
         alu_control_o = alu_control;
         alu_src_o = alu_src;
         imm_src_o = imm_src;
-        invert_condition_o = invert_condition;
+        invert_cond_o = invert_cond;
+        jump_src_o = jump_src;
     end
 
 endmodule

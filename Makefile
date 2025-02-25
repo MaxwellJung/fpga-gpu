@@ -11,7 +11,7 @@ all: riscvtest display-processor
 
 riscvtest: riscvtest.mem
 
-riscvtest.mem: riscvtest.bin riscvtest.out
+riscvtest.mem: riscvtest.bin
 	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
 
 riscvtest.bin: riscvtest.out

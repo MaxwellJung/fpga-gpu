@@ -68,7 +68,8 @@ module DisplayProcessor #(
     imm_src_t imm_src_d;
     alu_src_t alu_src_e;
     alu_control_t alu_control_e;
-    logic invert_condition_e;
+    logic invert_cond_e;
+    jump_src_t jump_src_e;
     logic pc_src_e;
     logic mem_write_m;
     logic [1:0] result_src_w;
@@ -99,7 +100,8 @@ module DisplayProcessor #(
         .imm_src_d_i        (imm_src_d),
         .alu_src_e_i        (alu_src_e),
         .alu_control_e_i    (alu_control_e),
-        .invert_condition_e_i (invert_condition_e),
+        .invert_cond_e_i    (invert_cond_e),
+        .jump_src_e_i       (jump_src_e),
         .pc_src_e_i         (pc_src_e),
         .mem_write_m_i      (mem_write_m),
         .result_src_w_i     (result_src_w),
@@ -137,7 +139,8 @@ module DisplayProcessor #(
         .imm_src_d_o          (imm_src_d),
         .alu_src_e_o          (alu_src_e),
         .alu_control_e_o      (alu_control_e),
-        .invert_condition_e_o (invert_condition_e),
+        .invert_cond_e_o      (invert_cond_e),
+        .jump_src_e_o         (jump_src_e),
         .pc_src_e_o           (pc_src_e),
         .mem_write_m_o        (mem_write_m),
         .reg_write_m_o        (reg_write_m),

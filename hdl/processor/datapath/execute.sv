@@ -22,7 +22,8 @@ module Execute (
     input logic [1:0] forward_b_e_i,
     input alu_src_t alu_src_e_i,
     input alu_control_t alu_control_e_i,
-    input logic invert_condition_e_i,
+    input logic invert_cond_e_i,
+    input jump_src_t jump_src_e_i,
     output logic [4:0] rs1_e_o,
     output logic [4:0] rs2_e_o,
     output logic [31:0] pc_target_e_o,
@@ -85,7 +86,7 @@ module Execute (
         .src_a_i(src_a_e),
         .src_b_i(src_b_e),
         .control_i(alu_control_e_i),
-        .invert_condition_i(invert_condition_e_i),
+        .invert_cond_i(invert_cond_e_i),
 
         .result_o(alu_result_e),
         .take_branch_o(take_branch_e)
@@ -93,7 +94,15 @@ module Execute (
 
     logic [31:0] pc_target_e;
     always_comb begin
-        pc_target_e = pc_e + imm_ext_e;
+        case (jump_src_e_i)
+            JUMP_SRC_PC:
+                pc_target_e = pc_e + imm_ext_e;
+            JUMP_SRC_REG: // equivalent to (src_a_e + imm_ext_e)
+                pc_target_e = alu_result_e;
+            default: begin // unknown jump
+                pc_target_e = '0;
+            end
+        endcase
     end
 
     always_comb begin
