@@ -6,10 +6,10 @@ module MemoryMap #(
     parameter MEMORY_BYTES = 1024,
 
     parameter PALETTE_BASE_ADDR = 2048,
-    parameter PALETTE_BYTES = 512,
+    parameter PALETTE_BYTES = 12*256/8,
 
     parameter FRAMEBUFFER_BASE_ADDR = 131072,
-    parameter FRAMEBUFFER_BYTES = 120000
+    parameter FRAMEBUFFER_BYTES = 400*300
 ) (
     input logic [31:0] bus_addr_i,
     output logic [31:0] bus_rd_data_o,

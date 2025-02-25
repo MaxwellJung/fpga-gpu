@@ -12,10 +12,10 @@ module Memory (
     input logic mem_write_m_i,
 
     // memory bus
-    output logic [31:0] addr_o,
-    input logic [31:0] rd_data_i,
-    output logic [31:0] wr_data_o,
-    output logic wr_en_o,
+    output logic [31:0] bus_addr_o,
+    input logic [31:0] bus_rd_data_i,
+    output logic [31:0] bus_wr_data_o,
+    output logic bus_wr_en_o,
 
     // output to next pipeline
     output logic [31:0] alu_result_m_o,
@@ -38,10 +38,10 @@ module Memory (
 
     logic [31:0] read_data_m;
     always_comb begin
-        addr_o = alu_result_m;
-        read_data_m = rd_data_i;
-        wr_data_o = write_data_m;
-        wr_en_o = mem_write_m_i;
+        bus_addr_o = alu_result_m;
+        read_data_m = bus_rd_data_i;
+        bus_wr_data_o = write_data_m;
+        bus_wr_en_o = mem_write_m_i;
     end
 
     always_comb begin

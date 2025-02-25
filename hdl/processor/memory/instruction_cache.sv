@@ -1,5 +1,5 @@
 module InstructionCache #(
-    parameter INIT_FILE = "build/riscvtest.mem",
+    parameter INIT_FILE = "build/gputest.mem",
     parameter WORD_COUNT = 64,
     parameter WORD_BITS = 32,
     localparam BYTES_PER_WORD = WORD_BITS/8,

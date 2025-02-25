@@ -60,10 +60,6 @@ module DisplayProcessor #(
     assign fb_wr_index_o = index;
     assign fb_wr_en_o = '1;
 
-    assign palette_wr_index_o = '0;
-    assign palette_wr_color_o = '0;
-    assign palette_wr_en_o = '0;
-
     logic [31:0] bus_addr;
     logic [31:0] bus_rd_data;
     logic [31:0] bus_wr_data;
@@ -73,10 +69,10 @@ module DisplayProcessor #(
         .clk_i        (clk_i),
         .reset_i      (reset_i || ctl_rst),
         // memory bus
-        .addr_o       (bus_addr),
-        .rd_data_i    (bus_rd_data),
-        .wr_data_o    (bus_wr_data),
-        .wr_en_o      (bus_wr_en)
+        .bus_addr_o       (bus_addr),
+        .bus_rd_data_i    (bus_rd_data),
+        .bus_wr_data_o    (bus_wr_data),
+        .bus_wr_en_o      (bus_wr_en)
     );
 
     logic [31:0] mem_addr;
@@ -94,15 +90,15 @@ module DisplayProcessor #(
         .mem_wr_data_o            (mem_wr_data),
         .mem_wr_en_o              (mem_wr_en),
         // framebuffer
-        .fb_addr_o                (fb_addr),
-        .fb_rd_data_i             (fb_rd_data),
-        .fb_wr_data_o             (fb_wr_data),
-        .fb_wr_en_o               (fb_wr_en),
+        .fb_addr_o                (),
+        .fb_rd_data_i             (),
+        .fb_wr_data_o             (),
+        .fb_wr_en_o               (),
         // palette
-        .palette_addr_o           (palette_addr),
-        .palette_rd_data_i        (palette_rd_data),
-        .palette_wr_data_o        (palette_wr_data),
-        .palette_wr_en_o          (palette_wr_en)
+        .palette_addr_o           (palette_wr_index_o),
+        .palette_rd_data_i        (),
+        .palette_wr_data_o        (palette_wr_color_o),
+        .palette_wr_en_o          (palette_wr_en_o)
     );
 
     DataCache data_cache (

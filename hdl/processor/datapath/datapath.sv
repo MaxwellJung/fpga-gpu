@@ -5,10 +5,10 @@ module Datapath(
     input logic reset_i,
 
     // memory bus
-    output logic [31:0] addr_o,
-    input logic [31:0] rd_data_i,
-    output logic [31:0] wr_data_o,
-    output logic wr_en_o,
+    output logic [31:0] bus_addr_o,
+    input logic [31:0] bus_rd_data_i,
+    output logic [31:0] bus_wr_data_o,
+    output logic bus_wr_en_o,
 
     // control
     input imm_src_t imm_src_d_i,
@@ -162,10 +162,10 @@ module Datapath(
         // control
         .mem_write_m_i     (mem_write_m_i),
         // memory bus
-        .addr_o            (addr_o),
-        .rd_data_i         (rd_data_i),
-        .wr_data_o         (wr_data_o),
-        .wr_en_o           (wr_en_o),
+        .bus_addr_o            (bus_addr_o),
+        .bus_rd_data_i         (bus_rd_data_i),
+        .bus_wr_data_o         (bus_wr_data_o),
+        .bus_wr_en_o           (bus_wr_en_o),
         // output to next pipeline
         .alu_result_m_o    (alu_result_m),
         .read_data_m_o     (read_data_m),

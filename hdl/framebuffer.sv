@@ -17,24 +17,24 @@ module Framebuffer #(
     input logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y_i,
     input logic [$clog2(PALETTE_LENGTH)-1:0] wr_palette_index_i
 );
-    logic [RESOLUTION_Y*RESOLUTION_X-1:0][$clog2(PALETTE_LENGTH)-1:0] pixels;
+    logic [RESOLUTION_Y-1:0][RESOLUTION_X-1:0][$clog2(PALETTE_LENGTH)-1:0] pixels;
 
     always_ff @(posedge wr_clk_i) begin 
-        if (reset_i) begin
+        if (reset_i)
             pixels <= '0;
-        end else if (we_i) begin
-            pixels[RESOLUTION_X*wr_pxl_y_i + wr_pxl_x_i] <= wr_palette_index_i;
-        end
+        else
+            if (we_i)
+                pixels[wr_pxl_y_i][wr_pxl_x_i] <= wr_palette_index_i;
     end
 
     always_ff @(posedge rd_clk_i) begin
-        if (reset_i) begin
+        if (reset_i)
             palette_index_o <= '0;
-        end else if (re_i) begin
-            palette_index_o <= pixels[RESOLUTION_X*pxl_y_i + pxl_x_i];
-            // palette_index_o <= RESOLUTION_X*pxl_y_i + pxl_x_i; // for testing
-        end else begin
-            palette_index_o <= '0;
+        else begin
+            if (re_i)
+                palette_index_o <= pixels[pxl_y_i][pxl_x_i];
+            else
+                palette_index_o <= '0;
         end
     end
 

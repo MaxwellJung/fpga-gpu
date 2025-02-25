@@ -7,7 +7,20 @@ PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name
 ASM_DIR := ./asm
 DATA_DIR := ./data
 
-all: riscvtest display-processor
+all: gputest display-processor
+
+gputest: gputest.mem
+
+gputest.mem: gputest.bin
+	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
+
+gputest.bin: gputest.out
+	riscv64-unknown-elf-objcopy -O binary --only-section=.text ${BUILD_DIR}/gputest.out ${BUILD_DIR}/gputest.bin
+
+gputest.out: ${ASM_DIR}/gputest.asm
+	mkdir -p $(BUILD_DIR)
+	riscv64-unknown-elf-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.out
+	riscv64-unknown-elf-objdump -d ${BUILD_DIR}/gputest.out > ${BUILD_DIR}/gputest-objdump.txt
 
 riscvtest: riscvtest.mem
 
