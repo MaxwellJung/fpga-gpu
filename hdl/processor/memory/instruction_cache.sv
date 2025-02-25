@@ -11,10 +11,10 @@ module InstructionCache #(
     logic [WORD_BITS-1:0] ram [WORD_COUNT];
     initial $readmemh(INIT_FILE, ram);
 
-    logic [$clog2(WORD_COUNT)-1:0] word_addr;
+    logic [$clog2(WORD_COUNT)-1:0] word_index;
     always_comb begin
-        word_addr = address_i >> $clog2(BYTES_PER_WORD);
-        rd_data_o = ram[word_addr];
+        word_index = address_i[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
+        rd_data_o = ram[word_index];
     end
 
 endmodule
