@@ -26,7 +26,7 @@ module Hazard(
     always_comb begin
         if (((rd_m == rs1_e) && reg_write_m) && (rs1_e != 0))
             forward_a_e = 2'b10; // Forward from Memory stage
-        else if (((rd_w == rs1_e) && reg_write_m) && (rs1_e != 0))
+        else if (((rd_w == rs1_e) && reg_write_w) && (rs1_e != 0))
             forward_a_e = 2'b01; // Forward from Writeback stage
         else
             forward_a_e = 2'b00; // No forwarding (use RF output)
@@ -35,7 +35,7 @@ module Hazard(
     always_comb begin
         if (((rd_m == rs2_e) && reg_write_m) && (rs2_e != 0))
             forward_b_e = 2'b10; // Forward from Memory stage
-        else if (((rd_w == rs2_e) && reg_write_m) && (rs2_e != 0))
+        else if (((rd_w == rs2_e) && reg_write_w) && (rs2_e != 0))
             forward_b_e = 2'b01; // Forward from Writeback stage
         else
             forward_b_e = 2'b00; // No forwarding (use RF output)
