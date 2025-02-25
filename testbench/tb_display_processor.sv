@@ -19,20 +19,20 @@ module TbDisplayProcessor();
         .PALETTE_LENGTH(PALETTE_LENGTH),
         .COLOR_BITS(COLOR_BITS)
     ) display_processor (
-        .clk_i(gpu_clk),
-        .reset_i(gpu_reset),
+        .clk(gpu_clk),
+        .reset(gpu_reset),
 
-        .status_o(gpu_status),
-        .control_i(gpu_control),
+        .status(gpu_status),
+        .control(gpu_control),
 
-        .fb_wr_x_o(),
-        .fb_wr_y_o(),
-        .fb_wr_index_o(),
-        .fb_wr_en_o(),
+        .fb_wr_x(),
+        .fb_wr_y(),
+        .fb_wr_index(),
+        .fb_wr_en(),
 
-        .palette_wr_index_o(),
-        .palette_wr_color_o(),
-        .palette_wr_en_o()
+        .palette_wr_index(),
+        .palette_wr_color(),
+        .palette_wr_en()
     );
 
     // generate clock to sequence tests

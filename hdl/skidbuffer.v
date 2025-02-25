@@ -45,7 +45,7 @@
 //		bus signals have a high fanout rate, or a long signal path
 //		across an FPGA.
 //
-//	OPT_OUTREG
+//	OPTUTREG
 //		Causes the outputs to be registered
 //
 //	OPT_PASSTHROUGH
@@ -81,11 +81,11 @@
 module skidbuffer #(
 		// {{{
 		parameter	[0:0]	OPT_LOWPOWER = 0,
-		parameter	[0:0]	OPT_OUTREG = 1,
+		parameter	[0:0]	OPTUTREG = 1,
 		//
 		parameter	[0:0]	OPT_PASSTHROUGH = 0,
 		parameter		DW = 8,
-		parameter	[0:0]	OPT_INITIAL = 1'b1
+		parameter	[0:0]	OPTNITIAL = 1'b1
 		// }}}
 	) (
 		// {{{
@@ -115,12 +115,12 @@ module skidbuffer #(
 		assign	w_data = 0;
 
 		// Keep Verilator happy
-		// Verilator lint_off UNUSED
+		// Verilator lintff UNUSED
 		// {{{
 		wire	unused_passthrough;
 		assign	unused_passthrough = &{ 1'b0, i_clk, i_reset };
 		// }}}
-		// Verilator lint_on  UNUSED
+		// Verilator lintn  UNUSED
 		// }}}
 	end else begin : LOGIC
 		// We'll start with skid buffer itself
@@ -130,7 +130,7 @@ module skidbuffer #(
 
 		// r_valid
 		// {{{
-		initial if (OPT_INITIAL) r_valid = 0;
+		initial if (OPTNITIAL) r_valid = 0;
 		always @(posedge i_clk)
 		if (i_reset)
 			r_valid <= 0;
@@ -143,13 +143,13 @@ module skidbuffer #(
 
 		// r_data
 		// {{{
-		initial if (OPT_INITIAL) r_data = 0;
+		initial if (OPTNITIAL) r_data = 0;
 		always @(posedge i_clk)
 		if (OPT_LOWPOWER && i_reset)
 			r_data <= 0;
 		else if (OPT_LOWPOWER && (!o_valid || i_ready))
 			r_data <= 0;
-		else if ((!OPT_LOWPOWER || !OPT_OUTREG || i_valid) && o_ready)
+		else if ((!OPT_LOWPOWER || !OPTUTREG || i_valid) && o_ready)
 			r_data <= i_data;
 
 		assign	w_data = r_data;
@@ -163,8 +163,8 @@ module skidbuffer #(
 		//
 		// And then move on to the output port
 		//
-		if (!OPT_OUTREG)
-		begin : NET_OUTPUT
+		if (!OPTUTREG)
+		begin : NETUTPUT
 			// Outputs are combinatorially determined from inputs
 			// {{{
 			// o_valid
@@ -183,14 +183,14 @@ module skidbuffer #(
 				o_data = 0;
 			// }}}
 			// }}}
-		end else begin : REG_OUTPUT
+		end else begin : REGUTPUT
 			// Register our outputs
 			// {{{
 			// o_valid
 			// {{{
 			reg	ro_valid;
 
-			initial if (OPT_INITIAL) ro_valid = 0;
+			initial if (OPTNITIAL) ro_valid = 0;
 			always @(posedge i_clk)
 			if (i_reset)
 				ro_valid <= 0;
@@ -202,7 +202,7 @@ module skidbuffer #(
 
 			// o_data
 			// {{{
-			initial if (OPT_INITIAL) o_data = 0;
+			initial if (OPTNITIAL) o_data = 0;
 			always @(posedge i_clk)
 			if (OPT_LOWPOWER && i_reset)
 				o_data <= 0;
@@ -225,12 +225,12 @@ module skidbuffer #(
 
 	// Keep Verilator happy
 	// {{{
-	// verilator coverage_off
-	// Verilator lint_off UNUSED
+	// verilator coverageff
+	// Verilator lintff UNUSED
 	wire	unused;
 	assign	unused = &{ 1'b0, w_data };
-	// Verilator lint_on  UNUSED
-	// verilator coverage_on
+	// Verilator lintn  UNUSED
+	// verilator coveragen
 	// }}}
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -267,14 +267,14 @@ module skidbuffer #(
 	always @(posedge i_clk)
 	if (!f_past_valid)
 	begin
-		`ASSUME(!i_valid || !OPT_INITIAL);
+		`ASSUME(!i_valid || !OPTNITIAL);
 	end else if ($past(i_valid && !o_ready && !i_reset) && !i_reset)
 		`ASSUME(i_valid && $stable(i_data));
 
 `ifdef	VERIFIC
 `define	FORMAL_VERIFIC
 	// Reset properties
-	property RESET_CLEARS_IVALID;
+	property RESET_CLEARSVALID;
 		@(posedge i_clk) i_reset |=> !i_valid;
 	endproperty
 
@@ -304,7 +304,7 @@ module skidbuffer #(
 		if (!f_past_valid) // || $past(i_reset))
 		begin
 			// Following any reset, valid must be deasserted
-			assert(!o_valid || !OPT_INITIAL);
+			assert(!o_valid || !OPTNITIAL);
 		end else if ($past(o_valid && !i_ready && !i_reset) && !i_reset)
 			// Following any stall, valid must remain high and
 			// data must be preserved
@@ -326,7 +326,7 @@ module skidbuffer #(
 		//	ready for a new request
 		// {{{
 		always @(posedge i_clk)
-		if (f_past_valid && $past(OPT_OUTREG && i_reset))
+		if (f_past_valid && $past(OPTUTREG && i_reset))
 			assert(o_ready);
 		// }}}
 
@@ -337,13 +337,13 @@ module skidbuffer #(
 `ifndef	VERIFIC
 		always @(posedge i_clk)
 		if (f_past_valid && !$past(i_reset) && $past(i_valid && o_ready
-			&& (!OPT_OUTREG || o_valid) && !i_ready))
+			&& (!OPTUTREG || o_valid) && !i_ready))
 			assert(!o_ready && w_data == $past(i_data));
 `else
 		assert property (@(posedge i_clk)
 			disable iff (i_reset)
 			(i_valid && o_ready
-				&& (!OPT_OUTREG || o_valid) && !i_ready)
+				&& (!OPTUTREG || o_valid) && !i_ready)
 				|=> (!o_ready && w_data == $past(i_data)));
 `endif
 		// }}}
@@ -351,7 +351,7 @@ module skidbuffer #(
 		// Rule #3:
 		//	After the last transaction, o_valid should become idle
 		// {{{
-		if (!OPT_OUTREG)
+		if (!OPTUTREG)
 		begin
 			// {{{
 			always @(posedge i_clk)
@@ -391,7 +391,7 @@ module skidbuffer #(
 		if (OPT_LOWPOWER)
 		begin
 			always @(*)
-			if ((OPT_OUTREG || !i_reset) && !o_valid)
+			if ((OPTUTREG || !i_reset) && !o_valid)
 				assert(o_data == 0);
 
 			always @(*)

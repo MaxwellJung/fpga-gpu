@@ -3,38 +3,38 @@ module Framebuffer #(
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256
 ) (
-    input logic reset_i,
+    input logic reset,
 
-    input logic rd_clk_i,
-    input logic re_i,
-    input logic [$clog2(RESOLUTION_X)-1:0] pxl_x_i,
-    input logic [$clog2(RESOLUTION_Y)-1:0] pxl_y_i,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] palette_index_o,
+    input logic rd_clk,
+    input logic re,
+    input logic [$clog2(RESOLUTION_X)-1:0] pxl_x,
+    input logic [$clog2(RESOLUTION_Y)-1:0] pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] palette_index,
 
-    input logic wr_clk_i,
-    input logic we_i,
-    input logic [$clog2(RESOLUTION_X)-1:0] wr_pxl_x_i,
-    input logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y_i,
-    input logic [$clog2(PALETTE_LENGTH)-1:0] wr_palette_index_i
+    input logic wr_clk,
+    input logic we,
+    input logic [$clog2(RESOLUTION_X)-1:0] wr_pxl_x,
+    input logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y,
+    input logic [$clog2(PALETTE_LENGTH)-1:0] wr_palette_index
 );
     logic [RESOLUTION_Y-1:0][RESOLUTION_X-1:0][$clog2(PALETTE_LENGTH)-1:0] pixels;
 
-    always_ff @(posedge wr_clk_i) begin 
-        if (reset_i)
+    always_ff @(posedge wr_clk) begin 
+        if (reset)
             pixels <= '0;
         else
-            if (we_i)
-                pixels[wr_pxl_y_i][wr_pxl_x_i] <= wr_palette_index_i;
+            if (we)
+                pixels[wr_pxl_y][wr_pxl_x] <= wr_palette_index;
     end
 
-    always_ff @(posedge rd_clk_i) begin
-        if (reset_i)
-            palette_index_o <= '0;
+    always_ff @(posedge rd_clk) begin
+        if (reset)
+            palette_index <= '0;
         else begin
-            if (re_i)
-                palette_index_o <= pixels[pxl_y_i][pxl_x_i];
+            if (re)
+                palette_index <= pixels[pxl_y][pxl_x];
             else
-                palette_index_o <= '0;
+                palette_index <= '0;
         end
     end
 

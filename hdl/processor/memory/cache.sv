@@ -13,19 +13,20 @@ module Cache #(
     parameter WORD_BITS = 32,
     localparam BYTES_PER_WORD = WORD_BITS/8
 ) (
-    input logic clk_i,
-    input logic reset_i,
+    input logic clk,
+    input logic reset,
 
-    input logic [ADDR_BITS-1:0] address_i,
-    output logic [WAY_COUNT-1:0] hits_o,
-    output logic [WORD_BITS-1:0] rd_word_o,
-    input logic [WORDS_PER_BLOCK-1:0][WORD_BITS-1:0] wr_block_i,
-    input logic [WAY_COUNT-1:0] wr_ens_i
+    input logic [ADDR_BITS-1:0] address,
+    // hit on way 0 = hits[0], ... , hit on way i = hits[i]
+    output logic [WAY_COUNT-1:0] hits,
+    output logic [WORD_BITS-1:0] rd_word,
+    input logic [WORDS_PER_BLOCK-1:0][WORD_BITS-1:0] wr_block,
+    input logic [WAY_COUNT-1:0] wr_ens
 );
     logic [ADDR_BITS-$clog2(SET_COUNT)-$clog2(WORDS_PER_BLOCK)-$clog2(BYTES_PER_WORD)-1:0] tag;
-    logic [$clog2(SET_COUNT)-1:0] set_index;
-    logic [$clog2(WORDS_PER_BLOCK)-1:0] word_index;
-    logic [$clog2(BYTES_PER_WORD)-1:0] byte_index;
+    logic [$clog2(SET_COUNT)-1:0] setndex;
+    logic [$clog2(WORDS_PER_BLOCK)-1:0] wordndex;
+    logic [$clog2(BYTES_PER_WORD)-1:0] bytendex;
     CacheAddrDecoder #(
         .WORD_WORD_CAPACITY (WORD_CAPACITY),
         .WORDS_PER_BLOCK    (WORDS_PER_BLOCK),
@@ -33,16 +34,13 @@ module Cache #(
         .ADDR_BITS          (ADDR_BITS),
         .WORD_BITS          (WORD_BITS)
     ) cache_addr_decoder (
-        .address_i          (address_i),
-        .tag_o              (tag),
-        .set_index_o        (set_index),
-        .word_index_o       (word_index),
-        .byte_index_o       (byte_index)
+        .address          (address),
+        .tag              (tag),
+        .set_index        (setndex),
+        .word_index       (wordndex),
+        .byte_index       (bytendex)
     );
 
-    // hit on way 0 = hits[0], ... , hit on way i = hits[i]
-    // easier to perform array-wise OR on [7:0] hits than hits[8]
-    logic [WAY_COUNT-1:0] hits;
     logic [WAY_COUNT-1:0][WORDS_PER_BLOCK-1:0][WORD_BITS-1:0] rd_blocks;
     generate
         genvar i;
@@ -55,28 +53,27 @@ module Cache #(
                 .ADDR_BITS          (ADDR_BITS),
                 .WORD_BITS          (WORD_BITS)
             ) cache_way (
-                .clk_i              (clk_i),
-                .reset_i            (reset_i),
-                .tag_i              (tag),
-                .set_index_i        (set_index),
-                .word_index_i       (word_index),
-                .byte_index_i       (byte_index),
-                .hit_o              (hits[i]),
-                .rd_block_o         (rd_blocks[i]),
-                .wr_block_i         (wr_block_i),
-                .wr_en_i            (wr_ens_i[i])
+                .clk              (clk),
+                .reset            (reset),
+                .tag              (tag),
+                .set_index        (setndex),
+                .word_index       (wordndex),
+                .byte_index       (bytendex),
+                .hit              (hits[i]),
+                .rd_block         (rd_blocks[i]),
+                .wr_block         (wr_block),
+                .wr_en            (wr_ens[i])
             );
         end
     endgenerate
 
     int j;
     always_comb begin
-        hits_o = |hits;
         // default value if no hits
-        rd_word_o = '0;
+        rd_word = '0;
         for (j = 0; j < WAY_COUNT; j = j+1)
             if (hits[j])
-                rd_word_o = rd_blocks[j][byte_index];
+                rd_word = rd_blocks[j][bytendex];
     end
 
 endmodule

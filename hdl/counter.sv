@@ -1,18 +1,18 @@
 module Counter #(
     parameter NUM_BITS = 8
 ) (
-    input logic clk_i,
-    input logic reset_i,
-    input logic enable_i,
+    input logic clk,
+    input logic reset,
+    input logic enable,
 
-    output logic [NUM_BITS-1:0] count_o
+    output logic [NUM_BITS-1:0] count
 );
 
-    always_ff @(posedge clk_i) begin
-        if (reset_i) begin
-            count_o <= 0;
-        end else if (enable_i) begin
-            count_o <= count_o + 1;
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            count <= 0;
+        end else if (enable) begin
+            count <= count + 1;
         end
     end
 

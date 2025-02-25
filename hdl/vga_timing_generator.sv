@@ -14,57 +14,57 @@ module VgaTimingGenerator #(
     localparam H_WHOLE_LINE_PXL = H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL + H_BACK_PORCH_PXL,
     localparam V_WHOLE_FRAME_PXL =  V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL + V_BACK_PORCH_PXL
 ) (
-    input logic clk_i,
-    input logic reset_i,
+    input logic clk,
+    input logic reset,
 
-    output logic [$clog2(H_WHOLE_LINE_PXL)-1:0] h_pxl_count_o,
-    output logic [$clog2(V_WHOLE_FRAME_PXL)-1:0] v_pxl_count_o,
+    output logic [$clog2(H_WHOLE_LINE_PXL)-1:0] h_pxl_count,
+    output logic [$clog2(V_WHOLE_FRAME_PXL)-1:0] v_pxl_count,
 
-    output logic h_sync_o,
-    output logic v_sync_o,
+    output logic h_sync,
+    output logic v_sync,
 
-    output logic h_visible_o,
-    output logic v_visible_o
+    output logic h_visible,
+    output logic v_visible
 );
     logic h_counter_end, v_counter_end;
-    assign h_counter_end = h_pxl_count_o >= H_WHOLE_LINE_PXL - 1;
-    assign v_counter_end = v_pxl_count_o >= V_WHOLE_FRAME_PXL - 1;
+    assign h_counter_end = h_pxl_count >= H_WHOLE_LINE_PXL - 1;
+    assign v_counter_end = v_pxl_count >= V_WHOLE_FRAME_PXL - 1;
 
     Counter #(
         .NUM_BITS($clog2(H_WHOLE_LINE_PXL))
         ) h_pxl_counter (
-        .clk_i(clk_i),
-        .reset_i(reset_i || h_counter_end),
-        .enable_i(1'b1),
-        .count_o(h_pxl_count_o)
+        .clk(clk),
+        .reset(reset || h_counter_end),
+        .enable(1'b1),
+        .count(h_pxl_count)
     );
 
     Counter #(
         .NUM_BITS($clog2(V_WHOLE_FRAME_PXL))
         ) v_pxl_counter (
-        .clk_i(clk_i),
-        .reset_i(reset_i || (h_counter_end && v_counter_end)),
-        .enable_i(h_counter_end),
-        .count_o(v_pxl_count_o)
+        .clk(clk),
+        .reset(reset || (h_counter_end && v_counter_end)),
+        .enable(h_counter_end),
+        .count(v_pxl_count)
     );
     
     logic h_sync, v_sync, h_visible, v_visible;
-    assign h_sync = !(((H_VIS_AREA_PXL + H_FRONT_PORCH_PXL) <= h_pxl_count_o) 
-                   && (h_pxl_count_o < (H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL)));
-    assign v_sync = !(((V_VIS_AREA_PXL + V_FRONT_PORCH_PXL) <= v_pxl_count_o) 
-                   && (v_pxl_count_o < (V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL)));
-    assign h_visible = h_pxl_count_o < H_VIS_AREA_PXL;
-    assign v_visible = v_pxl_count_o < V_VIS_AREA_PXL;
+    assign h_sync = !(((H_VIS_AREA_PXL + H_FRONT_PORCH_PXL) <= h_pxl_count) 
+                   && (h_pxl_count < (H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL)));
+    assign v_sync = !(((V_VIS_AREA_PXL + V_FRONT_PORCH_PXL) <= v_pxl_count) 
+                   && (v_pxl_count < (V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL)));
+    assign h_visible = h_pxl_count < H_VIS_AREA_PXL;
+    assign v_visible = v_pxl_count < V_VIS_AREA_PXL;
 
     Latency #(
         .LENGTH(SYNC_LATENCY),
         .WIDTH(4)
     ) delay_sync (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .data_i({h_sync, v_sync, h_visible, v_visible}),
-        .data_o({h_sync_o, v_sync_o, h_visible_o, v_visible_o})
+        .data({h_sync, v_sync, h_visible, v_visible}),
+        .data({h_sync, v_sync, h_visible, v_visible})
     );
 
 endmodule

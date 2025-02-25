@@ -1,44 +1,44 @@
 `include "./hdl/processor/defines.svh"
 
 module Datapath(
-    input logic clk_i,
-    input logic reset_i,
+    input logic clk,
+    input logic reset,
 
     // memory bus
-    output logic [31:0] bus_addr_o,
-    input logic [31:0] bus_rd_data_i,
-    output logic [31:0] bus_wr_data_o,
-    output logic bus_wr_en_o,
+    output logic [31:0] bus_addr,
+    input logic [31:0] bus_rd_data,
+    output logic [31:0] bus_wr_data,
+    output logic bus_wr_en,
 
     // control
-    input imm_src_t imm_src_d_i,
-    input alu_src_t alu_src_e_i,
-    input alu_control_t alu_control_e_i,
-    input logic invert_cond_e_i,
-    input jump_src_t jump_src_e_i,
-    input logic pc_src_e_i,
-    input logic mem_write_m_i,
-    input logic [1:0] result_src_w_i,
-    input logic reg_write_w_i,
-    output opcode_t op_o,
-    output logic [2:0] funct3_o,
-    output logic [6:0] funct7_o,
-    output logic take_branch_e_o,
+    input imm_src_t imm_src_d,
+    input alu_src_t alu_src_e,
+    input alu_control_t alu_control_e,
+    input logic invert_cond_e,
+    input jump_src_t jump_src_e,
+    input logic pc_src_e,
+    input logic mem_write_m,
+    input logic [1:0] result_src_w,
+    input logic reg_write_w,
+    output opcode_t op,
+    output logic [2:0] funct3,
+    output logic [6:0] funct7,
+    output logic take_branch_e,
 
     // hazard
-    input logic stall_f_i,
-    input logic stall_d_i,
-    input logic flush_d_i,
-    input logic flush_e_i,
-    input logic [1:0] forward_a_e_i,
-    input logic [1:0] forward_b_e_i,
-    output logic [4:0] rs1_d_o,
-    output logic [4:0] rs2_d_o,
-    output logic [4:0] rs1_e_o,
-    output logic [4:0] rs2_e_o,
-    output logic [4:0] rd_e_o,
-    output logic [4:0] rd_m_o,
-    output logic [4:0] rd_w_o
+    input logic stall_f,
+    input logic stall_d,
+    input logic flush_d,
+    input logic flush_e,
+    input logic [1:0] forward_a_e,
+    input logic [1:0] forward_b_e,
+    output logic [4:0] rs1_d,
+    output logic [4:0] rs2_d,
+    output logic [4:0] rs1_e,
+    output logic [4:0] rs2_e,
+    output logic [4:0] rd_e,
+    output logic [4:0] rd_m,
+    output logic [4:0] rd_w
 );
     logic [31:0] pc_target_e;
 
@@ -46,165 +46,134 @@ module Datapath(
     logic [31:0] pc_f;
     logic [31:0] pc_plus_4_f;
     Fetch fetch (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .stall_f_i(stall_f_i),
+        .stall_f(stall_f),
 
-        .pc_src_e_i(pc_src_e_i),
-        .pc_target_e_i(pc_target_e),
+        .pc_src_e(pc_src_e),
+        .pc_target_e(pc_target_e),
 
-        .instruction_f_o(instruction_f),
-        .pc_f_o(pc_f),
-        .pc_plus_4_f_o(pc_plus_4_f)
+        .instruction_f(instruction_f),
+        .pc_f(pc_f),
+        .pc_plus_4_f(pc_plus_4_f)
     );
 
-    logic [4:0] rd_w;
     logic [31:0] result_w;
-
-    opcode_t op;
-    logic [2:0] funct3;
-    logic [6:0] funct7;
 
     logic [31:0] rd1_d;
     logic [31:0] rd2_d;
     logic [31:0] pc_d;
-    logic [4:0] rs1_d;
-    logic [4:0] rs2_d;
     logic [4:0] rd_d;
     logic [31:0] imm_ext_d;
     logic [31:0] pc_plus_4_d;
     Decode decode (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .instruction_f_i(instruction_f),
-        .pc_f_i(pc_f),
-        .pc_plus_4_f_i(pc_plus_4_f),
+        .instruction_f(instruction_f),
+        .pc_f(pc_f),
+        .pc_plus_4_f(pc_plus_4_f),
 
-        .stall_d_i(stall_d_i),
-        .flush_d_i(flush_d_i),
-        .imm_src_d_i(imm_src_d_i),
+        .stall_d(stall_d),
+        .flush_d(flush_d),
+        .imm_src_d(imm_src_d),
 
-        .rd_w_i(rd_w),
-        .result_w_i(result_w),
-        .reg_write_w_i(reg_write_w_i),
+        .rd_w(rd_w),
+        .result_w(result_w),
+        .reg_write_w(reg_write_w),
 
-        .op_o(op),
-        .funct3_o(funct3),
-        .funct7_o(funct7),
+        .op(op),
+        .funct3(funct3),
+        .funct7(funct7),
 
-        .rd1_d_o(rd1_d),
-        .rd2_d_o(rd2_d),
-        .pc_d_o(pc_d),
-        .rs1_d_o(rs1_d),
-        .rs2_d_o(rs2_d),
-        .rd_d_o(rd_d),
-        .imm_ext_d_o(imm_ext_d),
-        .pc_plus_4_d_o(pc_plus_4_d)
+        .rd1_d(rd1_d),
+        .rd2_d(rd2_d),
+        .pc_d(pc_d),
+        .rs1_d(rs1_d),
+        .rs2_d(rs2_d),
+        .rd_d(rd_d),
+        .imm_ext_d(imm_ext_d),
+        .pc_plus_4_d(pc_plus_4_d)
     );
 
     logic [31:0] alu_result_m;
-    logic [4:0] rs1_e;
-    logic [4:0] rs2_e;
-    logic take_branch_e;
 
     logic [31:0] alu_result_e;
     logic [31:0] write_data_e;
-    logic [4:0] rd_e;
     logic [31:0] pc_plus_4_e;
     Execute execute (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .rd1_d_i(rd1_d),
-        .rd2_d_i(rd2_d),
-        .pc_d_i(pc_d),
-        .rs1_d_i(rs1_d),
-        .rs2_d_i(rs2_d),
-        .rd_d_i(rd_d),
-        .imm_ext_d_i(imm_ext_d),
-        .pc_plus_4_d_i(pc_plus_4_d),
+        .rd1_d(rd1_d),
+        .rd2_d(rd2_d),
+        .pc_d(pc_d),
+        .rs1_d(rs1_d),
+        .rs2_d(rs2_d),
+        .rd_d(rd_d),
+        .imm_ext_d(imm_ext_d),
+        .pc_plus_4_d(pc_plus_4_d),
 
-        .alu_result_m_i(alu_result_m),
+        .alu_result_m(alu_result_m),
 
-        .result_w_i(result_w),
+        .result_w(result_w),
 
-        .flush_e_i(flush_e_i),
-        .forward_a_e_i(forward_a_e_i),
-        .forward_b_e_i(forward_b_e_i),
-        .alu_src_e_i(alu_src_e_i),
-        .alu_control_e_i(alu_control_e_i),
-        .invert_cond_e_i(invert_cond_e_i),
-        .jump_src_e_i(jump_src_e_i),
-        .rs1_e_o(rs1_e),
-        .rs2_e_o(rs2_e),
-        .pc_target_e_o(pc_target_e),
-        .take_branch_e_o(take_branch_e),
+        .flush_e(flush_e),
+        .forward_a_e(forward_a_e),
+        .forward_b_e(forward_b_e),
+        .alu_src_e(alu_src_e),
+        .alu_control_e(alu_control_e),
+        .invert_cond_e(invert_cond_e),
+        .jump_src_e(jump_src_e),
+        .rs1_e(rs1_e),
+        .rs2_e(rs2_e),
+        .pc_target_e(pc_target_e),
+        .take_branch_e(take_branch_e),
 
-        .alu_result_e_o(alu_result_e),
-        .write_data_e_o(write_data_e),
-        .rd_e_o(rd_e),
-        .pc_plus_4_e_o(pc_plus_4_e)
+        .alu_result_e(alu_result_e),
+        .write_data_e(write_data_e),
+        .rd_e(rd_e),
+        .pc_plus_4_e(pc_plus_4_e)
     );
 
     logic [31:0] read_data_m;
-    logic [4:0] rd_m;
     logic [31:0] pc_plus_4_m;
     Memory memory (
-        .clk_i             (clk_i),
-        .reset_i           (reset_i),
+        .clk             (clk),
+        .reset           (reset),
         // input from previous pipeline
-        .alu_result_e_i    (alu_result_e),
-        .write_data_e_i    (write_data_e),
-        .rd_e_i            (rd_e),
-        .pc_plus_4_e_i     (pc_plus_4_e),
+        .alu_result_e    (alu_result_e),
+        .write_data_e    (write_data_e),
+        .rd_e            (rd_e),
+        .pc_plus_4_e     (pc_plus_4_e),
         // control
-        .mem_write_m_i     (mem_write_m_i),
+        .mem_write_m     (mem_write_m),
         // memory bus
-        .bus_addr_o            (bus_addr_o),
-        .bus_rd_data_i         (bus_rd_data_i),
-        .bus_wr_data_o         (bus_wr_data_o),
-        .bus_wr_en_o           (bus_wr_en_o),
+        .bus_addr            (bus_addr),
+        .bus_rd_data         (bus_rd_data),
+        .bus_wr_data         (bus_wr_data),
+        .bus_wr_en           (bus_wr_en),
         // output to next pipeline
-        .alu_result_m_o    (alu_result_m),
-        .read_data_m_o     (read_data_m),
-        .rd_m_o            (rd_m),
-        .pc_plus_4_m_o     (pc_plus_4_m)
+        .alu_result_m    (alu_result_m),
+        .read_data_m     (read_data_m),
+        .rd_m            (rd_m),
+        .pc_plus_4_m     (pc_plus_4_m)
     );
 
     Writeback writeback (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .alu_result_m_i(alu_result_m),
-        .read_data_m_i(read_data_m),
-        .rd_m_i(rd_m),
-        .pc_plus_4_m_i(pc_plus_4_m),
+        .alu_result_m(alu_result_m),
+        .read_data_m(read_data_m),
+        .rd_m(rd_m),
+        .pc_plus_4_m(pc_plus_4_m),
 
-        .result_src_w_i(result_src_w_i),
+        .result_src_w(result_src_w),
 
-        .result_w_o(result_w),
-        .rd_w_o(rd_w)
+        .result_w(result_w),
+        .rd_w(rd_w)
     );
-
-    // output to control
-    always_comb begin
-        op_o = op;
-        funct3_o = funct3;
-        funct7_o = funct7;
-        take_branch_e_o = take_branch_e;
-    end
-
-    // output to hazard
-    always_comb begin
-        rs1_d_o = rs1_d;
-        rs2_d_o = rs2_d;
-        rs1_e_o = rs1_e;
-        rs2_e_o = rs2_e;
-        rd_e_o = rd_e;
-        rd_m_o = rd_m;
-        rd_w_o = rd_w;
-    end
 
 endmodule

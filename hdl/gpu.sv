@@ -10,9 +10,9 @@ module Gpu #(
     parameter BLUE_BITS = 4,
     localparam COLOR_BITS = RED_BITS + GREEN_BITS + BLUE_BITS
 ) (
-    input logic gpu_clk_i,
-    input logic vga_clk_i,
-    input logic reset_i,
+    input logic gpu_clk,
+    input logic vga_clk,
+    input logic reset,
 
     // AXI4 host interface
     input logic [11:0]S_AXI_araddr,
@@ -55,11 +55,11 @@ module Gpu #(
     input logic s_axi_aresetn,
 
     // video interface
-    output logic vga_hs_o,
-    output logic vga_vs_o,
-    output logic [RED_BITS-1:0] vga_r_o,
-    output logic [GREEN_BITS-1:0] vga_g_o,
-    output logic [BLUE_BITS-1:0] vga_b_o
+    output logic vga_hs,
+    output logic vga_vs,
+    output logic [RED_BITS-1:0] vga_r,
+    output logic [GREEN_BITS-1:0] vga_g,
+    output logic [BLUE_BITS-1:0] vga_b
 );
     logic [31:0] gpu_status, gpu_control;
 
@@ -99,27 +99,27 @@ module Gpu #(
         .S_AXI_wstrb(S_AXI_wstrb),
         .S_AXI_wvalid(S_AXI_wvalid),
 
-        .gpu_status_i(gpu_status),
-        .gpu_control_o(gpu_control)
+        .gpu_status(gpu_status),
+        .gpu_control(gpu_control)
     );
 
-    // handle clock domain crossing (s_axi_aclk -> gpu_clk_i)
+    // handle clock domain crossing (s_axi_aclk -> gpu_clk)
     logic [31:0] control;
 
     Latency #(
         .LENGTH(2),
         .WIDTH(1*32)
     ) gpu_reg_synchronizer (
-        .clk_i(gpu_clk_i),
-        .reset_i(reset_i),
+        .clk(gpu_clk),
+        .reset(reset),
 
-        .data_i({gpu_control}),
-        .data_o({control})
+        .data({gpu_control}),
+        .data({control})
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x;
     logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index;
+    logic [$clog2(PALETTE_LENGTH)-1:0] fb_wrndex;
     logic fb_wr_en;
 
     DisplayProcessor #(
@@ -128,25 +128,25 @@ module Gpu #(
         .PALETTE_LENGTH(PALETTE_LENGTH),
         .COLOR_BITS(COLOR_BITS)
     ) display_processor (
-        .clk_i(gpu_clk_i),
-        .reset_i(reset_i),
+        .clk(gpu_clk),
+        .reset(reset),
 
-        .status_o(gpu_status),
-        .control_i(control),
+        .status(gpu_status),
+        .control(control),
 
-        .fb_wr_x_o(fb_wr_x),
-        .fb_wr_y_o(fb_wr_y),
-        .fb_wr_index_o(fb_wr_index),
-        .fb_wr_en_o(fb_wr_en),
+        .fb_wr_x(fb_wr_x),
+        .fb_wr_y(fb_wr_y),
+        .fb_wr_index(fb_wrndex),
+        .fb_wr_en(fb_wr_en),
 
-        .palette_wr_index_o(),
-        .palette_wr_color_o(),
-        .palette_wr_en_o()
+        .palette_wr_index(),
+        .palette_wr_color(),
+        .palette_wr_en()
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
     logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] palette_index;
+    logic [$clog2(PALETTE_LENGTH)-1:0] palettendex;
     logic [COLOR_BITS-1:0] color;
 
     Framebuffer #(
@@ -154,52 +154,52 @@ module Gpu #(
         .RESOLUTION_Y(RESOLUTION_Y),
         .PALETTE_LENGTH(PALETTE_LENGTH)
     ) framebuffer (
-        .reset_i(reset_i),
+        .reset(reset),
         
-        .rd_clk_i(vga_clk_i),
-        .re_i('1),
-        .pxl_x_i(fb_rd_x),
-        .pxl_y_i(fb_rd_y),
-        .palette_index_o(palette_index),
+        .rd_clk(vga_clk),
+        .re('1),
+        .pxl_x(fb_rd_x),
+        .pxl_y(fb_rd_y),
+        .palette_index(palettendex),
 
-        .wr_clk_i(gpu_clk_i),
-        .we_i(fb_wr_en),
-        .wr_pxl_x_i(fb_wr_x),
-        .wr_pxl_y_i(fb_wr_y),
-        .wr_palette_index_i(fb_wr_index)
+        .wr_clk(gpu_clk),
+        .we(fb_wr_en),
+        .wr_pxl_x(fb_wr_x),
+        .wr_pxl_y(fb_wr_y),
+        .wr_palette_index(fb_wrndex)
     );
 
     Palette #(
         .PALETTE_LENGTH(PALETTE_LENGTH),
         .COLOR_BITS(COLOR_BITS)
     ) palette (
-        .reset_i(reset_i),
+        .reset(reset),
 
-        .rd_clk_i(vga_clk_i),
-        .rd_en_i('1),
-        .rd_index_i(palette_index),
-        .rd_color_o(color),
+        .rd_clk(vga_clk),
+        .rd_en('1),
+        .rd_index(palettendex),
+        .rd_color(color),
 
-        .wr_clk_i(gpu_clk_i),
-        .wr_en_i('0)
+        .wr_clk(gpu_clk),
+        .wr_en('0)
     );
 
     VideoController #(
         .SYNC_LATENCY(SYNC_LATENCY)
     ) video_controller (
-        .clk_i(vga_clk_i),
-        .reset_i(reset_i),
+        .clk(vga_clk),
+        .reset(reset),
 
-        .fb_rd_x_o(fb_rd_x),
-        .fb_rd_y_o(fb_rd_y),
-        .color_i(color),
+        .fb_rd_x(fb_rd_x),
+        .fb_rd_y(fb_rd_y),
+        .color(color),
 
-        .vga_hs_o(vga_hs_o),
-        .vga_vs_o(vga_vs_o),
+        .vga_hs(vga_hs),
+        .vga_vs(vga_vs),
 
-        .vga_r_o(vga_r_o),
-        .vga_g_o(vga_g_o),
-        .vga_b_o(vga_b_o)
+        .vga_r(vga_r),
+        .vga_g(vga_g),
+        .vga_b(vga_b)
     );
 
 endmodule

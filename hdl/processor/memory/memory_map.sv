@@ -11,68 +11,68 @@ module MemoryMap #(
     parameter FRAMEBUFFER_BASE_ADDR = 131072,
     parameter FRAMEBUFFER_BYTES = 400*300
 ) (
-    input logic [31:0] bus_addr_i,
-    output logic [31:0] bus_rd_data_o,
-    input logic [31:0] bus_wr_data_i,
-    input logic bus_wr_en_i,
+    input logic [31:0] bus_addr,
+    output logic [31:0] bus_rd_data,
+    input logic [31:0] bus_wr_data,
+    input logic bus_wr_en,
 
     // main memory
-    output logic [$clog2(MEMORY_BYTES)-1:0] mem_addr_o,
-    input logic [31:0] mem_rd_data_i,
-    output logic [31:0] mem_wr_data_o,
-    output logic mem_wr_en_o,
+    output logic [$clog2(MEMORY_BYTES)-1:0] mem_addr,
+    input logic [31:0] mem_rd_data,
+    output logic [31:0] mem_wr_data,
+    output logic mem_wr_en,
 
     // framebuffer
-    output logic [$clog2(FRAMEBUFFER_BYTES)-1:0] fb_addr_o,
-    input logic [31:0] fb_rd_data_i,
-    output logic [31:0] fb_wr_data_o,
-    output logic fb_wr_en_o,
+    output logic [$clog2(FRAMEBUFFER_BYTES)-1:0] fb_addr,
+    input logic [31:0] fb_rd_data,
+    output logic [31:0] fb_wr_data,
+    output logic fb_wr_en,
 
     // palette
-    output logic [$clog2(PALETTE_BYTES)-1:0] palette_addr_o,
-    input logic [31:0] palette_rd_data_i,
-    output logic [31:0] palette_wr_data_o,
-    output logic palette_wr_en_o
+    output logic [$clog2(PALETTE_BYTES)-1:0] palette_addr,
+    input logic [31:0] palette_rd_data,
+    output logic [31:0] palette_wr_data,
+    output logic palette_wr_en
 );
     // check if MSBs of bus address match MSBs of base address
     logic access_memory;
     logic access_framebuffer;
     logic access_palette;
     always_comb begin
-        access_memory = (bus_addr_i[31:$clog2(MEMORY_BYTES)] == MEMORY_BASE_ADDR[31:$clog2(MEMORY_BYTES)]);
-        access_palette = (bus_addr_i[31:$clog2(PALETTE_BYTES)] == PALETTE_BASE_ADDR[31:$clog2(PALETTE_BYTES)]);
-        access_framebuffer = (bus_addr_i[31:$clog2(FRAMEBUFFER_BYTES)] == FRAMEBUFFER_BASE_ADDR[31:$clog2(FRAMEBUFFER_BYTES)]);
+        access_memory = (bus_addr[31:$clog2(MEMORY_BYTES)] == MEMORY_BASE_ADDR[31:$clog2(MEMORY_BYTES)]);
+        access_palette = (bus_addr[31:$clog2(PALETTE_BYTES)] == PALETTE_BASE_ADDR[31:$clog2(PALETTE_BYTES)]);
+        access_framebuffer = (bus_addr[31:$clog2(FRAMEBUFFER_BYTES)] == FRAMEBUFFER_BASE_ADDR[31:$clog2(FRAMEBUFFER_BYTES)]);
     end
 
     always_comb begin
         // memory
-        mem_addr_o = bus_addr_i[$clog2(MEMORY_BYTES)-1:0];
-        mem_wr_data_o = bus_wr_data_i;
-        mem_wr_en_o = access_memory && bus_wr_en_i;
+        mem_addr = bus_addr[$clog2(MEMORY_BYTES)-1:0];
+        mem_wr_data = bus_wr_data;
+        mem_wr_en = access_memory && bus_wr_en;
 
         // palette
-        palette_addr_o = bus_addr_i[$clog2(PALETTE_BYTES)-1:0];
-        palette_wr_data_o = bus_wr_data_i;
-        palette_wr_en_o = access_palette && bus_wr_en_i;
+        palette_addr = bus_addr[$clog2(PALETTE_BYTES)-1:0];
+        palette_wr_data = bus_wr_data;
+        palette_wr_en = access_palette && bus_wr_en;
 
         // framebuffer
-        fb_addr_o = bus_addr_i[$clog2(FRAMEBUFFER_BYTES)-1:0];
-        fb_wr_data_o = bus_wr_data_i;
-        fb_wr_en_o = access_framebuffer && bus_wr_en_i;
+        fb_addr = bus_addr[$clog2(FRAMEBUFFER_BYTES)-1:0];
+        fb_wr_data = bus_wr_data;
+        fb_wr_en = access_framebuffer && bus_wr_en;
     end
 
     always_comb begin
         if (access_memory) begin
-            bus_rd_data_o = mem_rd_data_i;
+            bus_rd_data = mem_rd_data;
         end
         else if (access_palette) begin
-            bus_rd_data_o = palette_rd_data_i;
+            bus_rd_data = palette_rd_data;
         end
         else if (access_framebuffer) begin
-            bus_rd_data_o = fb_rd_data_i;
+            bus_rd_data = fb_rd_data;
         end
         else begin
-            bus_rd_data_o = '0;
+            bus_rd_data = '0;
         end
     end
 

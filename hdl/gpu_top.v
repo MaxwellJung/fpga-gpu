@@ -1,7 +1,7 @@
 module GpuTop (
-    input wire gpu_clk_i,
-    input wire vga_clk_i,
-    input wire reset_i,
+    input wire gpu_clk,
+    input wire vga_clk,
+    input wire reset,
 
     // host interface
     input wire [11:0]S_AXI_araddr,
@@ -44,16 +44,16 @@ module GpuTop (
     input wire s_axi_aresetn,
 
     // video interface
-    output wire vga_hs_o,
-    output wire vga_vs_o,
-    output wire [3:0] vga_r_o,
-    output wire [3:0] vga_g_o,
-    output wire [3:0] vga_b_o
+    output wire vga_hs,
+    output wire vga_vs,
+    output wire [3:0] vga_r,
+    output wire [3:0] vga_g,
+    output wire [3:0] vga_b
 );
     Gpu gpu_0 (
-        .gpu_clk_i(gpu_clk_i),
-        .vga_clk_i(vga_clk_i),
-        .reset_i(reset_i),
+        .gpu_clk(gpu_clk),
+        .vga_clk(vga_clk),
+        .reset(reset),
 
         .S_AXI_araddr(S_AXI_araddr),
         .S_AXI_arburst(S_AXI_arburst),
@@ -89,11 +89,11 @@ module GpuTop (
         .s_axi_aclk(s_axi_aclk),
         .s_axi_aresetn(s_axi_aresetn),
 
-        .vga_hs_o(vga_hs_o),
-        .vga_vs_o(vga_vs_o),
-        .vga_r_o(vga_r_o),
-        .vga_g_o(vga_g_o),
-        .vga_b_o(vga_b_o)
+        .vga_hs(vga_hs),
+        .vga_vs(vga_vs),
+        .vga_r(vga_r),
+        .vga_g(vga_g),
+        .vga_b(vga_b)
     );
 
 endmodule

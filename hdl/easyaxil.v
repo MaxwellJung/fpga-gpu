@@ -126,7 +126,7 @@ module	easyaxil #(
 		// {{{
 		wire	awskd_valid, wskd_valid;
 
-		skidbuffer #(.OPT_OUTREG(0),
+		skidbuffer #(.OPTUTREG(0),
 				.OPT_LOWPOWER(OPT_LOWPOWER),
 				.DW(C_AXI_ADDR_WIDTH-ADDRLSB))
 		axilawskid(//
@@ -136,7 +136,7 @@ module	easyaxil #(
 			.o_valid(awskd_valid), .i_ready(axil_write_ready),
 			.o_data(awskd_addr));
 
-		skidbuffer #(.OPT_OUTREG(0),
+		skidbuffer #(.OPTUTREG(0),
 				.OPT_LOWPOWER(OPT_LOWPOWER),
 				.DW(C_AXI_DATA_WIDTH+C_AXI_DATA_WIDTH/8))
 		axilwskid(//
@@ -196,7 +196,7 @@ module	easyaxil #(
 		// {{{
 		wire	arskd_valid;
 
-		skidbuffer #(.OPT_OUTREG(0),
+		skidbuffer #(.OPTUTREG(0),
 				.OPT_LOWPOWER(OPT_LOWPOWER),
 				.DW(C_AXI_ADDR_WIDTH-ADDRLSB))
 		axilarskid(//
@@ -305,12 +305,12 @@ module	easyaxil #(
 
 	// Make Verilator happy
 	// {{{
-	// Verilator lint_off UNUSED
+	// Verilator lintff UNUSED
 	wire	unused;
 	assign	unused = &{ 1'b0, S_AXI_AWPROT, S_AXI_ARPROT,
 			S_AXI_ARADDR[ADDRLSB-1:0],
 			S_AXI_AWADDR[ADDRLSB-1:0] };
-	// Verilator lint_on  UNUSED
+	// Verilator lintn  UNUSED
 	// }}}
 ////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -330,9 +330,9 @@ module	easyaxil #(
 	//
 	// {{{
 	localparam	F_AXIL_LGDEPTH = 4;
-	wire	[F_AXIL_LGDEPTH-1:0]	faxil_rd_outstanding,
-					faxil_wr_outstanding,
-					faxil_awr_outstanding;
+	wire	[F_AXIL_LGDEPTH-1:0]	faxil_rdutstanding,
+					faxil_wrutstanding,
+					faxil_awrutstanding;
 
 	faxil_slave #(
 		// {{{
@@ -342,7 +342,7 @@ module	easyaxil #(
 		.F_AXI_MAXWAIT(3),
 		.F_AXI_MAXDELAY(3),
 		.F_AXI_MAXRSTALL(5),
-		.F_OPT_COVER_BURST(4)
+		.FPT_COVER_BURST(4)
 		// }}}
 	) faxil(
 		// {{{
@@ -372,27 +372,27 @@ module	easyaxil #(
 		.i_axi_rdata( S_AXI_RDATA),
 		.i_axi_rresp( S_AXI_RRESP),
 		//
-		.f_axi_rd_outstanding(faxil_rd_outstanding),
-		.f_axi_wr_outstanding(faxil_wr_outstanding),
-		.f_axi_awr_outstanding(faxil_awr_outstanding)
+		.f_axi_rdutstanding(faxil_rdutstanding),
+		.f_axi_wrutstanding(faxil_wrutstanding),
+		.f_axi_awrutstanding(faxil_awrutstanding)
 		// }}}
 		);
 
 	always @(*)
 	if (OPT_SKIDBUFFER)
 	begin
-		assert(faxil_awr_outstanding== (S_AXI_BVALID ? 1:0)
+		assert(faxil_awrutstanding== (S_AXI_BVALID ? 1:0)
 			+(S_AXI_AWREADY ? 0:1));
-		assert(faxil_wr_outstanding == (S_AXI_BVALID ? 1:0)
+		assert(faxil_wrutstanding == (S_AXI_BVALID ? 1:0)
 			+(S_AXI_WREADY ? 0:1));
 
-		assert(faxil_rd_outstanding == (S_AXI_RVALID ? 1:0)
+		assert(faxil_rdutstanding == (S_AXI_RVALID ? 1:0)
 			+(S_AXI_ARREADY ? 0:1));
 	end else begin
-		assert(faxil_wr_outstanding == (S_AXI_BVALID ? 1:0));
-		assert(faxil_awr_outstanding == faxil_wr_outstanding);
+		assert(faxil_wrutstanding == (S_AXI_BVALID ? 1:0));
+		assert(faxil_awrutstanding == faxil_wrutstanding);
 
-		assert(faxil_rd_outstanding == (S_AXI_RVALID ? 1:0));
+		assert(faxil_rdutstanding == (S_AXI_RVALID ? 1:0));
 	end
 
 	//

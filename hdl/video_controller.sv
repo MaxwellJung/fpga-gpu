@@ -19,19 +19,19 @@ module VideoController #(
     parameter BLUE_BITS = 4,
     localparam COLOR_BITS = RED_BITS + GREEN_BITS + BLUE_BITS
 ) (
-    input logic clk_i,
-    input logic reset_i,
+    input logic clk,
+    input logic reset,
 
-    output logic [$clog2(H_VIS_AREA_PXL)-1:0] fb_rd_x_o,
-    output logic [$clog2(V_VIS_AREA_PXL)-1:0] fb_rd_y_o,
-    input logic [COLOR_BITS-1:0] color_i,
+    output logic [$clog2(H_VIS_AREA_PXL)-1:0] fb_rd_x,
+    output logic [$clog2(V_VIS_AREA_PXL)-1:0] fb_rd_y,
+    input logic [COLOR_BITS-1:0] color,
 
-    output logic vga_hs_o,
-    output logic vga_vs_o,
+    output logic vga_hs,
+    output logic vga_vs,
 
-    output logic [RED_BITS-1:0] vga_r_o,
-    output logic [GREEN_BITS-1:0] vga_g_o,
-    output logic [BLUE_BITS-1:0] vga_b_o
+    output logic [RED_BITS-1:0] vga_r,
+    output logic [GREEN_BITS-1:0] vga_g,
+    output logic [BLUE_BITS-1:0] vga_b
 );
     logic [$clog2(H_WHOLE_LINE_PXL)-1:0] h_pxl_count;
     logic [$clog2(V_WHOLE_FRAME_PXL)-1:0] v_pxl_count;
@@ -50,29 +50,29 @@ module VideoController #(
 
         .SYNC_LATENCY(SYNC_LATENCY)
     ) vga_timing_generator_0 (
-        .clk_i(clk_i),
-        .reset_i(reset_i),
+        .clk(clk),
+        .reset(reset),
 
-        .h_pxl_count_o(h_pxl_count),
-        .v_pxl_count_o(v_pxl_count),
+        .h_pxl_count(h_pxl_count),
+        .v_pxl_count(v_pxl_count),
 
-        .h_sync_o(vga_hs_o),
-        .v_sync_o(vga_vs_o),
+        .h_sync(vga_hs),
+        .v_sync(vga_vs),
 
-        .h_visible_o(h_visible),
-        .v_visible_o(v_visible)
+        .h_visible(h_visible),
+        .v_visible(v_visible)
     );
 
-    always_ff @(posedge clk_i) begin
-        if (reset_i) begin
-            fb_rd_x_o <= '0;
-            fb_rd_y_o <= '0;
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            fb_rd_x <= '0;
+            fb_rd_y <= '0;
         end else begin
-            fb_rd_x_o <= (h_pxl_count < H_VIS_AREA_PXL) ? h_pxl_count>>1 : 0;
-            fb_rd_y_o <= (v_pxl_count < V_VIS_AREA_PXL) ? ((V_VIS_AREA_PXL-1) - v_pxl_count)>>1 : 0;
+            fb_rd_x <= (h_pxl_count < H_VIS_AREA_PXL) ? h_pxl_count>>1 : 0;
+            fb_rd_y <= (v_pxl_count < V_VIS_AREA_PXL) ? ((V_VIS_AREA_PXL-1) - v_pxl_count)>>1 : 0;
         end
     end
 
-    assign {vga_r_o, vga_g_o, vga_b_o} = (h_visible & v_visible) ? color_i : '0;
+    assign {vga_r, vga_g, vga_b} = (h_visible & v_visible) ? color : '0;
 
 endmodule

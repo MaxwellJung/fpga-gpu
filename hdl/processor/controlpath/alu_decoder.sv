@@ -1,25 +1,23 @@
 `include "./hdl/processor/defines.svh"
 
 module AluDecoder (
-    input opcode_t op_i,
-    input logic [2:0] funct3_i,
-    input logic [6:0] funct7_i,
-    output alu_control_t alu_control_o,
-    output logic invert_cond_o
+    input opcode_t op,
+    input logic [2:0] funct3,
+    input logic [6:0] funct7,
+    output alu_control_t alu_control,
+    output logic invert_cond
 );
-    alu_control_t alu_control;
-    logic invert_cond;
     always_comb begin
         // NOOP default
         alu_control = ALU_NOOP;
         invert_cond = '0;
-        case(op_i)
+        case(op)
             OP_LOAD, OP_STORE:
                 alu_control = ALU_ADD; // lw, sw
             OP_JAL:
                 alu_control = ALU_ADD; // jal
             OP_BRANCH: begin
-                case (funct3_i)
+                case (funct3)
                     3'b000: begin
                         alu_control = ALU_EQUAL; // beq
                         invert_cond = 1'b0;
@@ -42,10 +40,10 @@ module AluDecoder (
                     end
                 endcase
             end
-            OP_ALU_R, OP_ALU_I: begin // R–type or I–type ALU
-                case(funct3_i)
+            OP_ALU_R, OP_ALU: begin // R–type or I–type ALU
+                case(funct3)
                     3'b000: begin
-                        case ({op_i[5], funct7_i[5]})
+                        case ({op[5], funct7[5]})
                             2'b00: alu_control = ALU_ADD; // addi
                             // subi not possible because funct7[5] conflicts with immediate[10]
                             2'b01: alu_control = ALU_ADD; // addi 
@@ -59,7 +57,7 @@ module AluDecoder (
                     3'b011: alu_control = ALU_NOOP; // sltu, sltiu
                     3'b100: alu_control = ALU_XOR; // xor, xori
                     3'b101: begin
-                        case ({op_i[5], funct7_i[5]})
+                        case ({op[5], funct7[5]})
                             2'b00: alu_control = ALU_SRL; // srli
                             2'b01: alu_control = ALU_SRA; // srai
                             2'b10: alu_control = ALU_SRL; // srl
@@ -67,7 +65,7 @@ module AluDecoder (
                             default: alu_control = ALU_NOOP; // NOOP
                         endcase
                     end
-                    3'b110: alu_control = ALU_OR; // or, ori
+                    3'b110: alu_control = ALUR; // or, ori
                     3'b111: alu_control = ALU_AND; // and, andi
                     default: alu_control = ALU_NOOP; // NOOP
                 endcase
@@ -81,8 +79,4 @@ module AluDecoder (
         endcase
     end
 
-    always_comb begin
-        alu_control_o = alu_control;
-        invert_cond_o = invert_cond;
-    end
 endmodule
