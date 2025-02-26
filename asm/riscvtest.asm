@@ -32,18 +32,5 @@ around:
 end:
     add x2, x2, x9        # x2 = (7 + 18) = 25 48 00910133
     sw x2, 0x20(x3)       # [100] = 25 4C 0221A023
-custom:
-    li x2, 2048           # x2 = 2048
-    li x3, 0              # x3 = 0
-    sw x3, 0x00(x2)       # [2048] = 0
-    addi x2, x2, 1        # x2++
-    addi x3, x3, 1        # x3++
-    sw x3, 0x00(x2)       # [x2] = 1
-    addi x2, x2, 1        # x2++
-    addi x3, x3, 1        # x3++
-    sw x3, 0x00(x2)       # [x2] = 2
-    addi x2, x2, 1        # x2++
-    addi x3, x3, 1        # x3++
-    sw x3, 0x00(x2)       # [x2] = 3
 done:
-    beq x2, x2, done      # infinite loop 54 00210063
+    beq x2, x2, done      # infinite loop 50 00210063
