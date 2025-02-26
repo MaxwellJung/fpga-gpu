@@ -1,7 +1,7 @@
 // Maps memory bus read/write to I/O devices
 // Base Address must be integer multiples of 2**$clog2(bytes)
 // otherwise, MSBs cannot be used to identify I/O device
-module MemoryMap #(
+module DataBus #(
     parameter MEMORY_BASE_ADDR = 0,
     parameter MEMORY_BYTES = 1024,
 

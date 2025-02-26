@@ -79,7 +79,7 @@ module DisplayProcessor #(
     logic [31:0] mem_rd_data;
     logic [31:0] mem_wr_data;
     logic mem_wr_en;
-    MemoryMap memory_map (
+    DataBus data_bus (
         .bus_addr               (bus_addr),
         .bus_rd_data            (bus_rd_data),
         .bus_wr_data            (bus_wr_data),
