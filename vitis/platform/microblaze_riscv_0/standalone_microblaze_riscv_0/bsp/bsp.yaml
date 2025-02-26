@@ -165,7 +165,7 @@ drv_info:
     driver: uartlite
     ip_name: axi_uartlite
     path: /tools/Xilinx/Vitis/2024.2/data/embeddedsw/XilinxProcessorIPLib/drivers/uartlite_v3_11
-  gpu_axi_bram_ctrl_0:
+  gpu_0_axi_bram_ctrl_0:
     driver: bram
     ip_name: axi_bram_ctrl
     path: /tools/Xilinx/Vitis/2024.2/data/embeddedsw/XilinxProcessorIPLib/drivers/bram_v4_11

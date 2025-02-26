@@ -1,3 +1,6 @@
+_ide
+.rigel_lopper
+
 # Ignore build output directory
 /build
 /export

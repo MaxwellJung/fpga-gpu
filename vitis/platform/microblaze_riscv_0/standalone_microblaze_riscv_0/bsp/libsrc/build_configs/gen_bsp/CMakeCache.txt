@@ -256,6 +256,9 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=ON
 //Device Id
 DEVICE_ID:STRING=7a100t
 
+//Number of slrs
+NUMBER_OF_SLRS:STRING=0x1
+
 //The directory containing a CMake configuration file for SCUGIC.
 SCUGIC_DIR:PATH=SCUGIC_DIR-NOTFOUND
 

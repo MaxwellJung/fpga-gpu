@@ -1,0 +1,8 @@
+create libxil.a
+addlib /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/uartlite/src/libuartlite.a
+addlib /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/tmrctr/src/libtmrctr.a
+addlib /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/spi/src/libspi.a
+addlib /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/intc/src/libintc.a
+addlib /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/gpio/src/libgpio.a
+save
+end

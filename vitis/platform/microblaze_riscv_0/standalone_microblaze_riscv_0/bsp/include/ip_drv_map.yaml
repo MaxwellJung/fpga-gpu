@@ -10,7 +10,7 @@ axi_timer_0:
 axi_uartlite_0:
 - axi_uartlite
 - uartlite
-gpu_axi_bram_ctrl_0:
+gpu_0_axi_bram_ctrl_0:
 - axi_bram_ctrl
 - bram
 microblaze_riscv_0_axi_intc:
