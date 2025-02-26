@@ -12,24 +12,24 @@ module DataCache #(
     input logic [WORD_BITS-1:0] wr_data,
     input logic wr_en
 );
-    logic [WORD_COUNT-1:0][WORD_BITS-1:0] ram;
+    logic [WORD_BITS-1:0] ram[WORD_COUNT];
 
-    logic [$clog2(WORD_COUNT)-1:0] wordndex;
-    assign wordndex = address[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
+    logic [$clog2(WORD_COUNT)-1:0] wordindex;
+    assign wordindex = address[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
 
     always_ff @(posedge clk) begin
         if (reset) begin
-            ram <= '0;
+//            ram <= '0;
         end
         else begin
             if (wr_en) begin
-                ram[wordndex] <= wr_data;
+                ram[wordindex] <= wr_data;
             end
         end
     end
 
     always_comb begin
-        rd_data = ram[wordndex];
+        rd_data = ram[wordindex];
     end
 
 endmodule
