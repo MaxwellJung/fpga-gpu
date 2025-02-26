@@ -13,9 +13,8 @@ module Framebuffer #(
 
     input logic wr_clk,
     input logic we,
-    input logic [$clog2(RESOLUTION_X)-1:0] wr_pxl_x,
-    input logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y,
-    input logic [$clog2(PALETTE_LENGTH)-1:0] wr_palette_index
+    input logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] pxl_index,
+    input logic [$clog2(PALETTE_LENGTH)-1:0] pxl_value
 );
     logic [$clog2(PALETTE_LENGTH)-1:0] pixels[RESOLUTION_X*RESOLUTION_Y];
 
@@ -25,7 +24,7 @@ module Framebuffer #(
         end
         else
             if (we)
-                pixels[RESOLUTION_X*wr_pxl_y + wr_pxl_x] <= wr_palette_index;
+                pixels[pxl_index] <= pxl_value;
     end
 
     always_ff @(posedge rd_clk) begin

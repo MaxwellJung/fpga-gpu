@@ -13,27 +13,27 @@ module TbDisplayProcessor();
     logic [31:0] gpu_control;
 
     // instantiate device to be tested
+
     DisplayProcessor #(
-        .INIT_FILE("build/gputest.mem"),
-        .RESOLUTION_X(RESOLUTION_X),
-        .RESOLUTION_Y(RESOLUTION_Y),
-        .PALETTE_LENGTH(PALETTE_LENGTH),
-        .COLOR_BITS(COLOR_BITS)
-    ) display_processor (
-        .clk(gpu_clk),
-        .reset(gpu_reset),
-
-        .status(gpu_status),
-        .control(gpu_control),
-
-        .fb_wr_x(),
-        .fb_wr_y(),
-        .fb_wr_index(),
-        .fb_wr_en(),
-
-        .palette_wr_index(),
-        .palette_wr_color(),
-        .palette_wr_en()
+        .INIT_FILE           ("build/gputest.mem"),
+        .RESOLUTION_X        (RESOLUTION_X),
+        .RESOLUTION_Y        (RESOLUTION_Y),
+        .PALETTE_LENGTH      (PALETTE_LENGTH),
+        .COLOR_BITS          (COLOR_BITS)
+    ) u_DisplayProcessor (
+        .clk                 (gpu_clk),
+        .reset               (gpu_reset),
+        // memory mapped i/o
+        .status              (gpu_status),
+        .control             (gpu_control),
+        // color palette
+        .palette_wr_index    (),
+        .palette_wr_color    (),
+        .palette_wr_en       (),
+        // framebuffer
+        .fb_pxl_index        (),
+        .fb_pxl_value        (),
+        .fb_wr_en            ()
     );
 
     // generate clock to sequence tests

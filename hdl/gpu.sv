@@ -118,9 +118,8 @@ module Gpu #(
         .out({control})
     );
 
-    logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x;
-    logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] fb_wrndex;
+    logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_pxl_index;
+    logic [$clog2(PALETTE_LENGTH)-1:0] fb_pxl_value;
     logic fb_wr_en;
 
     logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index;
@@ -140,9 +139,8 @@ module Gpu #(
         .status(gpu_status),
         .control(control),
 
-        .fb_wr_x(fb_wr_x),
-        .fb_wr_y(fb_wr_y),
-        .fb_wr_index(fb_wrndex),
+        .fb_pxl_index(fb_pxl_index),
+        .fb_pxl_value(fb_pxl_value),
         .fb_wr_en(fb_wr_en),
 
         .palette_wr_index(palette_wr_index),
@@ -170,9 +168,8 @@ module Gpu #(
 
         .wr_clk(gpu_clk),
         .we(fb_wr_en),
-        .wr_pxl_x(fb_wr_x),
-        .wr_pxl_y(fb_wr_y),
-        .wr_palette_index(fb_wrndex)
+        .pxl_index(fb_pxl_index),
+        .wr_palette_index(fb_pxl_value)
     );
 
     Palette #(

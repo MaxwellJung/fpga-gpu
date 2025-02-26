@@ -20,9 +20,8 @@ module DisplayProcessor #(
     output logic palette_wr_en,
 
     // framebuffer
-    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x,
-    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_y,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_index,
+    output logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_pxl_index,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_pxl_value,
     output logic fb_wr_en
 );
     struct packed {
@@ -52,11 +51,6 @@ module DisplayProcessor #(
 
         end
     end
-
-    assign fb_wr_x = current_position.x;
-    assign fb_wr_y = current_position.y;
-    assign fb_wr_index = index;
-    assign fb_wr_en = '1;
 
     logic  inst_reset;
     logic [31:0] inst_addr;
@@ -99,10 +93,10 @@ module DisplayProcessor #(
         .dmem_wr_data            (dmem_wr_data),
         .dmem_wr_en              (dmem_wr_en),
         // framebuffer
-        .fb_addr                (),
+        .fb_addr                (fb_pxl_index),
         .fb_rd_data             (),
-        .fb_wr_data             (),
-        .fb_wr_en               (),
+        .fb_wr_data             (fb_pxl_value),
+        .fb_wr_en               (fb_wr_en),
         // palette
         .palette_addr           (palette_wr_index),
         .palette_rd_data        (),
