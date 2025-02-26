@@ -6,6 +6,8 @@ SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
 PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name '*.v')
 ASM_DIR := ./asm
 DATA_DIR := ./data
+# RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
+RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 
 all: gputest display-processor
 
@@ -15,12 +17,12 @@ gputest.mem: gputest.bin
 	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
 
 gputest.bin: gputest.out
-	riscv64-unknown-elf-objcopy -O binary --only-section=.text ${BUILD_DIR}/gputest.out ${BUILD_DIR}/gputest.bin
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/gputest.out ${BUILD_DIR}/gputest.bin
 
 gputest.out: ${ASM_DIR}/gputest.asm
 	mkdir -p $(BUILD_DIR)
-	riscv64-unknown-elf-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.out
-	riscv64-unknown-elf-objdump -d ${BUILD_DIR}/gputest.out > ${BUILD_DIR}/gputest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.out
+	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/gputest.out > ${BUILD_DIR}/gputest-objdump.txt
 
 riscvtest: riscvtest.mem
 
@@ -28,12 +30,12 @@ riscvtest.mem: riscvtest.bin
 	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
 
 riscvtest.bin: riscvtest.out
-	riscv64-unknown-elf-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin
 
 riscvtest.out: ${ASM_DIR}/riscvtest.asm
 	mkdir -p $(BUILD_DIR)
-	riscv64-unknown-elf-as -march=rv32i ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
-	riscv64-unknown-elf-objdump -d ${BUILD_DIR}/riscvtest.out > ${BUILD_DIR}/riscvtest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
+	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/riscvtest.out > ${BUILD_DIR}/riscvtest-objdump.txt
 
 # Vivado
 
