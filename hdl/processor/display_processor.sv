@@ -1,7 +1,7 @@
 `include "./hdl/processor/defines.svh"
 
 module DisplayProcessor #(
-    parameter INIT_FILE = "data/gpu_inst_init.mem",
+    parameter INIT_FILE = "build/gputest.mem",
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256,

@@ -22,7 +22,7 @@ module RegisterFile #(
         if (reset) begin
             registers <= '0;
         end else begin
-            if (wr_en) begin
+            if (wr_en && (address_3 != 0)) begin
                 registers[address_3] <= wr_data;
             end
         end

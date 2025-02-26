@@ -1,7 +1,7 @@
 `include "./hdl/processor/defines.svh"
 
 module RISCVCore #(
-    parameter INIT_FILE = "data/gpu_inst_init.mem"
+    parameter INIT_FILE = "build/gputest.mem"
 ) (
     input logic clk,
     input logic reset,

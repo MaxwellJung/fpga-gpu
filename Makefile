@@ -6,8 +6,8 @@ SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
 PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name '*.v')
 ASM_DIR := ./asm
 DATA_DIR := ./data
-# RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
-RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
+RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
+# RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 
 all: gputest display-processor
 

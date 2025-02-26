@@ -48,7 +48,7 @@ module TbDisplayProcessor();
         // hold gpu_reset for 22 ns
         gpu_reset <= 1; # 22; gpu_reset <= 0;
 
-        #(3000*GPU_CLK_PERIOD)
+        #(10000*GPU_CLK_PERIOD)
 
         $finish;
     end

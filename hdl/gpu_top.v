@@ -1,5 +1,5 @@
 module GpuTop #(
-    parameter INIT_FILE = "data/gpu_inst_init.mem"
+    parameter INIT_FILE = "build/gputest.mem"
 ) (
     input wire gpu_clk,
     input wire vga_clk,
