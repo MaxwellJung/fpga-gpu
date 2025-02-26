@@ -48,13 +48,13 @@ module VgaTimingGenerator #(
         .count(v_pxl_count)
     );
     
-    logic h_sync, v_sync, h_visible, v_visible;
-    assign h_sync = !(((H_VIS_AREA_PXL + H_FRONT_PORCH_PXL) <= h_pxl_count) 
+    logic h_sync_comb, v_sync_comb, h_visible_comb, v_visible_comb;
+    assign h_sync_comb = !(((H_VIS_AREA_PXL + H_FRONT_PORCH_PXL) <= h_pxl_count) 
                    && (h_pxl_count < (H_VIS_AREA_PXL + H_FRONT_PORCH_PXL + H_SYNC_PULSE_PXL)));
-    assign v_sync = !(((V_VIS_AREA_PXL + V_FRONT_PORCH_PXL) <= v_pxl_count) 
+    assign v_sync_comb = !(((V_VIS_AREA_PXL + V_FRONT_PORCH_PXL) <= v_pxl_count) 
                    && (v_pxl_count < (V_VIS_AREA_PXL + V_FRONT_PORCH_PXL + V_SYNC_PULSE_PXL)));
-    assign h_visible = h_pxl_count < H_VIS_AREA_PXL;
-    assign v_visible = v_pxl_count < V_VIS_AREA_PXL;
+    assign h_visible_comb = h_pxl_count < H_VIS_AREA_PXL;
+    assign v_visible_comb = v_pxl_count < V_VIS_AREA_PXL;
 
     Latency #(
         .LENGTH(SYNC_LATENCY),
@@ -63,8 +63,8 @@ module VgaTimingGenerator #(
         .clk(clk),
         .reset(reset),
 
-        .data({h_sync, v_sync, h_visible, v_visible}),
-        .data({h_sync, v_sync, h_visible, v_visible})
+        .in({h_sync_comb, v_sync_comb, h_visible_comb, v_visible_comb}),
+        .out({h_sync, v_sync, h_visible, v_visible})
     );
 
 endmodule

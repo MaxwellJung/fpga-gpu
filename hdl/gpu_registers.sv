@@ -14,11 +14,11 @@ module GpuRegisters #(
     input logic [WIDTH-1:0] din,
     input logic [BYTES_PER_REG-1:0] we,
 
+    // address 0x0 - write only
     input logic [31:0] gpu_status,
+    // address 0x4 - read/write
     output logic [31:0] gpu_control
 );
-    logic [31:0] gpu_status; // address 0x0 - write only
-    logic [31:0] gpu_control; // address 0x4 - read/write
     logic [ADDR_BITS-$clog2(BYTES_PER_REG)-1:0] reg_addr;
     assign reg_addr = addr >> $clog2(BYTES_PER_REG);
 
@@ -45,14 +45,6 @@ module GpuRegisters #(
                 end
             end
         end
-    end
-
-    always @(posedge clk) begin
-        gpu_status <= gpu_status;
-    end
-
-    always_comb begin
-        gpu_control = gpu_control;
     end
 
 endmodule

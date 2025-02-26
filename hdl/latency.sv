@@ -8,8 +8,8 @@ module Latency #(
     input  wire clk,
     input  wire reset,
 
-    input  wire [WIDTH-1:0] data,
-    output wire [WIDTH-1:0] data
+    input  wire [WIDTH-1:0] in,
+    output wire [WIDTH-1:0] out
 );
     reg [WIDTH-1:0] ff_chain [LENGTH-1:0];
     integer i;
@@ -20,13 +20,13 @@ module Latency #(
                 ff_chain[i] <= {WIDTH {1'b0}};
             end
         end else begin
-            ff_chain[0] <= data;
+            ff_chain[0] <= in;
             for (i = 1; i < LENGTH; i=i+1) begin
                 ff_chain[i] <= ff_chain[i-1];
             end
         end
     end
 
-    assign data = ff_chain[LENGTH-1];
+    assign out = ff_chain[LENGTH-1];
 
 endmodule

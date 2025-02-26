@@ -1,6 +1,7 @@
 `include "./hdl/processor/defines.svh"
 
 module DisplayProcessor #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem",
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256,
@@ -62,7 +63,9 @@ module DisplayProcessor #(
     logic [31:0] bus_wr_data;
     logic bus_wr_en;
 
-    RISCVCore riscv_core (
+    RISCVCore #(
+        .INIT_FILE(INIT_FILE)
+    ) riscv_core (
         .clk        (clk),
         .reset      (reset || ctl_rst),
         // memory bus

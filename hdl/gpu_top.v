@@ -1,4 +1,6 @@
-module GpuTop (
+module GpuTop #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem"
+) (
     input wire gpu_clk,
     input wire vga_clk,
     input wire reset,
@@ -50,7 +52,9 @@ module GpuTop (
     output wire [3:0] vga_g,
     output wire [3:0] vga_b
 );
-    Gpu gpu_0 (
+    Gpu #(
+        .INIT_FILE(INIT_FILE)
+    ) gpu_0 (
         .gpu_clk(gpu_clk),
         .vga_clk(vga_clk),
         .reset(reset),

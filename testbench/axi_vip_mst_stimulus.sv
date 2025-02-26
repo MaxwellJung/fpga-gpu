@@ -51,13 +51,13 @@ module axi_vip_mst_stimulus();
 
         agent.wait_drivers_idle(); 
 
-        // write to gpu control register
+        // write to gpu control register (reset high)
         mtestWID = $urandom_range(0,(1<<(0)-1)); 
         mtestWADDR = 64'h4;
         mtestWBurstLength = 0;
         mtestWDataSize = xil_axi_size_t'(xil_clog2((32)/8));
         mtestWBurstType = XIL_AXI_BURST_TYPE_INCR;
-        mtestWData = 1<<23;
+        mtestWData = 0<<23;
 
         wr_trans = agent.wr_driver.create_transaction("write transaction");
         wr_trans.set_write_cmd(
@@ -69,7 +69,7 @@ module axi_vip_mst_stimulus();
 
         agent.wait_drivers_idle();
 
-        // write to gpu control register
+        // write to gpu control register (reset low)
         mtestWID = $urandom_range(0,(1<<(0)-1)); 
         mtestWADDR = 64'h4;
         mtestWBurstLength = 0;

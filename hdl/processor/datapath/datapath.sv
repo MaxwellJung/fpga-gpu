@@ -1,6 +1,8 @@
 `include "./hdl/processor/defines.svh"
 
-module Datapath(
+module Datapath #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem"
+) (
     input logic clk,
     input logic reset,
 
@@ -45,7 +47,9 @@ module Datapath(
     logic [31:0] instruction_f;
     logic [31:0] pc_f;
     logic [31:0] pc_plus_4_f;
-    Fetch fetch (
+    Fetch #(
+        .INIT_FILE(INIT_FILE)
+    ) fetch (
         .clk(clk),
         .reset(reset),
 

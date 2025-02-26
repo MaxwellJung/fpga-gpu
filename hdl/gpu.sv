@@ -1,4 +1,5 @@
 module Gpu #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem",
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256,
@@ -113,8 +114,8 @@ module Gpu #(
         .clk(gpu_clk),
         .reset(reset),
 
-        .data({gpu_control}),
-        .data({control})
+        .in({gpu_control}),
+        .out({control})
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_wr_x;
@@ -123,6 +124,7 @@ module Gpu #(
     logic fb_wr_en;
 
     DisplayProcessor #(
+        .INIT_FILE(INIT_FILE),
         .RESOLUTION_X(RESOLUTION_X),
         .RESOLUTION_Y(RESOLUTION_Y),
         .PALETTE_LENGTH(PALETTE_LENGTH),

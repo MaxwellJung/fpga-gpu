@@ -1,4 +1,6 @@
-module Fetch (
+module Fetch #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem"
+) (
     input logic clk,
     input logic reset,
     
@@ -31,7 +33,9 @@ module Fetch (
     end
     assign pc_plus_4_f = pc_f + 4;
 
-    InstructionCache instruction_cache (
+    InstructionCache #(
+        .INIT_FILE(INIT_FILE)
+    ) instruction_cache (
         .address(pc_f),
         .rd_data(instruction_f)
     );

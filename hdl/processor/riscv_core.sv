@@ -1,6 +1,8 @@
 `include "./hdl/processor/defines.svh"
 
-module RISCVCore (
+module RISCVCore #(
+    parameter INIT_FILE = "data/gpu_inst_init.mem"
+) (
     input logic clk,
     input logic reset,
     
@@ -41,7 +43,9 @@ module RISCVCore (
     logic [4:0] rd_m;
     logic [4:0] rd_w;
 
-    Datapath datapath (
+    Datapath #(
+        .INIT_FILE(INIT_FILE)
+    ) datapath (
         .clk              (clk),
         .reset            (reset),
         // memory bus
