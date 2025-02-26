@@ -169,7 +169,7 @@ module Gpu #(
         .wr_clk(gpu_clk),
         .we(fb_wr_en),
         .pxl_index(fb_pxl_index),
-        .wr_palette_index(fb_pxl_value)
+        .pxl_value(fb_pxl_value)
     );
 
     Palette #(
