@@ -4,95 +4,95 @@ module Execute (
     input logic clk,
     input logic reset,
     
-    input logic [31:0] rd1_d,
-    input logic [31:0] rd2_d,
-    input logic [31:0] pc_d,
-    input logic [4:0] rs1_d,
-    input logic [4:0] rs2_d,
-    input logic [4:0] rd_d,
-    input logic [31:0] imm_ext_d,
-    input logic [31:0] pc_plus_4_d,
+    input logic [31:0] d_rs1_value,
+    input logic [31:0] d_rs2_value,
+    input logic [31:0] d_pc,
+    input logic [4:0] d_rs1,
+    input logic [4:0] d_rs2,
+    input logic [4:0] d_rd,
+    input logic [31:0] d_imm_ext,
+    input logic [31:0] d_pc_plus_4,
 
-    input logic [31:0] alu_result_m,
+    input logic [31:0] m_alu_result,
     
-    input logic [31:0] result_w,
+    input logic [31:0] w_result,
 
-    input logic flush_e,
-    input logic [1:0] forward_a_e,
-    input logic [1:0] forward_b_e,
-    input alu_src_t alu_src_e,
-    input alu_control_t alu_control_e,
-    input logic invert_cond_e,
-    input jump_src_t jump_src_e,
-    output logic [4:0] rs1_e,
-    output logic [4:0] rs2_e,
-    output logic [31:0] pc_target_e,
-    output logic take_branch_e,
+    input logic e_flush,
+    input logic [1:0] e_forward_a,
+    input logic [1:0] e_forward_b,
+    input alu_src_t e_alu_src,
+    input alu_control_t e_alu_control,
+    input logic e_invert_cond,
+    input jump_src_t e_jump_src,
+    output logic [4:0] e_rs1,
+    output logic [4:0] e_rs2,
+    output logic [31:0] e_pc_target,
+    output logic e_take_branch,
 
-    output logic [31:0] alu_result_e,
-    output logic [31:0] write_data_e,
-    output logic [4:0] rd_e,
-    output logic [31:0] pc_plus_4_e
+    output logic [31:0] e_alu_result,
+    output logic [31:0] e_write_data,
+    output logic [4:0] e_rd,
+    output logic [31:0] e_pc_plus_4
 );
-    logic [31:0] rd1_e;
-    logic [31:0] rd2_e;
-    logic [31:0] pc_e;
-    logic [31:0] imm_ext_e;
+    logic [31:0] e_rs1_value;
+    logic [31:0] e_rs2_value;
+    logic [31:0] e_pc;
+    logic [31:0] e_imm_ext;
     always_ff @(posedge clk) begin
-        if (reset || flush_e) begin
-            {rd1_e, rd2_e, pc_e, rs1_e, rs2_e, rd_e, imm_ext_e, pc_plus_4_e} <= '0;
+        if (reset || e_flush) begin
+            {e_rs1_value, e_rs2_value, e_pc, e_rs1, e_rs2, e_rd, e_imm_ext, e_pc_plus_4} <= '0;
         end else begin
-            {rd1_e, rd2_e, pc_e, rs1_e, rs2_e, rd_e, imm_ext_e, pc_plus_4_e} <= 
-            {rd1_d, rd2_d, pc_d, rs1_d, rs2_d, rd_d, imm_ext_d, pc_plus_4_d};
+            {e_rs1_value, e_rs2_value, e_pc, e_rs1, e_rs2, e_rd, e_imm_ext, e_pc_plus_4} <= 
+            {d_rs1_value, d_rs2_value, d_pc, d_rs1, d_rs2, d_rd, d_imm_ext, d_pc_plus_4};
         end
     end
 
-    logic [31:0] src_a_e;
+    logic [31:0] e_src_a;
     always_comb begin
-        case (forward_a_e)
-            2'b00: src_a_e = rd1_e;
-            2'b01: src_a_e = result_w;
-            2'b10: src_a_e = alu_result_m;
-            default: src_a_e = '0;
+        case (e_forward_a)
+            2'b00: e_src_a = e_rs1_value;
+            2'b01: e_src_a = w_result;
+            2'b10: e_src_a = m_alu_result;
+            default: e_src_a = '0;
         endcase
     end
 
     always_comb begin
-        case (forward_b_e)
-            2'b00: write_data_e = rd2_e;
-            2'b01: write_data_e = result_w;
-            2'b10: write_data_e = alu_result_m;
-            default: write_data_e = '0;
+        case (e_forward_b)
+            2'b00: e_write_data = e_rs2_value;
+            2'b01: e_write_data = w_result;
+            2'b10: e_write_data = m_alu_result;
+            default: e_write_data = '0;
         endcase
     end
 
-    logic [31:0] src_b_e;
+    logic [31:0] e_src_b;
     always_comb begin
-        case (alu_src_e)
-            ALU_SRC_REG: src_b_e = write_data_e;
-            ALU_SRCMM: src_b_e = imm_ext_e;
-            default: src_b_e = '0;
+        case (e_alu_src)
+            ALU_SRC_REG: e_src_b = e_write_data;
+            ALU_SRCMM: e_src_b = e_imm_ext;
+            default: e_src_b = '0;
         endcase
     end
 
     Alu alu (
-        .src_a(src_a_e),
-        .src_b(src_b_e),
-        .control(alu_control_e),
-        .invert_cond(invert_cond_e),
+        .src_a(e_src_a),
+        .src_b(e_src_b),
+        .control(e_alu_control),
+        .invert_cond(e_invert_cond),
 
-        .result(alu_result_e),
-        .take_branch(take_branch_e)
+        .result(e_alu_result),
+        .take_branch(e_take_branch)
     );
 
     always_comb begin
-        case (jump_src_e)
+        case (e_jump_src)
             JUMP_SRC_PC:
-                pc_target_e = pc_e + imm_ext_e;
-            JUMP_SRC_REG: // equivalent to (src_a_e + imm_ext_e)
-                pc_target_e = alu_result_e;
+                e_pc_target = e_pc + e_imm_ext;
+            JUMP_SRC_REG: // equivalent to (e_src_a + e_imm_ext)
+                e_pc_target = e_alu_result;
             default: begin // unknown jump
-                pc_target_e = '0;
+                e_pc_target = '0;
             end
         endcase
     end

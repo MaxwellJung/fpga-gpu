@@ -14,6 +14,7 @@ module TbDisplayProcessor();
 
     // instantiate device to be tested
     DisplayProcessor #(
+        .INIT_FILE("build/gputest.mem"),
         .RESOLUTION_X(RESOLUTION_X),
         .RESOLUTION_Y(RESOLUTION_Y),
         .PALETTE_LENGTH(PALETTE_LENGTH),

@@ -1,89 +1,96 @@
 `include "./hdl/processor/defines.svh"
 
-module RISCVCore #(
-    parameter INIT_FILE = "build/gputest.mem"
-) (
+module RISCVCore (
     input logic clk,
     input logic reset,
+
+    // instr bus
+    output logic inst_reset,
+    output logic [31:0] inst_addr,
+    input logic [31:0] inst_rd_data,
+    output logic inst_rd_en,
     
-    // memory bus
-    output logic [31:0] bus_addr,
-    input logic [31:0] bus_rd_data,
-    output logic [31:0] bus_wr_data,
-    output logic bus_wr_en
+    // data bus
+    output logic [31:0] dbus_addr,
+    input logic [31:0] dbus_rd_data,
+    output logic [31:0] dbus_wr_data,
+    output logic dbus_wr_en
 );
 
     // control wires
-    imm_src_t imm_src_d;
-    alu_src_t alu_src_e;
-    alu_control_t alu_control_e;
-    logic invert_cond_e;
-    jump_src_t jump_src_e;
-    logic pc_src_e;
-    logic mem_write_m;
-    logic [1:0] result_src_w;
-    logic reg_write_w;
+    imm_src_t d_imm_src;
+    alu_src_t e_alu_src;
+    alu_control_t e_alu_control;
+    logic e_invert_cond;
+    jump_src_t e_jump_src;
+    logic e_pc_src;
+    logic m_mem_write;
+    logic [1:0] w_result_src;
+    logic w_reg_write;
     opcode_t op;
     logic [2:0] funct3;
     logic [6:0] funct7;
-    logic take_branch_e;
+    logic e_take_branch;
 
     // hazard wires
-    logic stall_f;
-    logic stall_d;
-    logic flush_d;
-    logic flush_e;
-    logic [1:0] forward_a_e;
-    logic [1:0] forward_b_e;
-    logic [4:0] rs1_d;
-    logic [4:0] rs2_d;
-    logic [4:0] rs1_e;
-    logic [4:0] rs2_e;
-    logic [4:0] rd_e;
-    logic [4:0] rd_m;
-    logic [4:0] rd_w;
+    logic f_stall;
+    logic d_stall;
+    logic d_flush;
+    logic e_flush;
+    logic [1:0] e_forward_a;
+    logic [1:0] e_forward_b;
+    logic [4:0] d_rs1;
+    logic [4:0] d_rs2;
+    logic [4:0] e_rs1;
+    logic [4:0] e_rs2;
+    logic [4:0] e_rd;
+    logic [4:0] m_rd;
+    logic [4:0] w_rd;
 
-    Datapath #(
-        .INIT_FILE(INIT_FILE)
-    ) datapath (
+    Datapath u_Datapath (
         .clk              (clk),
         .reset            (reset),
-        // memory bus
-        .bus_addr         (bus_addr),
-        .bus_rd_data      (bus_rd_data),
-        .bus_wr_data      (bus_wr_data),
-        .bus_wr_en        (bus_wr_en),
+        // instr bus
+        .inst_reset       (inst_reset),
+        .inst_addr        (inst_addr),
+        .inst_rd_data     (inst_rd_data),
+        .inst_rd_en       (inst_rd_en),
+        // data bus
+        .dbus_addr         (dbus_addr),
+        .dbus_rd_data      (dbus_rd_data),
+        .dbus_wr_data      (dbus_wr_data),
+        .dbus_wr_en        (dbus_wr_en),
         // control
-        .imm_src_d        (imm_src_d),
-        .alu_src_e        (alu_src_e),
-        .alu_control_e    (alu_control_e),
-        .invert_cond_e    (invert_cond_e),
-        .jump_src_e       (jump_src_e),
-        .pc_src_e         (pc_src_e),
-        .mem_write_m      (mem_write_m),
-        .result_src_w     (result_src_w),
-        .reg_write_w      (reg_write_w),
+        .d_imm_src        (d_imm_src),
+        .e_alu_src        (e_alu_src),
+        .e_alu_control    (e_alu_control),
+        .e_invert_cond    (e_invert_cond),
+        .e_jump_src       (e_jump_src),
+        .e_pc_src         (e_pc_src),
+        .m_mem_write      (m_mem_write),
+        .w_result_src     (w_result_src),
+        .w_reg_write      (w_reg_write),
         .op               (op),
         .funct3           (funct3),
         .funct7           (funct7),
-        .take_branch_e     (take_branch_e),
+        .e_take_branch    (e_take_branch),
         // hazard
-        .stall_f          (stall_f),
-        .stall_d          (stall_d),
-        .flush_d          (flush_d),
-        .flush_e          (flush_e),
-        .forward_a_e      (forward_a_e),
-        .forward_b_e      (forward_b_e),
-        .rs1_d            (rs1_d),
-        .rs2_d            (rs2_d),
-        .rs1_e            (rs1_e),
-        .rs2_e            (rs2_e),
-        .rd_e             (rd_e),
-        .rd_m             (rd_m),
-        .rd_w             (rd_w)
+        .f_stall          (f_stall),
+        .d_stall          (d_stall),
+        .d_flush          (d_flush),
+        .e_flush          (e_flush),
+        .e_forward_a      (e_forward_a),
+        .e_forward_b      (e_forward_b),
+        .d_rs1            (d_rs1),
+        .d_rs2            (d_rs2),
+        .e_rs1            (e_rs1),
+        .e_rs2            (e_rs2),
+        .e_rd             (e_rd),
+        .m_rd             (m_rd),
+        .w_rd             (w_rd)
     );
 
-    logic [1:0] result_src_e;
+    logic [1:0] e_result_src;
     Controlpath controlpath (
         .clk                (clk),
         .reset              (reset),
@@ -91,44 +98,44 @@ module RISCVCore #(
         .op                 (op),
         .funct3             (funct3),
         .funct7             (funct7),
-        .take_branch_e      (take_branch_e),
-        .flush_e            (flush_e),
+        .e_take_branch      (e_take_branch),
+        .e_flush            (e_flush),
         // output to datapath
-        .imm_src_d          (imm_src_d),
-        .alu_src_e          (alu_src_e),
-        .alu_control_e      (alu_control_e),
-        .invert_cond_e      (invert_cond_e),
-        .jump_src_e         (jump_src_e),
-        .pc_src_e           (pc_src_e),
-        .mem_write_m        (mem_write_m),
-        .reg_write_m        (reg_write_m),
-        .result_src_w       (result_src_w),
-        .reg_write_w        (reg_write_w),
+        .d_imm_src          (d_imm_src),
+        .e_alu_src          (e_alu_src),
+        .e_alu_control      (e_alu_control),
+        .e_invert_cond      (e_invert_cond),
+        .e_jump_src         (e_jump_src),
+        .e_pc_src           (e_pc_src),
+        .m_mem_write        (m_mem_write),
+        .m_reg_write        (m_reg_write),
+        .w_result_src       (w_result_src),
+        .w_reg_write        (w_reg_write),
         // output to hazard
-        .result_src_e       (result_src_e)
+        .e_result_src       (e_result_src)
     );
 
     Hazard hazard (
         // input from datapath
-        .rs1_d           (rs1_d),
-        .rs2_d           (rs2_d),
-        .rs1_e           (rs1_e),
-        .rs2_e           (rs2_e),
-        .rd_e            (rd_e),
-        .rd_m            (rd_m),
-        .rd_w            (rd_w),
+        .d_rs1           (d_rs1),
+        .d_rs2           (d_rs2),
+        .e_rs1           (e_rs1),
+        .e_rs2           (e_rs2),
+        .e_rd            (e_rd),
+        .m_rd            (m_rd),
+        .w_rd            (w_rd),
         // input from control
-        .pc_src_e        (pc_src_e),
-        .result_src_e    (result_src_e),
-        .reg_write_m     (reg_write_m),
-        .reg_write_w     (reg_write_w),
+        .e_pc_src        (e_pc_src),
+        .e_result_src    (e_result_src),
+        .m_reg_write     (m_reg_write),
+        .w_reg_write     (w_reg_write),
         // output to datapath
-        .stall_f         (stall_f),
-        .stall_d         (stall_d),
-        .flush_d         (flush_d),
-        .flush_e         (flush_e),
-        .forward_a_e     (forward_a_e),
-        .forward_b_e     (forward_b_e)
+        .f_stall         (f_stall),
+        .d_stall         (d_stall),
+        .d_flush         (d_flush),
+        .e_flush         (e_flush),
+        .e_forward_a     (e_forward_a),
+        .e_forward_b     (e_forward_b)
     );
 
 endmodule

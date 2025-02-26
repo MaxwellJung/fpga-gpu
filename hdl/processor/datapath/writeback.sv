@@ -2,34 +2,38 @@ module Writeback (
     input logic clk,
     input logic reset,
 
-    input logic [31:0] alu_result_m,
-    input logic [31:0] read_data_m,
-    input logic [4:0] rd_m,
-    input logic [31:0] pc_plus_4_m,
+    // input from memory stage
+    input logic [31:0] m_alu_result,
+    input logic [4:0] m_rd,
+    input logic [31:0] m_pc_plus_4,
 
-    input logic [1:0] result_src_w,
+    // input from data memory
+    input logic [31:0] w_read_data,
 
-    output logic [31:0] result_w,
-    output logic [4:0] rd_w
+    // input from control
+    input logic [1:0] w_result_src,
+
+    // output to register file
+    output logic [31:0] w_result,
+    output logic [4:0] w_rd
 );
-    logic [31:0] alu_result_w;
-    logic [31:0] read_data_w;
-    logic [31:0] pc_plus_4_w;
+    logic [31:0] w_alu_result;
+    logic [31:0] w_pc_plus_4;
     always_ff @(posedge clk) begin
         if (reset) begin
-            {alu_result_w, read_data_w, rd_w, pc_plus_4_w} <= '0;
+            {w_alu_result, w_rd, w_pc_plus_4} <= '0;
         end else begin
-            {alu_result_w, read_data_w, rd_w, pc_plus_4_w} <= 
-            {alu_result_m, read_data_m, rd_m, pc_plus_4_m};
+            {w_alu_result, w_rd, w_pc_plus_4} <= 
+            {m_alu_result, m_rd, m_pc_plus_4};
         end
     end
 
     always_comb begin
-        case (result_src_w)
-            2'b00: result_w = alu_result_w;
-            2'b01: result_w = read_data_w;
-            2'b10: result_w = pc_plus_4_w;
-            default: result_w = '0;
+        case (w_result_src)
+            2'b00: w_result = w_alu_result;
+            2'b01: w_result = w_read_data;
+            2'b10: w_result = w_pc_plus_4;
+            default: w_result = '0;
         endcase
     end
 

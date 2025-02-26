@@ -1,43 +1,33 @@
-module Fetch #(
-    parameter INIT_FILE = "build/gputest.mem"
-) (
+module fetch (
     input logic clk,
     input logic reset,
     
-    input logic stall_f,
+    input logic f_stall,
 
-    input logic pc_src_e,
-    input logic [31:0] pc_target_e,
+    input logic e_pc_src,
+    input logic [31:0] e_pc_target,
 
-    output logic [31:0] instruction_f,
-    output logic [31:0] pc_f,
-    output logic [31:0] pc_plus_4_f
+    output logic [31:0] f_pc,
+    output logic [31:0] f_pc_plus_4
 );
-    logic [31:0] pc_f_prime;
+    logic [31:0] f_pc_prime;
     always_comb begin
-        case (pc_src_e)
-            1'b0: pc_f_prime = pc_plus_4_f;
-            1'b1: pc_f_prime = pc_target_e;
-            default: pc_f_prime = '0;
+        f_pc_plus_4 = f_pc + 4;
+        case (e_pc_src)
+            1'b0: f_pc_prime = f_pc_plus_4;
+            1'b1: f_pc_prime = e_pc_target;
+            default: f_pc_prime = '0;
         endcase
     end
 
     always_ff @(posedge clk) begin
         if (reset) begin
-            pc_f <= '0;
+            f_pc <= '0;
         end else begin
-            if (!stall_f) begin
-                pc_f <= pc_f_prime;
+            if (!f_stall) begin
+                f_pc <= f_pc_prime;
             end
         end
     end
-    assign pc_plus_4_f = pc_f + 4;
-
-    InstructionCache #(
-        .INIT_FILE(INIT_FILE)
-    ) instruction_cache (
-        .address(pc_f),
-        .rd_data(instruction_f)
-    );
 
 endmodule

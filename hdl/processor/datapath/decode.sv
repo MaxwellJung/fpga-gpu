@@ -1,69 +1,77 @@
 `include "./hdl/processor/defines.svh"
 
-module Decode (
+module decode (
     input logic clk,
     input logic reset,
 
-    input logic [31:0] instruction_f,
-    input logic [31:0] pc_f,
-    input logic [31:0] pc_plus_4_f,
+    // input from fetch stage
+    input logic [31:0] f_pc,
+    input logic [31:0] f_pc_plus_4,
 
-    input logic stall_d,
-    input logic flush_d,
-    input imm_src_t imm_src_d,
+    // input from instruction memory
+    input logic [31:0] d_instruction,
 
-    input logic [4:0] rd_w,
-    input logic [31:0] result_w,
-    input logic reg_write_w,
+    // input from hazard unit
+    input logic d_stall,
+    input logic d_flush,
 
+    // input from writeback stage
+    input logic [4:0] w_rd,
+    input logic [31:0] w_result,
+    input logic w_reg_write,
+
+    // output to control unit
     output opcode_t op,
     output logic [2:0] funct3,
     output logic [6:0] funct7,
 
-    output logic [31:0] rd1_d,
-    output logic [31:0] rd2_d,
-    output logic [31:0] pc_d,
-    output logic [4:0] rs1_d,
-    output logic [4:0] rs2_d,
-    output logic [4:0] rd_d,
-    output logic [31:0] imm_ext_d,
-    output logic [31:0] pc_plus_4_d
+    // input from control unit
+    input imm_src_t d_imm_src,
+
+    // output to execute pipeline
+    output logic [31:0] d_rs1_value,
+    output logic [31:0] d_rs2_value,
+    output logic [31:0] d_pc,
+    output logic [4:0] d_rs1,
+    output logic [4:0] d_rs2,
+    output logic [4:0] d_rd,
+    output logic [31:0] d_imm_ext,
+    output logic [31:0] d_pc_plus_4
 );
-    logic [31:0] instruction_d;
     always_ff @(posedge clk) begin
-        if (reset || flush_d) begin
-            {instruction_d, pc_d, pc_plus_4_d} <= '0;
+        if (reset || d_flush) begin
+            {d_pc, d_pc_plus_4} <= '0;
         end else begin
-            if (!stall_d) begin
-                {instruction_d, pc_d, pc_plus_4_d} <= 
-                {instruction_f, pc_f, pc_plus_4_f};
+            if (!d_stall) begin
+                {d_pc, d_pc_plus_4} <= 
+                {f_pc, f_pc_plus_4};
             end
         end
     end
 
     always_comb begin
-        {funct7, rs2_d, rs1_d, funct3, rd_d, op} = instruction_d;
+        {funct7, d_rs2, d_rs1, funct3, d_rd, op} = d_instruction;
     end
 
-    RegisterFile register_file (
-        .clk(clk),
-        .reset(reset),
+    register_file u_register_file (
+        .clk          (clk),
+        .reset        (reset),
 
-        .address_1(rs1_d),
-        .address_2(rs2_d),
+        .rs1          (d_rs1),
+        .rs2          (d_rs2),
+
+        .rs1_value    (d_rs1_value),
+        .rs2_value    (d_rs2_value),
         
-        .rd_data_1(rd1_d),
-        .rd_data_2(rd2_d),
-
-        .address_3(rd_w),
-        .wr_data(result_w),
-        .wr_en(reg_write_w)
+        .rd           (w_rd),
+        .rd_value     (w_result),
+        .wr_en        (w_reg_write)
     );
 
     SignExtend sign_extend (
-        .instr(instruction_d[31:7]),
-        .imm_src(imm_src_d),
-        .imm_ext(imm_ext_d)
+        .instr(d_instruction[31:7]),
+        .imm_src(d_imm_src),
+        .imm_ext(d_imm_ext)
     );
 
 endmodule

@@ -58,37 +58,46 @@ module DisplayProcessor #(
     assign fb_wr_index = index;
     assign fb_wr_en = '1;
 
-    logic [31:0] bus_addr;
-    logic [31:0] bus_rd_data;
-    logic [31:0] bus_wr_data;
-    logic bus_wr_en;
+    logic  inst_reset;
+    logic [31:0] inst_addr;
+    logic [31:0] inst_rd_data;
+    logic inst_rd_en;
 
-    RISCVCore #(
-        .INIT_FILE(INIT_FILE)
-    ) riscv_core (
-        .clk        (clk),
-        .reset      (reset || ctl_rst),
-        // memory bus
-        .bus_addr       (bus_addr),
-        .bus_rd_data    (bus_rd_data),
-        .bus_wr_data    (bus_wr_data),
-        .bus_wr_en      (bus_wr_en)
+    logic [31:0] dmem_addr;
+    logic [31:0] dmem_rd_data;
+    logic [31:0] dmem_wr_data;
+    logic dmem_wr_en;
+
+    logic [31:0] dbus_addr;
+    logic [31:0] dbus_rd_data;
+    logic [31:0] dbus_wr_data;
+    logic dbus_wr_en;
+
+    RISCVCore u_RISCVCore (
+        .clk             (clk),
+        .reset           (reset || ctl_rst),
+        // instr bus
+        .inst_reset      (inst_reset),
+        .inst_addr       (inst_addr),
+        .inst_rd_data    (inst_rd_data),
+        .inst_rd_en      (inst_rd_en),
+        // data bus
+        .dbus_addr        (dbus_addr),
+        .dbus_rd_data     (dbus_rd_data),
+        .dbus_wr_data     (dbus_wr_data),
+        .dbus_wr_en       (dbus_wr_en)
     );
 
-    logic [31:0] mem_addr;
-    logic [31:0] mem_rd_data;
-    logic [31:0] mem_wr_data;
-    logic mem_wr_en;
     DataBus data_bus (
-        .bus_addr               (bus_addr),
-        .bus_rd_data            (bus_rd_data),
-        .bus_wr_data            (bus_wr_data),
-        .bus_wr_en              (bus_wr_en),
+        .dbus_addr               (dbus_addr),
+        .dbus_rd_data            (dbus_rd_data),
+        .dbus_wr_data            (dbus_wr_data),
+        .dbus_wr_en              (dbus_wr_en),
         // main memory
-        .mem_addr               (mem_addr),
-        .mem_rd_data            (mem_rd_data),
-        .mem_wr_data            (mem_wr_data),
-        .mem_wr_en              (mem_wr_en),
+        .dmem_addr               (dmem_addr),
+        .dmem_rd_data            (dmem_rd_data),
+        .dmem_wr_data            (dmem_wr_data),
+        .dmem_wr_en              (dmem_wr_en),
         // framebuffer
         .fb_addr                (),
         .fb_rd_data             (),
@@ -101,14 +110,26 @@ module DisplayProcessor #(
         .palette_wr_en          (palette_wr_en)
     );
 
-    DataCache data_cache (
-        .clk(clk),
-        .reset(reset),
-
-        .address(mem_addr),
-        .rd_data(mem_rd_data),
-        .wr_data(mem_wr_data),
-        .wr_en(mem_wr_en)
+    main_memory #(
+        .INIT_FILE         (INIT_FILE),
+        .WORD_COUNT        (64),
+        .WORD_BITS         (32)
+    ) u_main_memory (
+        .clk               (clk),
+        // instruction
+        .port_a_reset      (inst_reset),
+        .port_a_address    (inst_addr),
+        .port_a_rd_data    (inst_rd_data),
+        .port_a_rd_en      (inst_rd_en),
+        .port_a_wr_data    (),
+        .port_a_wr_en      (),
+        // data
+        .port_b_reset      ('0),
+        .port_b_address    (dmem_addr),
+        .port_b_rd_data    (dmem_rd_data),
+        .port_b_rd_en      ('1),
+        .port_b_wr_data    (dmem_wr_data),
+        .port_b_wr_en      (dmem_wr_en)
     );
 
 endmodule

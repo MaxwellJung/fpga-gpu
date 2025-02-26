@@ -1,18 +1,18 @@
-module RegisterFile #(
+module register_file #(
     parameter REG_COUNT = 32,
     parameter REG_WIDTH = 32
 ) (
     input logic clk,
     input logic reset,
 
-    input logic [$clog2(REG_COUNT)-1:0] address_1,
-    input logic [$clog2(REG_COUNT)-1:0] address_2,
+    input logic [$clog2(REG_COUNT)-1:0] rs1,
+    input logic [$clog2(REG_COUNT)-1:0] rs2,
 
-    output logic [REG_WIDTH-1:0] rd_data_1,
-    output logic [REG_WIDTH-1:0] rd_data_2,
+    output logic [REG_WIDTH-1:0] rs1_value,
+    output logic [REG_WIDTH-1:0] rs2_value,
 
-    input logic [$clog2(REG_COUNT)-1:0] address_3,
-    input logic [REG_WIDTH-1:0] wr_data,
+    input logic [$clog2(REG_COUNT)-1:0] rd,
+    input logic [REG_WIDTH-1:0] rd_value,
     input logic wr_en
 );
 
@@ -22,15 +22,15 @@ module RegisterFile #(
         if (reset) begin
             registers <= '0;
         end else begin
-            if (wr_en && (address_3 != 0)) begin
-                registers[address_3] <= wr_data;
+            if (wr_en && (rd != 0)) begin
+                registers[rd] <= rd_value;
             end
         end
     end
 
     always_comb begin
-        rd_data_1 = registers[address_1];
-        rd_data_2 = registers[address_2];
+        rs1_value = registers[rs1];
+        rs2_value = registers[rs2];
     end
 
 endmodule
