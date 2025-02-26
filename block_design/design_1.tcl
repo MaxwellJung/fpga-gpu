@@ -420,6 +420,7 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   set axi_quad_spi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_quad_spi:3.2 axi_quad_spi_0 ]
   set_property -dict [list \
     CONFIG.C_SCK_RATIO {8} \
+    CONFIG.C_USE_STARTUP {0} \
     CONFIG.QSPI_BOARD_INTERFACE {Custom} \
     CONFIG.USE_BOARD_FLOW {true} \
   ] $axi_quad_spi_0
@@ -433,7 +434,8 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   [get_bd_pins micro_sd_0/mosi]
   connect_bd_net -net axi_quad_spi_0_ip2intc_irpt  [get_bd_pins axi_quad_spi_0/ip2intc_irpt] \
   [get_bd_pins ip2intc_irpt]
-  connect_bd_net -net axi_quad_spi_0_sck_o  [get_bd_pins micro_sd_0/sck]
+  connect_bd_net -net axi_quad_spi_0_sck_o  [get_bd_pins axi_quad_spi_0/sck_o] \
+  [get_bd_pins micro_sd_0/sck]
   connect_bd_net -net axi_quad_spi_0_ss_o  [get_bd_pins axi_quad_spi_0/ss_o] \
   [get_bd_pins micro_sd_0/cs]
   connect_bd_net -net micro_sd_0_miso  [get_bd_pins micro_sd_0/miso] \
@@ -766,7 +768,9 @@ proc create_root_design { parentCell } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.INIT_FILE {/home/maxwelljung/programming/fpga-gpu/data/gpu_mem_init.mem} $GpuTop_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_16bits] [get_bd_intf_pins axi_gpio_0/GPIO]
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports rgb_led] [get_bd_intf_pins axi_gpio_0/GPIO2]
@@ -797,15 +801,15 @@ proc create_root_design { parentCell } {
   [get_bd_pins mig_7series_0/sys_rst] \
   [get_bd_pins clk_wiz_0/resetn] \
   [get_bd_pins rst_clk_wiz_0_200M/ext_reset_in]
-  connect_bd_net -net GpuTop_0_vga_b_o  [get_bd_pins GpuTop_0/vga_b_o] \
+  connect_bd_net -net GpuTop_0_vga_b_o  [get_bd_pins GpuTop_0/vga_b] \
   [get_bd_ports VGA_B]
-  connect_bd_net -net GpuTop_0_vga_g_o  [get_bd_pins GpuTop_0/vga_g_o] \
+  connect_bd_net -net GpuTop_0_vga_g_o  [get_bd_pins GpuTop_0/vga_g] \
   [get_bd_ports VGA_G]
-  connect_bd_net -net GpuTop_0_vga_hs_o  [get_bd_pins GpuTop_0/vga_hs_o] \
+  connect_bd_net -net GpuTop_0_vga_hs_o  [get_bd_pins GpuTop_0/vga_hs] \
   [get_bd_ports VGA_HS]
-  connect_bd_net -net GpuTop_0_vga_r_o  [get_bd_pins GpuTop_0/vga_r_o] \
+  connect_bd_net -net GpuTop_0_vga_r_o  [get_bd_pins GpuTop_0/vga_r] \
   [get_bd_ports VGA_R]
-  connect_bd_net -net GpuTop_0_vga_vs_o  [get_bd_pins GpuTop_0/vga_vs_o] \
+  connect_bd_net -net GpuTop_0_vga_vs_o  [get_bd_pins GpuTop_0/vga_vs] \
   [get_bd_ports VGA_VS]
   connect_bd_net -net axi_gpio_1_ip2intc_irpt  [get_bd_pins axi_gpio_1/ip2intc_irpt] \
   [get_bd_pins microblaze_riscv_0_xlconcat/In1]
@@ -814,11 +818,11 @@ proc create_root_design { parentCell } {
   connect_bd_net -net clk_wiz_0_clk_out2  [get_bd_pins clk_wiz_0/ddr_clk] \
   [get_bd_pins mig_7series_0/clk_ref_i]
   connect_bd_net -net clk_wiz_0_gpu_clk  [get_bd_pins clk_wiz_0/gpu_clk] \
-  [get_bd_pins GpuTop_0/gpu_clk_i]
+  [get_bd_pins GpuTop_0/gpu_clk]
   connect_bd_net -net clk_wiz_0_locked  [get_bd_pins clk_wiz_0/locked] \
   [get_bd_pins rst_clk_wiz_0_200M/dcm_locked]
   connect_bd_net -net clk_wiz_0_vga_clk  [get_bd_pins clk_wiz_0/vga_clk] \
-  [get_bd_pins GpuTop_0/vga_clk_i]
+  [get_bd_pins GpuTop_0/vga_clk]
   connect_bd_net -net mdm_1_debug_sys_rst  [get_bd_pins mdm_1/Debug_SYS_Rst] \
   [get_bd_pins rst_clk_wiz_0_200M/mb_debug_sys_rst]
   connect_bd_net -net micro_sd_0_sd_clk  [get_bd_pins microsd/SD_SCK] \
@@ -891,7 +895,7 @@ proc create_root_design { parentCell } {
   [get_bd_pins GpuTop_0/s_axi_aresetn]
   connect_bd_net -net rst_clk_wiz_0_200M_peripheral_reset  [get_bd_pins rst_clk_wiz_0_200M/peripheral_reset] \
   [get_bd_pins microsd/reset] \
-  [get_bd_pins GpuTop_0/reset_i]
+  [get_bd_pins GpuTop_0/reset]
   connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn  [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] \
   [get_bd_pins ram_interconnect/M00_ARESETN] \
   [get_bd_pins mig_7series_0/aresetn]

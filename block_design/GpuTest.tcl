@@ -267,7 +267,9 @@ proc create_root_design { parentCell } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.INIT_FILE {/home/maxwelljung/programming/fpga-gpu/build/gputest.mem} $GpuTop_0
+
+
   # Create instance: axi_clk_gen, and set properties
   set axi_clk_gen [ create_bd_cell -type ip -vlnv xilinx.com:ip:sim_clk_gen:1.0 axi_clk_gen ]
   set_property CONFIG.RESET_POLARITY {ACTIVE_LOW} $axi_clk_gen
@@ -288,9 +290,9 @@ proc create_root_design { parentCell } {
 
   # Create port connections
   connect_bd_net -net gpu_clk_gen_clk  [get_bd_pins gpu_clk_gen/clk] \
-  [get_bd_pins GpuTop_0/gpu_clk_i]
+  [get_bd_pins GpuTop_0/gpu_clk]
   connect_bd_net -net gpu_clk_gen_sync_rst  [get_bd_pins gpu_clk_gen/sync_rst] \
-  [get_bd_pins GpuTop_0/reset_i]
+  [get_bd_pins GpuTop_0/reset]
   connect_bd_net -net sim_clk_gen_0_clk  [get_bd_pins axi_clk_gen/clk] \
   [get_bd_pins axi_vip_0/aclk] \
   [get_bd_pins GpuTop_0/s_axi_aclk]
@@ -298,7 +300,7 @@ proc create_root_design { parentCell } {
   [get_bd_pins axi_vip_0/aresetn] \
   [get_bd_pins GpuTop_0/s_axi_aresetn]
   connect_bd_net -net vga_clk_gen_clk  [get_bd_pins vga_clk_gen/clk] \
-  [get_bd_pins GpuTop_0/vga_clk_i]
+  [get_bd_pins GpuTop_0/vga_clk]
 
   # Create address segments
   assign_bd_address -offset 0x00000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces axi_vip_0/Master_AXI] [get_bd_addr_segs GpuTop_0/S_AXI/reg0] -force
