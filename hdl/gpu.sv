@@ -123,6 +123,10 @@ module Gpu #(
     logic [$clog2(PALETTE_LENGTH)-1:0] fb_wrndex;
     logic fb_wr_en;
 
+    logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index;
+    logic [COLOR_BITS-1:0] palette_wr_color;
+    logic palette_wr_en;
+
     DisplayProcessor #(
         .INIT_FILE(INIT_FILE),
         .RESOLUTION_X(RESOLUTION_X),
@@ -141,9 +145,9 @@ module Gpu #(
         .fb_wr_index(fb_wrndex),
         .fb_wr_en(fb_wr_en),
 
-        .palette_wr_index(),
-        .palette_wr_color(),
-        .palette_wr_en()
+        .palette_wr_index(palette_wr_index),
+        .palette_wr_color(palette_wr_color),
+        .palette_wr_en(palette_wr_en)
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
@@ -172,18 +176,20 @@ module Gpu #(
     );
 
     Palette #(
-        .PALETTE_LENGTH(PALETTE_LENGTH),
-        .COLOR_BITS(COLOR_BITS)
+        .PALETTE_LENGTH    (PALETTE_LENGTH),
+        .COLOR_BITS        (COLOR_BITS)
     ) palette (
-        .reset(reset),
+        .reset             (reset),
 
-        .rd_clk(vga_clk),
-        .rd_en('1),
-        .rd_index(palettendex),
-        .rd_color(color),
+        .rd_clk            (vga_clk),
+        .rd_en             ('1),
+        .rd_index          (palettendex),
+        .rd_color          (color),
 
-        .wr_clk(gpu_clk),
-        .wr_en('0)
+        .wr_clk            (gpu_clk),
+        .wr_en             (palette_wr_en),
+        .wr_index          (palette_wr_index),
+        .wr_color          (palette_wr_color)
     );
 
     VideoController #(

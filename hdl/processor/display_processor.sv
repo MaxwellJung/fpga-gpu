@@ -16,7 +16,7 @@ module DisplayProcessor #(
 
     // color palette
     output logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index,
-    output logic [$clog2(COLOR_BITS)-1:0] palette_wr_color,
+    output logic [COLOR_BITS-1:0] palette_wr_color,
     output logic palette_wr_en,
 
     // framebuffer
