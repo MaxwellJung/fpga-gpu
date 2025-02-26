@@ -52,7 +52,7 @@ module DisplayProcessor #(
         end
     end
 
-    logic  inst_reset;
+    logic inst_reset;
     logic [31:0] inst_addr;
     logic [31:0] inst_rd_data;
     logic inst_rd_en;
