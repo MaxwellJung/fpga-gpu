@@ -43,12 +43,16 @@ module AluDecoder (
             OP_ALU_R, OP_ALU_I: begin // R–type or I–type ALU
                 case(funct3)
                     3'b000: begin
-                        case ({op[5], funct7[5]})
-                            2'b00: alu_control = ALU_ADD; // addi
+                        case ({op[5], funct7[6:5]})
+                            3'b000: alu_control = ALU_ADD; // addi
                             // subi not possible because funct7[5] conflicts with immediate[10]
-                            2'b01: alu_control = ALU_ADD; // addi 
-                            2'b10: alu_control = ALU_ADD; // add
-                            2'b11: alu_control = ALU_SUB; // sub
+                            3'b001: alu_control = ALU_ADD; // addi
+                            3'b100: alu_control = ALU_ADD; // add
+                            3'b101: alu_control = ALU_SUB; // sub
+                            3'b010: alu_control = ALU_XY_ADD; // addxyi
+                            3'b011: alu_control = ALU_XY_ADD; // addxyi
+                            3'b110: alu_control = ALU_XY_ADD; // addxy
+                            3'b111: alu_control = ALU_XY_SUB; // subxy
                             default: alu_control = ALU_NOOP; // NOOP
                         endcase
                     end
