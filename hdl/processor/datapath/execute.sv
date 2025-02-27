@@ -4,6 +4,7 @@ module Execute (
     input logic clk,
     input logic reset,
     
+    // input from previous pipeline
     input logic [31:0] d_rs1_value,
     input logic [31:0] d_rs2_value,
     input logic [31:0] d_pc,
@@ -13,13 +14,16 @@ module Execute (
     input logic [31:0] d_imm_ext,
     input logic [31:0] d_pc_plus_4,
 
+    // forward
     input logic [31:0] m_alu_result,
-    
     input logic [31:0] w_result,
 
+    // hazard
     input logic e_flush,
     input logic [1:0] e_forward_a,
     input logic [1:0] e_forward_b,
+
+    // output to next pipeline
     input alu_src_t e_alu_src,
     input alu_control_t e_alu_control,
     input logic e_invert_cond,
@@ -29,6 +33,7 @@ module Execute (
     output logic [31:0] e_pc_target,
     output logic e_take_branch,
 
+    // 
     output logic [31:0] e_alu_result,
     output logic [31:0] e_write_data,
     output logic [4:0] e_rd,

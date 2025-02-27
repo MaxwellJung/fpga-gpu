@@ -1,27 +1,19 @@
 # gpu test assembly code
 main:
 
-reset_palette:
-    li x0, 2048           # addr to palette base
-    li x1, 0              # x1 = palette index
-    li x4, 256            # x4 = # of colors
-write_palette_loop:
-    add x2, x0, x1        # x2 = palette addr
-    mv x3, x1             # x3 = palette value = index
-    sw x3, 0x00(x2)       # write to palette
-    addi x1, x1, 1        # palette index++
-    blt x1, x4, write_palette_loop
-
 reset_framebuffer:
-    li x0, 131072         # addr to framebuffer base
-    li x1, 0              # x1 = pixel index
-    li x4, 120000         # x4 = # of pixels
-write_framebuffer_loop:
-    add x2, x0, x1        # x2 = pixel addr
-    mv x3, x1             # x3 = pixel value = index
-    sw x3, 0x00(x2)       # write to framebuffer
-    addi x1, x1, 1        # pixel index++
-    blt x1, x4, write_framebuffer_loop
+    li x1, 0              # x1 = (y,x) = (0,0)
+    li x3, 0              # x3 = pixel color
+    .word  0b11111110001100001000111110101011 # fbsw
+    li x1, 1              # x1 = (y,x) = (0,1)
+    li x3, 1              # x3 = pixel color
+    .word  0b11111110001100001000111110101011 # fbsw
+    li x1, 0x00010000     # x1 = (y,x) = (1,0)
+    li x3, 2              # x3 = pixel color
+    .word  0b11111110001100001000111110101011 # fbsw
+    li x1, 0x00010000     # x1 = (y,x) = (1,1)
+    li x3, 3              # x3 = pixel color
+    .word  0b11111110001100001000111110101011 # fbsw
 
 done:
-    j main                # restart program
+    j done                # restart program

@@ -49,4 +49,9 @@ typedef enum logic {
     JUMP_SRC_REG // JTA/BTA = rs1 + immediate
 } jump_src_t;
 
+typedef enum logic {
+    FB_NO_WRITE,
+    FB_WRITE
+} fb_write_t;
+
 `endif // DEFINES_H

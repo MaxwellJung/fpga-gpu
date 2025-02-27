@@ -35,6 +35,7 @@ module Datapath #(
     input jump_src_t e_jump_src,
     input logic e_pc_src,
     input logic m_mem_write,
+    input logic m_fb_write,
     input logic [1:0] w_result_src,
     input logic w_reg_write,
     output opcode_t op,
@@ -123,60 +124,71 @@ module Datapath #(
     logic [31:0] e_alu_result;
     logic [31:0] e_write_data;
     logic [31:0] e_pc_plus_4;
-    Execute execute (
-        .clk(clk),
-        .reset(reset),
 
-        .d_rs1_value(d_rs1_value),
-        .d_rs2_value(d_rs2_value),
-        .d_pc(d_pc),
-        .d_rs1(d_rs1),
-        .d_rs2(d_rs2),
-        .d_rd(d_rd),
-        .d_imm_ext(d_imm_ext),
-        .d_pc_plus_4(d_pc_plus_4),
-
-        .m_alu_result(m_alu_result),
-
-        .w_result(w_result),
-
-        .e_flush(e_flush),
-        .e_forward_a(e_forward_a),
-        .e_forward_b(e_forward_b),
-        .e_alu_src(e_alu_src),
-        .e_alu_control(e_alu_control),
-        .e_invert_cond(e_invert_cond),
-        .e_jump_src(e_jump_src),
-        .e_rs1(e_rs1),
-        .e_rs2(e_rs2),
-        .e_pc_target(e_pc_target),
-        .e_take_branch(e_take_branch),
-
-        .e_alu_result(e_alu_result),
-        .e_write_data(e_write_data),
-        .e_rd(e_rd),
-        .e_pc_plus_4(e_pc_plus_4)
+    Execute u_Execute (
+        .clk              (clk),
+        .reset            (reset),
+        // input from previous pipeline
+        .d_rs1_value      (d_rs1_value),
+        .d_rs2_value      (d_rs2_value),
+        .d_pc             (d_pc),
+        .d_rs1            (d_rs1),
+        .d_rs2            (d_rs2),
+        .d_rd             (d_rd),
+        .d_imm_ext        (d_imm_ext),
+        .d_pc_plus_4      (d_pc_plus_4),
+        // forward
+        .m_alu_result     (m_alu_result),
+        .w_result         (w_result),
+        // hazard
+        .e_flush          (e_flush),
+        .e_forward_a      (e_forward_a),
+        .e_forward_b      (e_forward_b),
+        // output to next pipeline
+        .e_alu_src        (e_alu_src),
+        .e_alu_control    (e_alu_control),
+        .e_invert_cond    (e_invert_cond),
+        .e_jump_src       (e_jump_src),
+        .e_rs1            (e_rs1),
+        .e_rs2            (e_rs2),
+        .e_pc_target      (e_pc_target),
+        .e_take_branch    (e_take_branch),
+        // 
+        .e_alu_result     (e_alu_result),
+        .e_write_data     (e_write_data),
+        .e_rd             (e_rd),
+        .e_pc_plus_4      (e_pc_plus_4)
     );
 
     logic [31:0] m_pc_plus_4;
-    Memory u_Memory (
-        .clk             (clk),
-        .reset           (reset),
+    Memory #(
+        .RESOLUTION_X       (RESOLUTION_X),
+        .RESOLUTION_Y       (RESOLUTION_Y),
+        .PALETTE_LENGTH     (PALETTE_LENGTH)
+    ) u_Memory (
+        .clk                (clk),
+        .reset              (reset),
         // input from previous pipeline
-        .e_alu_result    (e_alu_result),
-        .e_write_data    (e_write_data),
-        .e_rd            (e_rd),
-        .e_pc_plus_4     (e_pc_plus_4),
+        .e_alu_result       (e_alu_result),
+        .e_write_data       (e_write_data),
+        .e_rd               (e_rd),
+        .e_pc_plus_4        (e_pc_plus_4),
         // control
-        .m_mem_write     (m_mem_write),
+        .m_mem_write        (m_mem_write),
+        .m_fb_write         (m_fb_write),
         // data bus
-        .dbus_addr        (dbus_addr),
-        .dbus_wr_data     (dbus_wr_data),
-        .dbus_wr_en       (dbus_wr_en),
+        .dbus_addr          (dbus_addr),
+        .dbus_wr_data       (dbus_wr_data),
+        .dbus_wr_en         (dbus_wr_en),
+        // framebuffer
+        .fb_wr_en           (fb_wr_en),
+        .fb_wr_pxl_x        (fb_wr_pxl_x),
+        .fb_wr_pxl_y        (fb_wr_pxl_y),
+        .fb_wr_pxl_value    (fb_wr_pxl_value),
         // output to next pipeline
-        .m_alu_result    (m_alu_result),
-        .m_rd            (m_rd),
-        .m_pc_plus_4     (m_pc_plus_4)
+        .m_alu_result       (m_alu_result),
+        .m_rd               (m_rd),
+        .m_pc_plus_4        (m_pc_plus_4)
     );
 
     Writeback u_Writeback (

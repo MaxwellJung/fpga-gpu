@@ -74,7 +74,7 @@ module AluDecoder (
                 alu_control = ALU_B; // lui
             OP_JALR:
                 alu_control = ALU_ADD; // jalr
-            OP_CUSTOM1:
+            OP_CUSTOM2:
                 alu_control = ALU_A; // fbsw 
             default:
                 alu_control = ALU_NOOP; // NOOP

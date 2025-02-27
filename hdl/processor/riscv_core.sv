@@ -36,6 +36,7 @@ module RISCVCore #(
     jump_src_t e_jump_src;
     logic e_pc_src;
     logic m_mem_write;
+    logic m_fb_write;
     logic [1:0] w_result_src;
     logic w_reg_write;
     opcode_t op;
@@ -84,6 +85,7 @@ module RISCVCore #(
         .e_jump_src         (e_jump_src),
         .e_pc_src           (e_pc_src),
         .m_mem_write        (m_mem_write),
+        .m_fb_write         (m_fb_write),
         .w_result_src       (w_result_src),
         .w_reg_write        (w_reg_write),
         .op                 (op),
@@ -124,6 +126,7 @@ module RISCVCore #(
         .e_jump_src         (e_jump_src),
         .e_pc_src           (e_pc_src),
         .m_mem_write        (m_mem_write),
+        .m_fb_write         (m_fb_write),
         .m_reg_write        (m_reg_write),
         .w_result_src       (w_result_src),
         .w_reg_write        (w_reg_write),
