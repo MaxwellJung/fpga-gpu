@@ -44,9 +44,14 @@ typedef enum logic [2:0] {
 } imm_src_t;
 
 typedef enum logic {
-    ALU_SRC_REG,
-    ALU_SRC_IMM
-} alu_src_t;
+    ALU_SRC_A_REG,
+    ALU_SRC_A_PC
+} alu_src_a_t;
+
+typedef enum logic {
+    ALU_SRC_B_REG,
+    ALU_SRC_B_IMM
+} alu_src_b_t;
 
 typedef enum logic {
     JUMP_SRC_PC, // JTA/BTA = PC + immediate
@@ -57,5 +62,11 @@ typedef enum logic {
     FB_NO_WRITE,
     FB_WRITE
 } fb_write_t;
+
+typedef enum logic [1:0] {
+    RESULT_SRC_ALU,
+    RESULT_SRC_MEMORY,
+    RESULT_SRC_PC_PLUS_4
+} result_src_t;
 
 `endif // DEFINES_H

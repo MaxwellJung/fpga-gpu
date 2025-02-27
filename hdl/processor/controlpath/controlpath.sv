@@ -13,7 +13,8 @@ module Controlpath (
 
     // output to datapath
     output imm_src_t d_imm_src,
-    output alu_src_t e_alu_src,
+    output alu_src_a_t e_alu_src_a,
+    output alu_src_b_t e_alu_src_b,
     output alu_control_t e_alu_control,
     output logic e_invert_cond,
     output jump_src_t e_jump_src,
@@ -34,23 +35,27 @@ module Controlpath (
     logic d_jump;
     logic d_branch;
     alu_control_t d_alu_control;
-    alu_src_t d_alu_src;
+    alu_src_a_t d_alu_src_a;
+    alu_src_b_t d_alu_src_b;
     logic d_invert_cond;
-    Control control_unit (
-        .op                    (op),
-        .funct3                (funct3),
-        .funct7                (funct7),
-        .reg_write             (d_reg_write),
-        .result_src            (d_result_src),
-        .mem_write             (d_mem_write),
-        .fb_write              (d_fb_write),
-        .jump                  (d_jump),
-        .branch                (d_branch),
-        .alu_control           (d_alu_control),
-        .alu_src               (d_alu_src),
-        .imm_src               (d_imm_src),
-        .invert_cond           (d_invert_cond),
-        .jump_src              (d_jump_src)
+    logic d_jump_src;
+
+    Control u_Control (
+        .op               (op),
+        .funct3           (funct3),
+        .funct7           (funct7),
+        .d_reg_write      (d_reg_write),
+        .d_result_src     (d_result_src),
+        .d_mem_write      (d_mem_write),
+        .d_fb_write       (d_fb_write),
+        .d_jump           (d_jump),
+        .d_branch         (d_branch),
+        .d_alu_control    (d_alu_control),
+        .d_alu_src_a      (d_alu_src_a),
+        .d_alu_src_b      (d_alu_src_b),
+        .d_imm_src        (d_imm_src),
+        .d_invert_cond    (d_invert_cond),
+        .d_jump_src       (d_jump_src)
     );
 
     logic e_reg_write;
@@ -60,10 +65,13 @@ module Controlpath (
     logic e_branch;
     always_ff @(posedge clk) begin
         if (reset || e_flush) begin
-            {e_reg_write, e_result_src, e_mem_write, e_fb_write, e_jump, e_branch, e_alu_control, e_alu_src, e_invert_cond, e_jump_src} <= '0;
+            {e_reg_write, e_result_src, e_mem_write, e_fb_write, e_jump, e_branch, 
+            e_alu_control, e_alu_src_a, e_alu_src_b, e_invert_cond, e_jump_src} <= '0;
         end else begin
-            {e_reg_write, e_result_src, e_mem_write, e_fb_write, e_jump, e_branch, e_alu_control, e_alu_src, e_invert_cond, e_jump_src} <= 
-            {d_reg_write, d_result_src, d_mem_write, d_fb_write, d_jump, d_branch, d_alu_control, d_alu_src, d_invert_cond, d_jump_src};
+            {e_reg_write, e_result_src, e_mem_write, e_fb_write, e_jump, e_branch, 
+            e_alu_control, e_alu_src_a, e_alu_src_b, e_invert_cond, e_jump_src} <= 
+            {d_reg_write, d_result_src, d_mem_write, d_fb_write, d_jump, d_branch, 
+            d_alu_control, d_alu_src_a, d_alu_src_b, d_invert_cond, d_jump_src};
         end
     end
 

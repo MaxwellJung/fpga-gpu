@@ -29,7 +29,8 @@ module Datapath #(
 
     // control
     input imm_src_t d_imm_src,
-    input alu_src_t e_alu_src,
+    input alu_src_a_t e_alu_src_a,
+    input alu_src_b_t e_alu_src_b,
     input alu_control_t e_alu_control,
     input logic e_invert_cond,
     input jump_src_t e_jump_src,
@@ -144,8 +145,9 @@ module Datapath #(
         .e_flush          (e_flush),
         .e_forward_a      (e_forward_a),
         .e_forward_b      (e_forward_b),
-        // output to next pipeline
-        .e_alu_src        (e_alu_src),
+        // control
+        .e_alu_src_a      (e_alu_src_a),
+        .e_alu_src_b      (e_alu_src_b),
         .e_alu_control    (e_alu_control),
         .e_invert_cond    (e_invert_cond),
         .e_jump_src       (e_jump_src),
@@ -153,7 +155,7 @@ module Datapath #(
         .e_rs2            (e_rs2),
         .e_pc_target      (e_pc_target),
         .e_take_branch    (e_take_branch),
-        // 
+        // output to next pipeline
         .e_alu_result     (e_alu_result),
         .e_write_data     (e_write_data),
         .e_rd             (e_rd),

@@ -80,6 +80,8 @@ module AluDecoder (
                 alu_control = ALU_ADD; // jalr
             OP_CUSTOM2:
                 alu_control = ALU_A; // fbsw 
+            OP_AUIPC:
+                alu_control = ALU_ADD;
             default:
                 alu_control = ALU_NOOP; // NOOP
         endcase

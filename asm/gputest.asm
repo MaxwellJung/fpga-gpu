@@ -1,5 +1,7 @@
 # gpu test assembly code
+
 main:
+    la x4, palette # load palette address (not working)
 
 reset_framebuffer:
     li x1, 0              # x1 = (y,x) = (0,0)
@@ -10,6 +12,8 @@ write_pixel:
     .word  0b10000000001000001000000010110011 # addxy x1, x1, x2
     j write_pixel
 
-
 done:
     j done                # restart program
+
+palette:
+    .word 10, 20, 30, 40

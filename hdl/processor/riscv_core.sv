@@ -30,7 +30,8 @@ module RISCVCore #(
 
     // control wires
     imm_src_t d_imm_src;
-    alu_src_t e_alu_src;
+    alu_src_a_t e_alu_src_a;
+    alu_src_b_t e_alu_src_b;
     alu_control_t e_alu_control;
     logic e_invert_cond;
     jump_src_t e_jump_src;
@@ -79,7 +80,8 @@ module RISCVCore #(
         .fb_wr_pxl_value    (fb_wr_pxl_value),
         // control
         .d_imm_src          (d_imm_src),
-        .e_alu_src          (e_alu_src),
+        .e_alu_src_a        (e_alu_src_a),
+        .e_alu_src_b        (e_alu_src_b),
         .e_alu_control      (e_alu_control),
         .e_invert_cond      (e_invert_cond),
         .e_jump_src         (e_jump_src),
@@ -109,29 +111,29 @@ module RISCVCore #(
     );
 
     logic [1:0] e_result_src;
-    Controlpath controlpath (
-        .clk                (clk),
-        .reset              (reset),
-        // input from datapath
-        .op                 (op),
-        .funct3             (funct3),
-        .funct7             (funct7),
-        .e_take_branch      (e_take_branch),
-        .e_flush            (e_flush),
+    Controlpath u_Controlpath (
+        .clk              (clk),
+        .reset            (reset),
+        .op               (op),
+        .funct3           (funct3),
+        .funct7           (funct7),
+        .e_take_branch    (e_take_branch),
+        .e_flush          (e_flush),
         // output to datapath
-        .d_imm_src          (d_imm_src),
-        .e_alu_src          (e_alu_src),
-        .e_alu_control      (e_alu_control),
-        .e_invert_cond      (e_invert_cond),
-        .e_jump_src         (e_jump_src),
-        .e_pc_src           (e_pc_src),
-        .m_mem_write        (m_mem_write),
-        .m_fb_write         (m_fb_write),
-        .m_reg_write        (m_reg_write),
-        .w_result_src       (w_result_src),
-        .w_reg_write        (w_reg_write),
+        .d_imm_src        (d_imm_src),
+        .e_alu_src_a      (e_alu_src_a),
+        .e_alu_src_b      (e_alu_src_b),
+        .e_alu_control    (e_alu_control),
+        .e_invert_cond    (e_invert_cond),
+        .e_jump_src       (e_jump_src),
+        .e_pc_src         (e_pc_src),
+        .m_mem_write      (m_mem_write),
+        .m_fb_write       (m_fb_write),
+        .m_reg_write      (m_reg_write),
+        .w_result_src     (w_result_src),
+        .w_reg_write      (w_reg_write),
         // output to hazard
-        .e_result_src       (e_result_src)
+        .e_result_src     (e_result_src)
     );
 
     Hazard hazard (
