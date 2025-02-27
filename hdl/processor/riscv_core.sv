@@ -1,6 +1,11 @@
 `include "./hdl/processor/defines.svh"
 
-module RISCVCore (
+module RISCVCore #(
+    parameter RESOLUTION_X = 400,
+    parameter RESOLUTION_Y = 300,
+    parameter PALETTE_LENGTH = 256,
+    parameter COLOR_BITS = 12
+) (
     input logic clk,
     input logic reset,
 
@@ -14,7 +19,13 @@ module RISCVCore (
     output logic [31:0] dbus_addr,
     input logic [31:0] dbus_rd_data,
     output logic [31:0] dbus_wr_data,
-    output logic dbus_wr_en
+    output logic dbus_wr_en,
+
+    // framebuffer
+    output logic fb_wr_en,
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_pxl_x,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_pxl_value
 );
 
     // control wires
@@ -48,46 +59,51 @@ module RISCVCore (
     logic [4:0] w_rd;
 
     Datapath u_Datapath (
-        .clk              (clk),
-        .reset            (reset),
+        .clk                (clk),
+        .reset              (reset),
         // instr bus
-        .inst_reset       (inst_reset),
-        .inst_addr        (inst_addr),
-        .inst_rd_data     (inst_rd_data),
-        .inst_rd_en       (inst_rd_en),
+        .inst_reset         (inst_reset),
+        .inst_addr          (inst_addr),
+        .inst_rd_data       (inst_rd_data),
+        .inst_rd_en         (inst_rd_en),
         // data bus
-        .dbus_addr         (dbus_addr),
-        .dbus_rd_data      (dbus_rd_data),
-        .dbus_wr_data      (dbus_wr_data),
-        .dbus_wr_en        (dbus_wr_en),
+        .dbus_addr          (dbus_addr),
+        .dbus_rd_data       (dbus_rd_data),
+        .dbus_wr_data       (dbus_wr_data),
+        .dbus_wr_en         (dbus_wr_en),
+        // framebuffer
+        .fb_wr_en           (fb_wr_en),
+        .fb_wr_pxl_x        (fb_wr_pxl_x),
+        .fb_wr_pxl_y        (fb_wr_pxl_y),
+        .fb_wr_pxl_value    (fb_wr_pxl_value),
         // control
-        .d_imm_src        (d_imm_src),
-        .e_alu_src        (e_alu_src),
-        .e_alu_control    (e_alu_control),
-        .e_invert_cond    (e_invert_cond),
-        .e_jump_src       (e_jump_src),
-        .e_pc_src         (e_pc_src),
-        .m_mem_write      (m_mem_write),
-        .w_result_src     (w_result_src),
-        .w_reg_write      (w_reg_write),
-        .op               (op),
-        .funct3           (funct3),
-        .funct7           (funct7),
-        .e_take_branch    (e_take_branch),
+        .d_imm_src          (d_imm_src),
+        .e_alu_src          (e_alu_src),
+        .e_alu_control      (e_alu_control),
+        .e_invert_cond      (e_invert_cond),
+        .e_jump_src         (e_jump_src),
+        .e_pc_src           (e_pc_src),
+        .m_mem_write        (m_mem_write),
+        .w_result_src       (w_result_src),
+        .w_reg_write        (w_reg_write),
+        .op                 (op),
+        .funct3             (funct3),
+        .funct7             (funct7),
+        .e_take_branch      (e_take_branch),
         // hazard
-        .f_stall          (f_stall),
-        .d_stall          (d_stall),
-        .d_flush          (d_flush),
-        .e_flush          (e_flush),
-        .e_forward_a      (e_forward_a),
-        .e_forward_b      (e_forward_b),
-        .d_rs1            (d_rs1),
-        .d_rs2            (d_rs2),
-        .e_rs1            (e_rs1),
-        .e_rs2            (e_rs2),
-        .e_rd             (e_rd),
-        .m_rd             (m_rd),
-        .w_rd             (w_rd)
+        .f_stall            (f_stall),
+        .d_stall            (d_stall),
+        .d_flush            (d_flush),
+        .e_flush            (e_flush),
+        .e_forward_a        (e_forward_a),
+        .e_forward_b        (e_forward_b),
+        .d_rs1              (d_rs1),
+        .d_rs2              (d_rs2),
+        .e_rs1              (e_rs1),
+        .e_rs2              (e_rs2),
+        .e_rd               (e_rd),
+        .m_rd               (m_rd),
+        .w_rd               (w_rd)
     );
 
     logic [1:0] e_result_src;

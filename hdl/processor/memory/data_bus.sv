@@ -22,12 +22,6 @@ module DataBus #(
     output logic [31:0] dmem_wr_data,
     output logic dmem_wr_en,
 
-    // framebuffer
-    output logic [$clog2(FRAMEBUFFER_BYTES)-1:0] fb_addr,
-    input logic [31:0] fb_rd_data,
-    output logic [31:0] fb_wr_data,
-    output logic fb_wr_en,
-
     // palette
     output logic [$clog2(PALETTE_BYTES)-1:0] palette_addr,
     input logic [31:0] palette_rd_data,
@@ -36,12 +30,10 @@ module DataBus #(
 );
     // check if MSBs of bus address match MSBs of base address
     logic access_memory;
-    logic access_framebuffer;
     logic access_palette;
     always_comb begin
         access_memory = (dbus_addr[31:$clog2(MEMORY_BYTES)] == MEMORY_BASE_ADDR[31:$clog2(MEMORY_BYTES)]);
         access_palette = (dbus_addr[31:$clog2(PALETTE_BYTES)] == PALETTE_BASE_ADDR[31:$clog2(PALETTE_BYTES)]);
-        access_framebuffer = (dbus_addr[31:$clog2(FRAMEBUFFER_BYTES)] == FRAMEBUFFER_BASE_ADDR[31:$clog2(FRAMEBUFFER_BYTES)]);
     end
 
     always_comb begin
@@ -54,11 +46,6 @@ module DataBus #(
         palette_addr = dbus_addr[$clog2(PALETTE_BYTES)-1:0];
         palette_wr_data = dbus_wr_data;
         palette_wr_en = access_palette && dbus_wr_en;
-
-        // framebuffer
-        fb_addr = dbus_addr[$clog2(FRAMEBUFFER_BYTES)-1:0];
-        fb_wr_data = dbus_wr_data;
-        fb_wr_en = access_framebuffer && dbus_wr_en;
     end
 
     always_comb begin
@@ -67,9 +54,6 @@ module DataBus #(
         end
         else if (access_palette) begin
             dbus_rd_data = palette_rd_data;
-        end
-        else if (access_framebuffer) begin
-            dbus_rd_data = fb_rd_data;
         end
         else begin
             dbus_rd_data = '0;

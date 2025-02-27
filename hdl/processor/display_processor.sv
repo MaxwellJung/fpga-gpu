@@ -20,9 +20,10 @@ module DisplayProcessor #(
     output logic palette_wr_en,
 
     // framebuffer
-    output logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_pxl_index,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_pxl_value,
-    output logic fb_wr_en
+    output logic fb_wr_en,
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_pxl_x,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_pxl_value
 );
     struct packed {
         logic [$clog2(RESOLUTION_X)-1:0] x;
@@ -68,18 +69,23 @@ module DisplayProcessor #(
     logic dbus_wr_en;
 
     RISCVCore u_RISCVCore (
-        .clk             (clk),
-        .reset           (reset || ctl_rst),
+        .clk                (clk),
+        .reset              (reset || ctl_rst),
         // instr bus
-        .inst_reset      (inst_reset),
-        .inst_addr       (inst_addr),
-        .inst_rd_data    (inst_rd_data),
-        .inst_rd_en      (inst_rd_en),
+        .inst_reset         (inst_reset),
+        .inst_addr          (inst_addr),
+        .inst_rd_data       (inst_rd_data),
+        .inst_rd_en         (inst_rd_en),
         // data bus
-        .dbus_addr        (dbus_addr),
-        .dbus_rd_data     (dbus_rd_data),
-        .dbus_wr_data     (dbus_wr_data),
-        .dbus_wr_en       (dbus_wr_en)
+        .dbus_addr          (dbus_addr),
+        .dbus_rd_data       (dbus_rd_data),
+        .dbus_wr_data       (dbus_wr_data),
+        .dbus_wr_en         (dbus_wr_en),
+        // framebuffer
+        .fb_wr_en           (fb_wr_en),
+        .fb_wr_pxl_x        (fb_wr_pxl_x),
+        .fb_wr_pxl_y        (fb_wr_pxl_y),
+        .fb_wr_pxl_value    (fb_wr_pxl_value)
     );
 
     DataBus data_bus (
@@ -92,11 +98,6 @@ module DisplayProcessor #(
         .dmem_rd_data            (dmem_rd_data),
         .dmem_wr_data            (dmem_wr_data),
         .dmem_wr_en              (dmem_wr_en),
-        // framebuffer
-        .fb_addr                (fb_pxl_index),
-        .fb_rd_data             (),
-        .fb_wr_data             (fb_pxl_value),
-        .fb_wr_en               (fb_wr_en),
         // palette
         .palette_addr           (palette_wr_index),
         .palette_rd_data        (),

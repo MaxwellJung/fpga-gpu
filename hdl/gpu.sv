@@ -139,18 +139,19 @@ module Gpu #(
         .status(gpu_status),
         .control(control),
 
-        .fb_pxl_index(fb_pxl_index),
-        .fb_pxl_value(fb_pxl_value),
-        .fb_wr_en(fb_wr_en),
-
         .palette_wr_index(palette_wr_index),
         .palette_wr_color(palette_wr_color),
-        .palette_wr_en(palette_wr_en)
+        .palette_wr_en(palette_wr_en),
+
+        .fb_wr_en(fb_wr_en),
+        .fb_wr_pxl_x(wr_pxl_x),
+        .fb_wr_pxl_y(wr_pxl_y),
+        .fb_wr_palette_value(wr_pxl_value)
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
     logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] palettendex;
+    logic [$clog2(PALETTE_LENGTH)-1:0] palette_index;
     logic [COLOR_BITS-1:0] color;
 
     Framebuffer #(
@@ -161,15 +162,16 @@ module Gpu #(
         .reset(reset),
         
         .rd_clk(vga_clk),
-        .re('1),
-        .pxl_x(fb_rd_x),
-        .pxl_y(fb_rd_y),
-        .palette_index(palettendex),
+        .rd_en('1),
+        .rd_pxl_x(fb_rd_x),
+        .rd_pxl_y(fb_rd_y),
+        .rd_pxl_value(palette_index),
 
         .wr_clk(gpu_clk),
-        .we(fb_wr_en),
-        .pxl_index(fb_pxl_index),
-        .pxl_value(fb_pxl_value)
+        .wr_en(fb_wr_en),
+        .wr_pxl_x(wr_pxl_x),
+        .wr_pxl_y(wr_pxl_y),
+        .wr_pxl_value(wr_pxl_value),
     );
 
     Palette #(
@@ -180,7 +182,7 @@ module Gpu #(
 
         .rd_clk            (vga_clk),
         .rd_en             ('1),
-        .rd_index          (palettendex),
+        .rd_index          (palette_index),
         .rd_color          (color),
 
         .wr_clk            (gpu_clk),

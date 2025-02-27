@@ -17,19 +17,19 @@ module OpcodeDecoder (
         case(op)
             // RegWritemmSrc_ALUSrc_MemWrite_ResultSrc_Branch_Jump_JumpSrc
             OP_LOAD:
-                controls = {1'b1, IMM, ALU_SRCMM, 5'b0_01_0_0, JUMP_SRC_PC}; // lw
-            OP_ALU:
-                controls = {1'b1, IMM, ALU_SRCMM, 5'b0_00_0_0, JUMP_SRC_PC}; // I–type
+                controls = {1'b1, IMM_I, ALU_SRC_IMM, 5'b0_01_0_0, JUMP_SRC_PC}; // lw
+            OP_ALU_I:
+                controls = {1'b1, IMM_I, ALU_SRC_IMM, 5'b0_00_0_0, JUMP_SRC_PC}; // I–type
             OP_STORE:
-                controls = {1'b0, IMM_S, ALU_SRCMM, 5'b1_00_0_0, JUMP_SRC_PC}; // sw
+                controls = {1'b0, IMM_S, ALU_SRC_IMM, 5'b1_00_0_0, JUMP_SRC_PC}; // sw
             OP_ALU_R:
-                controls = {1'b1, IMM, ALU_SRC_REG, 5'b0_00_0_0, JUMP_SRC_PC}; // R–type
+                controls = {1'b1, IMM_I, ALU_SRC_REG, 5'b0_00_0_0, JUMP_SRC_PC}; // R–type
             OP_LUI:
-                controls = {1'b1, IMM_U, ALU_SRCMM, 5'b0_00_0_0, JUMP_SRC_PC}; // lui
+                controls = {1'b1, IMM_U, ALU_SRC_IMM, 5'b0_00_0_0, JUMP_SRC_PC}; // lui
             OP_BRANCH:
                 controls = {1'b0, IMM_B, ALU_SRC_REG, 5'b0_00_1_0, JUMP_SRC_PC}; // beq
             OP_JALR:
-                controls = {1'b1, IMM, ALU_SRCMM, 5'b0_10_0_1, JUMP_SRC_REG}; // jalr
+                controls = {1'b1, IMM_I, ALU_SRC_IMM, 5'b0_10_0_1, JUMP_SRC_REG}; // jalr
             OP_JAL:
                 controls = {1'b1, IMM_J, ALU_SRC_REG, 5'b0_10_0_1, JUMP_SRC_PC}; // jal
             default:

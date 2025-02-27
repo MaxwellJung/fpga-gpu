@@ -1,6 +1,11 @@
 `include "./hdl/processor/defines.svh"
 
-module Datapath (
+module Datapath #(
+    parameter RESOLUTION_X = 400,
+    parameter RESOLUTION_Y = 300,
+    parameter PALETTE_LENGTH = 256,
+    parameter COLOR_BITS = 12
+) (
     input logic clk,
     input logic reset,
 
@@ -15,6 +20,12 @@ module Datapath (
     input logic [31:0] dbus_rd_data,
     output logic [31:0] dbus_wr_data,
     output logic dbus_wr_en,
+
+    // framebuffer
+    output logic fb_wr_en,
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_pxl_x,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_pxl_value,
 
     // control
     input imm_src_t d_imm_src,

@@ -31,9 +31,10 @@ module TbDisplayProcessor();
         .palette_wr_color    (),
         .palette_wr_en       (),
         // framebuffer
-        .fb_pxl_index        (),
-        .fb_pxl_value        (),
-        .fb_wr_en            ()
+        .fb_wr_en            (),
+        .fb_wr_pxl_x         (),
+        .fb_wr_pxl_y         (),
+        .fb_wr_pxl_value     ()
     );
 
     // generate clock to sequence tests

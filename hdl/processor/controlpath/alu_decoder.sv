@@ -40,7 +40,7 @@ module AluDecoder (
                     end
                 endcase
             end
-            OP_ALU_R, OP_ALU: begin // R–type or I–type ALU
+            OP_ALU_R, OP_ALU_I: begin // R–type or I–type ALU
                 case(funct3)
                     3'b000: begin
                         case ({op[5], funct7[5]})
@@ -74,6 +74,8 @@ module AluDecoder (
                 alu_control = ALU_B; // lui
             OP_JALR:
                 alu_control = ALU_ADD; // jalr
+            OP_CUSTOM1:
+                alu_control = ALU_A; // fbsw 
             default:
                 alu_control = ALU_NOOP; // NOOP
         endcase

@@ -3,14 +3,16 @@
 
 typedef enum logic [6:0] {
     OP_LOAD     = 7'b0000011, // (3)
-    OP_ALU    = 7'b0010011, // (19)
+    OP_CUSTOM1  = 7'b0001011, // (11)
+    OP_ALU_I    = 7'b0010011, // (19)
     OP_AUIPC    = 7'b0010111, // (23)
     OP_STORE    = 7'b0100011, // (35)
+    OP_CUSTOM2  = 7'b0101011, // (43)
     OP_ALU_R    = 7'b0110011, // (51)
     OP_LUI      = 7'b0110111, // (55)
     OP_BRANCH   = 7'b1100011, // (99)
-    OP_JALR   = 7'b1100111, // (103)
-    OP_JAL     = 7'b1101111  // (111)
+    OP_JALR     = 7'b1100111, // (103)
+    OP_JAL      = 7'b1101111  // (111)
 } opcode_t;
 
 typedef enum {
@@ -30,7 +32,7 @@ typedef enum {
 } alu_control_t;
 
 typedef enum logic [2:0] {
-    IMM, // I−type
+    IMM_I, // I−type
     IMM_S, // S−type (stores)
     IMM_B, // B−type (branches)
     IMM_J, // J−type (jal)
@@ -39,7 +41,7 @@ typedef enum logic [2:0] {
 
 typedef enum logic {
     ALU_SRC_REG,
-    ALU_SRCMM
+    ALU_SRC_IMM
 } alu_src_t;
 
 typedef enum logic {

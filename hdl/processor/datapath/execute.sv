@@ -70,7 +70,7 @@ module Execute (
     always_comb begin
         case (e_alu_src)
             ALU_SRC_REG: e_src_b = e_write_data;
-            ALU_SRCMM: e_src_b = e_imm_ext;
+            ALU_SRC_IMM: e_src_b = e_imm_ext;
             default: e_src_b = '0;
         endcase
     end
