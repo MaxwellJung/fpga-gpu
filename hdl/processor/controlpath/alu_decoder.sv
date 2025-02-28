@@ -47,10 +47,10 @@ module AluDecoder (
                             3'b000: alu_control = ALU_ADD; // addi
                             // subi not possible because funct7[5] conflicts with immediate[10]
                             3'b001: alu_control = ALU_ADD; // addi
+                            3'b010: alu_control = ALU_ADD; // addi
+                            3'b011: alu_control = ALU_ADD; // addi
                             3'b100: alu_control = ALU_ADD; // add
                             3'b101: alu_control = ALU_SUB; // sub
-                            3'b010: alu_control = ALU_XY_ADD; // addxyi
-                            3'b011: alu_control = ALU_XY_ADD; // addxyi
                             3'b110: alu_control = ALU_XY_ADD; // addxy
                             3'b111: alu_control = ALU_XY_SUB; // subxy
                             default: alu_control = ALU_NOOP; // NOOP

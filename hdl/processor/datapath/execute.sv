@@ -53,35 +53,37 @@ module Execute (
         end
     end
 
+    logic [31:0] e_src_a_rs1;
     logic [31:0] e_src_a;
     always_comb begin
         case (e_forward_a)
-            2'b00: e_src_a = e_rs1_value;
-            2'b01: e_src_a = w_result;
-            2'b10: e_src_a = m_alu_result;
-            default: e_src_a = '0;
+            2'b00: e_src_a_rs1 = e_rs1_value;
+            2'b01: e_src_a_rs1 = w_result;
+            2'b10: e_src_a_rs1 = m_alu_result;
+            default: e_src_a_rs1 = '0;
         endcase
 
         case (e_alu_src_a)
-            ALU_SRC_A_REG: e_src_a = e_src_a;
+            ALU_SRC_A_REG: e_src_a = e_src_a_rs1;
             ALU_SRC_A_PC: e_src_a = e_pc;
             default: e_src_a = '0;
     endcase
     end
 
+    logic [31:0] e_src_b_rs2;
     logic [31:0] e_src_b;
     always_comb begin
         case (e_forward_b)
-            2'b00: e_src_b = e_rs2_value;
-            2'b01: e_src_b = w_result;
-            2'b10: e_src_b = m_alu_result;
-            default: e_src_b = '0;
+            2'b00: e_src_b_rs2 = e_rs2_value;
+            2'b01: e_src_b_rs2 = w_result;
+            2'b10: e_src_b_rs2 = m_alu_result;
+            default: e_src_b_rs2 = '0;
         endcase
 
-        e_write_data = e_src_b;
+        e_write_data = e_src_b_rs2;
 
         case (e_alu_src_b)
-            ALU_SRC_B_REG: e_src_b = e_src_b;
+            ALU_SRC_B_REG: e_src_b = e_src_b_rs2;
             ALU_SRC_B_IMM: e_src_b = e_imm_ext;
             default: e_src_b = '0;
         endcase

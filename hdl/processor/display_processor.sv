@@ -89,6 +89,9 @@ module DisplayProcessor #(
     );
 
     DataBus data_bus (
+        .clk                (clk),
+        .reset              (reset || ctl_rst),
+        // data bus
         .dbus_addr               (dbus_addr),
         .dbus_rd_data            (dbus_rd_data),
         .dbus_wr_data            (dbus_wr_data),
@@ -107,7 +110,7 @@ module DisplayProcessor #(
 
     main_memory #(
         .INIT_FILE         (INIT_FILE),
-        .WORD_COUNT        (64),
+        .WORD_COUNT        (1024),
         .WORD_BITS         (32)
     ) u_main_memory (
         .clk               (clk),

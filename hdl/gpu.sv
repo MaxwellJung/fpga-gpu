@@ -126,6 +126,10 @@ module Gpu #(
     logic [COLOR_BITS-1:0] palette_wr_color;
     logic palette_wr_en;
 
+    logic [$clog2(RESOLUTION_X)-1:0] wr_pxl_x;
+    logic [$clog2(RESOLUTION_Y)-1:0] wr_pxl_y;
+    logic [$clog2(PALETTE_LENGTH)-1:0] wr_pxl_value;
+
     DisplayProcessor #(
         .INIT_FILE(INIT_FILE),
         .RESOLUTION_X(RESOLUTION_X),
@@ -146,7 +150,7 @@ module Gpu #(
         .fb_wr_en(fb_wr_en),
         .fb_wr_pxl_x(wr_pxl_x),
         .fb_wr_pxl_y(wr_pxl_y),
-        .fb_wr_palette_value(wr_pxl_value)
+        .fb_wr_pxl_value(wr_pxl_value)
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
@@ -171,7 +175,7 @@ module Gpu #(
         .wr_en(fb_wr_en),
         .wr_pxl_x(wr_pxl_x),
         .wr_pxl_y(wr_pxl_y),
-        .wr_pxl_value(wr_pxl_value),
+        .wr_pxl_value(wr_pxl_value)
     );
 
     Palette #(

@@ -1,0 +1,89 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Fri Feb 28 02:31:53 2025
+[*]
+[dumpfile] "/home/maxwelljung/programming/fpga-gpu/build/sim/display_processor_sim.vcd"
+[dumpfile_mtime] "Fri Feb 28 02:30:27 2025"
+[dumpfile_size] 17778535
+[savefile] "/home/maxwelljung/programming/fpga-gpu/display_processor_sim.gtkw"
+[timestart] 22766500
+[size] 1920 1052
+[pos] -1 -1
+*-17.000000 23160000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TbDisplayProcessor.
+[treeopen] TbDisplayProcessor.u_DisplayProcessor.
+[treeopen] TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.
+[treeopen] TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.
+[sst_width] 212
+[signals_width] 278
+[sst_expanded] 1
+[sst_vpaned_height] 306
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.clk
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.reset
+@200
+-
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.op[6:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.funct7[6:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.funct3[2:0]
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs1[4:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2[4:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs1_value[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2_value[31:0]
+@200
+-
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_control[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_result[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.w_result[31:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_forward_b[1:0]
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b_rs2[31:0]
+@200
+-
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_alu_result[31:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_fb_write
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_mem_write
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_pc_plus_4[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_rd[4:0]
+@23
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_write_data[31:0]
+@200
+-
+@22
+TbDisplayProcessor.u_DisplayProcessor.data_bus.dmem_rd_data[31:0]
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.w_rd[4:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.w_reg_write
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_read_data[31:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_result_src[1:0]
+@22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.w_result[31:0]
+@200
+-
+@22
+TbDisplayProcessor.u_DisplayProcessor.data_bus.palette_addr[8:0]
+TbDisplayProcessor.u_DisplayProcessor.data_bus.palette_rd_data[31:0]
+TbDisplayProcessor.u_DisplayProcessor.data_bus.palette_wr_data[31:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.data_bus.palette_wr_en
+@200
+-
+@22
+TbDisplayProcessor.u_DisplayProcessor.data_bus.dbus_addr[31:0]
+TbDisplayProcessor.u_DisplayProcessor.data_bus.dbus_rd_data[31:0]
+TbDisplayProcessor.u_DisplayProcessor.data_bus.dbus_wr_data[31:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.data_bus.dbus_wr_en
+[pattern_trace] 1
+[pattern_trace] 0

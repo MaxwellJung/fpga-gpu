@@ -16,13 +16,14 @@ gputest: gputest.mem
 gputest.mem: gputest.bin
 	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
 
-gputest.bin: gputest.out
-	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/gputest.out ${BUILD_DIR}/gputest.bin
+gputest.bin: gputest.elf
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.bin
 
-gputest.out: ${ASM_DIR}/gputest.asm
+gputest.elf: ${ASM_DIR}/gputest.asm
 	mkdir -p $(BUILD_DIR)
-	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.out
-	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/gputest.out > ${BUILD_DIR}/gputest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.o
+	${RISCV-GNU-TOOLCHAIN}-ld --format=elf32-littleriscv --script ${ASM_DIR}/gputest.ld ${BUILD_DIR}/gputest.o -o ${BUILD_DIR}/gputest.elf
+	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${BUILD_DIR}/gputest.elf > ${BUILD_DIR}/gputest-objdump.txt
 
 riscvtest: riscvtest.mem
 
