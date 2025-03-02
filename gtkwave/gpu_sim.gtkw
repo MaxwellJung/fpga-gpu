@@ -1,0 +1,77 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Fri Feb 14 00:14:42 2025
+[*]
+[dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/gpu_sim.vcd"
+[dumpfile_mtime] "Fri Feb 14 00:14:41 2025"
+[dumpfile_size] 609897137
+[savefile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/gpu_sim.gtkw"
+[timestart] 0
+[size] 1920 1027
+[pos] -1 -1
+*-15.814085 85800 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] tb_gpu.
+[treeopen] tb_gpu.dut.
+[sst_width] 253
+[signals_width] 219
+[sst_expanded] 1
+[sst_vpaned_height] 309
+@28
+tb_gpu.gpu_clk
+tb_gpu.reset
+tb_gpu.vga_clk
+tb_gpu.VGA_HS
+tb_gpu.VGA_VS
+@c00022
+tb_gpu.VGA_R[3:0]
+@28
+(0)tb_gpu.VGA_R[3:0]
+(1)tb_gpu.VGA_R[3:0]
+(2)tb_gpu.VGA_R[3:0]
+(3)tb_gpu.VGA_R[3:0]
+@1401200
+-group_end
+@22
+tb_gpu.VGA_G[3:0]
+tb_gpu.VGA_B[3:0]
+tb_gpu.dut.video_controller_0.vga_r_o[3:0]
+tb_gpu.dut.video_controller_0.vga_g_o[3:0]
+tb_gpu.dut.video_controller_0.vga_b_o[3:0]
+@200
+-
+@24
+tb_gpu.dut.video_controller_0.fb_rd_x_o[9:0]
+tb_gpu.dut.video_controller_0.fb_rd_y_o[9:0]
+@200
+-
+@24
+tb_gpu.dut.framebuffer_0.palette_index_o[7:0]
+tb_gpu.dut.palette_0.rd_color_o[11:0]
+[pattern_trace] 1
+[pattern_trace] 0
