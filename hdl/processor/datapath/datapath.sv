@@ -1,6 +1,11 @@
 `include "./hdl/processor/defines.svh"
 
-module Datapath (
+module Datapath #(
+    parameter RESOLUTION_X = 400,
+    parameter RESOLUTION_Y = 300,
+    parameter PALETTE_LENGTH = 256,
+    parameter COLOR_BITS = 12
+) (
     input logic clk,
     input logic reset,
 
@@ -16,15 +21,25 @@ module Datapath (
     output logic [31:0] dbus_wr_data,
     output logic dbus_wr_en,
 
+    // framebuffer
+    output logic fb_wr_en,
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_pxl_x,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_pxl_value,
+
     // control
     input imm_src_t d_imm_src,
-    input alu_src_t e_alu_src,
+    input alu_src_a_t e_alu_src_a,
+    input alu_src_b_t e_alu_src_b,
     input alu_control_t e_alu_control,
     input logic e_invert_cond,
     input jump_src_t e_jump_src,
     input logic e_pc_src,
     input logic m_mem_write,
-    input logic [1:0] w_result_src,
+    input logic m_fb_write,
+    input result_src_t w_result_src,
+    input load_size_t w_load_size,
+    input load_sign_t w_load_sign,
     input logic w_reg_write,
     output opcode_t op,
     output logic [2:0] funct3,
@@ -112,60 +127,72 @@ module Datapath (
     logic [31:0] e_alu_result;
     logic [31:0] e_write_data;
     logic [31:0] e_pc_plus_4;
-    Execute execute (
-        .clk(clk),
-        .reset(reset),
 
-        .d_rs1_value(d_rs1_value),
-        .d_rs2_value(d_rs2_value),
-        .d_pc(d_pc),
-        .d_rs1(d_rs1),
-        .d_rs2(d_rs2),
-        .d_rd(d_rd),
-        .d_imm_ext(d_imm_ext),
-        .d_pc_plus_4(d_pc_plus_4),
-
-        .m_alu_result(m_alu_result),
-
-        .w_result(w_result),
-
-        .e_flush(e_flush),
-        .e_forward_a(e_forward_a),
-        .e_forward_b(e_forward_b),
-        .e_alu_src(e_alu_src),
-        .e_alu_control(e_alu_control),
-        .e_invert_cond(e_invert_cond),
-        .e_jump_src(e_jump_src),
-        .e_rs1(e_rs1),
-        .e_rs2(e_rs2),
-        .e_pc_target(e_pc_target),
-        .e_take_branch(e_take_branch),
-
-        .e_alu_result(e_alu_result),
-        .e_write_data(e_write_data),
-        .e_rd(e_rd),
-        .e_pc_plus_4(e_pc_plus_4)
+    Execute u_Execute (
+        .clk              (clk),
+        .reset            (reset),
+        // input from previous pipeline
+        .d_rs1_value      (d_rs1_value),
+        .d_rs2_value      (d_rs2_value),
+        .d_pc             (d_pc),
+        .d_rs1            (d_rs1),
+        .d_rs2            (d_rs2),
+        .d_rd             (d_rd),
+        .d_imm_ext        (d_imm_ext),
+        .d_pc_plus_4      (d_pc_plus_4),
+        // forward
+        .m_alu_result     (m_alu_result),
+        .w_result         (w_result),
+        // hazard
+        .e_flush          (e_flush),
+        .e_forward_a      (e_forward_a),
+        .e_forward_b      (e_forward_b),
+        // control
+        .e_alu_src_a      (e_alu_src_a),
+        .e_alu_src_b      (e_alu_src_b),
+        .e_alu_control    (e_alu_control),
+        .e_invert_cond    (e_invert_cond),
+        .e_jump_src       (e_jump_src),
+        .e_rs1            (e_rs1),
+        .e_rs2            (e_rs2),
+        .e_pc_target      (e_pc_target),
+        .e_take_branch    (e_take_branch),
+        // output to next pipeline
+        .e_alu_result     (e_alu_result),
+        .e_write_data     (e_write_data),
+        .e_rd             (e_rd),
+        .e_pc_plus_4      (e_pc_plus_4)
     );
 
     logic [31:0] m_pc_plus_4;
-    Memory u_Memory (
-        .clk             (clk),
-        .reset           (reset),
+    Memory #(
+        .RESOLUTION_X       (RESOLUTION_X),
+        .RESOLUTION_Y       (RESOLUTION_Y),
+        .PALETTE_LENGTH     (PALETTE_LENGTH)
+    ) u_Memory (
+        .clk                (clk),
+        .reset              (reset),
         // input from previous pipeline
-        .e_alu_result    (e_alu_result),
-        .e_write_data    (e_write_data),
-        .e_rd            (e_rd),
-        .e_pc_plus_4     (e_pc_plus_4),
+        .e_alu_result       (e_alu_result),
+        .e_write_data       (e_write_data),
+        .e_rd               (e_rd),
+        .e_pc_plus_4        (e_pc_plus_4),
         // control
-        .m_mem_write     (m_mem_write),
+        .m_mem_write        (m_mem_write),
+        .m_fb_write         (m_fb_write),
         // data bus
-        .dbus_addr        (dbus_addr),
-        .dbus_wr_data     (dbus_wr_data),
-        .dbus_wr_en       (dbus_wr_en),
+        .dbus_addr          (dbus_addr),
+        .dbus_wr_data       (dbus_wr_data),
+        .dbus_wr_en         (dbus_wr_en),
+        // framebuffer
+        .fb_wr_en           (fb_wr_en),
+        .fb_wr_pxl_x        (fb_wr_pxl_x),
+        .fb_wr_pxl_y        (fb_wr_pxl_y),
+        .fb_wr_pxl_value    (fb_wr_pxl_value),
         // output to next pipeline
-        .m_alu_result    (m_alu_result),
-        .m_rd            (m_rd),
-        .m_pc_plus_4     (m_pc_plus_4)
+        .m_alu_result       (m_alu_result),
+        .m_rd               (m_rd),
+        .m_pc_plus_4        (m_pc_plus_4)
     );
 
     Writeback u_Writeback (
@@ -179,6 +206,8 @@ module Datapath (
         .w_read_data     (dbus_rd_data),
         // input from control
         .w_result_src    (w_result_src),
+        .w_load_size     (w_load_size),
+        .w_load_sign     (w_load_sign),
         // output to register file
         .w_result        (w_result),
         .w_rd            (w_rd)

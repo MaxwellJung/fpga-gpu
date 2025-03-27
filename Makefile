@@ -4,25 +4,29 @@ BUILD_DIR := ./build
 SIM_DIR := $(BUILD_DIR)/sim
 SRC_FILES := $(shell find $(SRC_DIRS) -name '*.sv' -or -name '*.v')
 PROCESSOR_SRC_FILES := $(shell find $(PROCESSOR_SRC_DIRS) -name '*.sv' -or -name '*.v')
-ASM_DIR := ./asm
+SRC_DIR := ./src
 DATA_DIR := ./data
 RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 # RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 
 all: gputest display-processor
 
-gputest: gputest.mem
-
-gputest.mem: gputest.bin
-	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
-
-gputest.bin: gputest.out
-	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/gputest.out ${BUILD_DIR}/gputest.bin
-
-gputest.out: ${ASM_DIR}/gputest.asm
+gputest: FORCE
 	mkdir -p $(BUILD_DIR)
-	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/gputest.asm -o ${BUILD_DIR}/gputest.out
-	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/gputest.out > ${BUILD_DIR}/gputest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-gcc -o ${SRC_DIR}/gputest.asm -S ${SRC_DIR}/main.c \
+		-O1 -g -march=rv32i -mabi=ilp32
+
+	${RISCV-GNU-TOOLCHAIN}-as -o ${BUILD_DIR}/gputest.o ${SRC_DIR}/gputest.asm \
+		-march=rv32i -mabi=ilp32 
+	${RISCV-GNU-TOOLCHAIN}-as -o ${BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm \
+		-march=rv32i -mabi=ilp32
+
+	${RISCV-GNU-TOOLCHAIN}-ld -o ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.o ${BUILD_DIR}/startup.o \
+		--format=elf32-littleriscv --script ${SRC_DIR}/gputest.ld
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.bin
+	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
+	
+	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${BUILD_DIR}/gputest.elf > ${BUILD_DIR}/gputest-objdump.txt
 
 riscvtest: riscvtest.mem
 
@@ -32,9 +36,9 @@ riscvtest.mem: riscvtest.bin
 riscvtest.bin: riscvtest.out
 	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin
 
-riscvtest.out: ${ASM_DIR}/riscvtest.asm
+riscvtest.out: ${SRC_DIR}/riscvtest.asm
 	mkdir -p $(BUILD_DIR)
-	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${ASM_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
+	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${SRC_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
 	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/riscvtest.out > ${BUILD_DIR}/riscvtest-objdump.txt
 
 # Vivado

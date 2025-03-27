@@ -1,4 +1,8 @@
-module Memory (
+module Memory #(
+    parameter RESOLUTION_X = 400,
+    parameter RESOLUTION_Y = 300,
+    parameter PALETTE_LENGTH = 256
+) (
     input logic clk,
     input logic reset,
 
@@ -10,11 +14,18 @@ module Memory (
 
     // control
     input logic m_mem_write,
+    input logic m_fb_write,
 
     // data bus
     output logic [31:0] dbus_addr,
     output logic [31:0] dbus_wr_data,
     output logic dbus_wr_en,
+
+    // framebuffer
+    output logic fb_wr_en,
+    output logic [$clog2(RESOLUTION_X)-1:0] fb_wr_pxl_x,
+    output logic [$clog2(RESOLUTION_Y)-1:0] fb_wr_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_pxl_value,
 
     // output to next pipeline
     output logic [31:0] m_alu_result,
@@ -35,6 +46,13 @@ module Memory (
         dbus_addr = m_alu_result;
         dbus_wr_data = m_write_data;
         dbus_wr_en = m_mem_write;
+    end
+
+    always_comb begin
+        fb_wr_en = m_fb_write;
+        fb_wr_pxl_x = m_alu_result[15:0];
+        fb_wr_pxl_y = m_alu_result[31:16];
+        fb_wr_pxl_value = m_write_data;
     end
 
 endmodule

@@ -10,7 +10,7 @@ module Hazard(
 
     // input from control
     input logic e_pc_src,
-    input logic [1:0] e_result_src,
+    input result_src_t e_result_src,
     input logic m_reg_write,
     input logic w_reg_write,
 
@@ -43,7 +43,7 @@ module Hazard(
 
     logic lw_stall;
     always_comb begin
-        lw_stall = e_result_src[0] & ((d_rs1 == e_rd) || (d_rs2 == e_rd));
+        lw_stall = (e_result_src == RESULT_SRC_MEMORY) & ((d_rs1 == e_rd) || (d_rs2 == e_rd));
         f_stall = lw_stall;
         d_stall = lw_stall;
 

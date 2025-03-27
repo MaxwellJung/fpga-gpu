@@ -6,7 +6,7 @@ module Palette #(
 
     input logic rd_clk,
     input logic rd_en,
-    input logic [$clog2(PALETTE_LENGTH)-1:0]  rd_index,
+    input logic [$clog2(PALETTE_LENGTH)-1:0] rd_index,
     output logic [COLOR_BITS-1:0] rd_color,
 
     input logic wr_clk,

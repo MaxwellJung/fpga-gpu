@@ -12,19 +12,36 @@ module Alu (
     logic condition;
     always_comb begin
         case (control)
-            ALU_NOOP:  result = '0;
-            ALU_A:     result = src_a;
-            ALU_B:     result = src_b;
-            ALU_ADD:   result = src_a + src_b;
-            ALU_SUB:   result = src_a - src_b;
-            ALU_AND:   result = src_a & src_b;
-            ALUR:    result = src_a | src_b;
-            ALU_XOR:   result = src_a ^ src_b;
-            ALU_SLT:   result = (src_a < src_b) ? 1 : 0;
-            ALU_SLL:   result = src_a << src_b;
-            ALU_SRL:   result = src_a >> src_b;
-            ALU_SRA:   result = src_a >>> src_b;
-            ALU_EQUAL: result = (src_a == src_b) ? 1 : 0;
+            ALU_NOOP:
+                result = '0;
+            ALU_A:
+                result = src_a;
+            ALU_B:
+                result = src_b;
+            ALU_ADD:
+                result = src_a + src_b;
+            ALU_SUB:
+                result = src_a - src_b;
+            ALU_AND:
+                result = src_a & src_b;
+            ALUR:
+                result = src_a | src_b;
+            ALU_XOR:
+                result = src_a ^ src_b;
+            ALU_SLT:
+                result = (src_a < src_b) ? 1 : 0;
+            ALU_SLL:
+                result = src_a << src_b;
+            ALU_SRL:
+                result = src_a >> src_b;
+            ALU_SRA:
+                result = src_a >>> src_b;
+            ALU_EQUAL:
+                result = (src_a == src_b) ? 1 : 0;
+            ALU_XY_ADD:
+                result = {src_a[31:16] + src_b[31:16], src_a[15:0] + src_b[15:0]};
+            ALU_XY_SUB: 
+                result = {src_a[31:16] - src_b[31:16], src_a[15:0] - src_b[15:0]};
             default: result = '0;
         endcase
 

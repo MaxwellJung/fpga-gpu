@@ -4,16 +4,20 @@ import numpy as np
 import random
 
 def main():
-    color_palette()
+    rgb332_color_palette()
     # frame_buffer()
     # black_image()
     # index_image()
     # random_image()
     # test_image()
 
-def color_palette():
-    for i in range(64):
-        print('{3:08b}{2:08b}{1:08b}{0:08b}'.format(4*i, 4*i+1, 4*i+2, 4*i+3))
+def rgb332_color_palette():
+    for i in range(256):
+        r = (i & 0b11100000) >> 5
+        g = (i & 0b00011100) >> 2
+        b = (i & 0b00000011) >> 0
+        rgb444 = (r << 9) | (g << 5) | (b << 2)
+        print('.word 0x{0:03x}'.format(rgb444))
     
 def frame_buffer():
     for i in range(400*300):

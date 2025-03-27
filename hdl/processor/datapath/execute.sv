@@ -4,6 +4,7 @@ module Execute (
     input logic clk,
     input logic reset,
     
+    // input from previous pipeline
     input logic [31:0] d_rs1_value,
     input logic [31:0] d_rs2_value,
     input logic [31:0] d_pc,
@@ -13,14 +14,18 @@ module Execute (
     input logic [31:0] d_imm_ext,
     input logic [31:0] d_pc_plus_4,
 
+    // forward
     input logic [31:0] m_alu_result,
-    
     input logic [31:0] w_result,
 
+    // hazard
     input logic e_flush,
     input logic [1:0] e_forward_a,
     input logic [1:0] e_forward_b,
-    input alu_src_t e_alu_src,
+
+    // control
+    input alu_src_b_t e_alu_src_a,
+    input alu_src_b_t e_alu_src_b,
     input alu_control_t e_alu_control,
     input logic e_invert_cond,
     input jump_src_t e_jump_src,
@@ -29,6 +34,7 @@ module Execute (
     output logic [31:0] e_pc_target,
     output logic e_take_branch,
 
+    // output to next pipeline
     output logic [31:0] e_alu_result,
     output logic [31:0] e_write_data,
     output logic [4:0] e_rd,
@@ -47,30 +53,38 @@ module Execute (
         end
     end
 
+    logic [31:0] e_src_a_rs1;
     logic [31:0] e_src_a;
     always_comb begin
         case (e_forward_a)
-            2'b00: e_src_a = e_rs1_value;
-            2'b01: e_src_a = w_result;
-            2'b10: e_src_a = m_alu_result;
+            2'b00: e_src_a_rs1 = e_rs1_value;
+            2'b01: e_src_a_rs1 = w_result;
+            2'b10: e_src_a_rs1 = m_alu_result;
+            default: e_src_a_rs1 = '0;
+        endcase
+
+        case (e_alu_src_a)
+            ALU_SRC_A_REG: e_src_a = e_src_a_rs1;
+            ALU_SRC_A_PC: e_src_a = e_pc;
             default: e_src_a = '0;
-        endcase
+    endcase
     end
 
-    always_comb begin
-        case (e_forward_b)
-            2'b00: e_write_data = e_rs2_value;
-            2'b01: e_write_data = w_result;
-            2'b10: e_write_data = m_alu_result;
-            default: e_write_data = '0;
-        endcase
-    end
-
+    logic [31:0] e_src_b_rs2;
     logic [31:0] e_src_b;
     always_comb begin
-        case (e_alu_src)
-            ALU_SRC_REG: e_src_b = e_write_data;
-            ALU_SRCMM: e_src_b = e_imm_ext;
+        case (e_forward_b)
+            2'b00: e_src_b_rs2 = e_rs2_value;
+            2'b01: e_src_b_rs2 = w_result;
+            2'b10: e_src_b_rs2 = m_alu_result;
+            default: e_src_b_rs2 = '0;
+        endcase
+
+        e_write_data = e_src_b_rs2;
+
+        case (e_alu_src_b)
+            ALU_SRC_B_REG: e_src_b = e_src_b_rs2;
+            ALU_SRC_B_IMM: e_src_b = e_imm_ext;
             default: e_src_b = '0;
         endcase
     end

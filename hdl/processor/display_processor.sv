@@ -2,17 +2,22 @@
 
 module DisplayProcessor #(
     parameter INIT_FILE = "build/gputest.mem",
+    parameter MAIN_MEMORY_BYTES = 1024,
+    parameter IO_REGISTERS_BYTES = 4096,
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256,
+    localparam PALETTE_BYTES = 2*PALETTE_LENGTH,
     parameter COLOR_BITS = 12
 ) (
     input logic clk,
     input logic reset,
 
     // memory mapped i/o
-    output logic [31:0] status,
-    input logic [31:0] control,
+    output logic [$clog2(IO_REGISTERS_BYTES)-1:0] io_reg_addr,
+    input logic [31:0] io_reg_rd_data,
+    output logic [31:0] io_reg_wr_data,
+    output logic io_reg_wr_en,
 
     // color palette
     output logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index,
@@ -20,8 +25,8 @@ module DisplayProcessor #(
     output logic palette_wr_en,
 
     // framebuffer
-    output logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_pxl_index,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_pxl_value,
+    output logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_addr,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_data,
     output logic fb_wr_en
 );
     struct packed {
@@ -34,12 +39,8 @@ module DisplayProcessor #(
     logic [31:0] mask;
     logic [31:0] pattern;
 
-    logic ctl_rst;
-    assign ctl_rst = control[23];
-
     always_ff @(posedge clk) begin
-        if (reset || ctl_rst) begin
-            status <= 32'h00000010;
+        if (reset) begin
             current_position.x <= '0;
             current_position.y <= '0;
             fill <= '0;
@@ -57,57 +58,78 @@ module DisplayProcessor #(
     logic [31:0] inst_rd_data;
     logic inst_rd_en;
 
-    logic [31:0] dmem_addr;
-    logic [31:0] dmem_rd_data;
-    logic [31:0] dmem_wr_data;
-    logic dmem_wr_en;
-
     logic [31:0] dbus_addr;
     logic [31:0] dbus_rd_data;
     logic [31:0] dbus_wr_data;
     logic dbus_wr_en;
 
     RISCVCore u_RISCVCore (
-        .clk             (clk),
-        .reset           (reset || ctl_rst),
+        .clk                (clk),
+        .reset              (reset),
         // instr bus
-        .inst_reset      (inst_reset),
-        .inst_addr       (inst_addr),
-        .inst_rd_data    (inst_rd_data),
-        .inst_rd_en      (inst_rd_en),
+        .inst_reset         (inst_reset),
+        .inst_addr          (inst_addr),
+        .inst_rd_data       (inst_rd_data),
+        .inst_rd_en         (inst_rd_en),
         // data bus
-        .dbus_addr        (dbus_addr),
-        .dbus_rd_data     (dbus_rd_data),
-        .dbus_wr_data     (dbus_wr_data),
-        .dbus_wr_en       (dbus_wr_en)
+        .dbus_addr          (dbus_addr),
+        .dbus_rd_data       (dbus_rd_data),
+        .dbus_wr_data       (dbus_wr_data),
+        .dbus_wr_en         (dbus_wr_en),
+        // framebuffer
+        .fb_wr_pxl_x        (),
+        .fb_wr_pxl_y        (),
+        .fb_wr_pxl_value    (),
+        .fb_wr_en           ()
     );
 
-    DataBus data_bus (
-        .dbus_addr               (dbus_addr),
-        .dbus_rd_data            (dbus_rd_data),
-        .dbus_wr_data            (dbus_wr_data),
-        .dbus_wr_en              (dbus_wr_en),
-        // main memory
-        .dmem_addr               (dmem_addr),
-        .dmem_rd_data            (dmem_rd_data),
-        .dmem_wr_data            (dmem_wr_data),
-        .dmem_wr_en              (dmem_wr_en),
-        // framebuffer
-        .fb_addr                (fb_pxl_index),
-        .fb_rd_data             (),
-        .fb_wr_data             (fb_pxl_value),
-        .fb_wr_en               (fb_wr_en),
-        // palette
-        .palette_addr           (palette_wr_index),
-        .palette_rd_data        (),
-        .palette_wr_data        (palette_wr_color),
-        .palette_wr_en          (palette_wr_en)
+    logic [31:0] main_mem_addr;
+    logic [31:0] main_mem_rd_data;
+    logic [31:0] main_mem_wr_data;
+    logic main_mem_wr_en;
+
+    logic [$clog2(PALETTE_BYTES)-1:0] palette_addr;
+    logic [31:0] palette_wr_data;
+
+    MemoryMapper #(
+        .MAIN_MEMORY_BYTES         (MAIN_MEMORY_BYTES),
+        .IO_REGISTERS_BYTES        (4096),
+        .PALETTE_BYTES             (2*256),
+        .FRAMEBUFFER_BYTES         (400*300)
+    ) u_MemoryMapper (
+        .clk                       (clk),
+        .reset                     (reset),
+        // Data bus
+        .bus_addr                  (dbus_addr),
+        .bus_rd_data               (dbus_rd_data),
+        .bus_wr_data               (dbus_wr_data),
+        .bus_wr_en                 (dbus_wr_en),
+        // Main memory
+        .main_mem_addr             (main_mem_addr),
+        .main_mem_rd_data          (main_mem_rd_data),
+        .main_mem_wr_data          (main_mem_wr_data),
+        .main_mem_wr_en            (main_mem_wr_en),
+        // IO registers
+        .io_reg_addr               (io_reg_addr),
+        .io_reg_rd_data            (io_reg_rd_data),
+        .io_reg_wr_data            (io_reg_wr_data),
+        .io_reg_wr_en              (io_reg_wr_en),
+        // Palette
+        .palette_addr              (palette_addr),
+        .palette_rd_data           (),
+        .palette_wr_data           (palette_wr_data),
+        .palette_wr_en             (palette_wr_en),
+        // Framebuffer
+        .fb_addr                   (fb_addr),
+        .fb_rd_data                (),
+        .fb_wr_data                (fb_wr_data),
+        .fb_wr_en                  (fb_wr_en)
     );
 
     main_memory #(
         .INIT_FILE         (INIT_FILE),
-        .WORD_COUNT        (64),
-        .WORD_BITS         (32)
+        .WORD_BITS         (32),
+        .CAPACITY_BYTES    (MAIN_MEMORY_BYTES)
     ) u_main_memory (
         .clk               (clk),
         // instruction
@@ -115,15 +137,20 @@ module DisplayProcessor #(
         .port_a_address    (inst_addr),
         .port_a_rd_data    (inst_rd_data),
         .port_a_rd_en      (inst_rd_en),
-        .port_a_wr_data    (),
-        .port_a_wr_en      (),
+        .port_a_wr_data    ('0),
+        .port_a_wr_en      ('0),
         // data
         .port_b_reset      ('0),
-        .port_b_address    (dmem_addr),
-        .port_b_rd_data    (dmem_rd_data),
+        .port_b_address    (main_mem_addr),
+        .port_b_rd_data    (main_mem_rd_data),
         .port_b_rd_en      ('1),
-        .port_b_wr_data    (dmem_wr_data),
-        .port_b_wr_en      (dmem_wr_en)
+        .port_b_wr_data    (main_mem_wr_data),
+        .port_b_wr_en      (main_mem_wr_en)
     );
+
+    always_comb begin
+        palette_wr_index = palette_addr>>1;
+        palette_wr_color = palette_wr_data[0+:COLOR_BITS];
+    end
 
 endmodule

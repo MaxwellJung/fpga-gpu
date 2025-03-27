@@ -1,0 +1,7 @@
+#ifndef _PALETTE_H
+#define _PALETTE_H
+
+#define PALETTE_BASE_ADDR  0xC0001000
+#define PALETTE_LENGTH  256
+
+#endif // _PALETTE_H

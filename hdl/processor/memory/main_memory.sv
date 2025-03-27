@@ -1,9 +1,10 @@
 module main_memory #(
     parameter INIT_FILE = "build/gputest.mem",
-    parameter WORD_COUNT = 64,
     parameter WORD_BITS = 32,
     localparam BYTES_PER_WORD = WORD_BITS/8,
-    localparam ADDR_BITS = $clog2(WORD_COUNT*BYTES_PER_WORD)
+    parameter CAPACITY_BYTES = 128,
+    localparam WORD_COUNT = CAPACITY_BYTES/BYTES_PER_WORD,
+    localparam ADDR_BITS = $clog2(CAPACITY_BYTES)
 ) (
     input logic clk,
 

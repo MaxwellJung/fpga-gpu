@@ -6,15 +6,15 @@ module Framebuffer #(
     input logic reset,
 
     input logic rd_clk,
-    input logic re,
-    input logic [$clog2(RESOLUTION_X)-1:0] pxl_x,
-    input logic [$clog2(RESOLUTION_Y)-1:0] pxl_y,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] palette_index,
+    input logic rd_en,
+    input logic [$clog2(RESOLUTION_X)-1:0] rd_pxl_x,
+    input logic [$clog2(RESOLUTION_Y)-1:0] rd_pxl_y,
+    output logic [$clog2(PALETTE_LENGTH)-1:0] rd_pxl_value,
 
     input logic wr_clk,
-    input logic we,
-    input logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] pxl_index,
-    input logic [$clog2(PALETTE_LENGTH)-1:0] pxl_value
+    input logic wr_en,
+    input logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] wr_pxl_addr,
+    input logic [$clog2(PALETTE_LENGTH)-1:0] wr_pxl_value
 );
     logic [$clog2(PALETTE_LENGTH)-1:0] pixels[RESOLUTION_X*RESOLUTION_Y];
 
@@ -23,18 +23,18 @@ module Framebuffer #(
             // pixels <= '0;
         end
         else
-            if (we)
-                pixels[pxl_index] <= pxl_value;
+            if (wr_en)
+                pixels[wr_pxl_addr] <= wr_pxl_value;
     end
 
     always_ff @(posedge rd_clk) begin
         if (reset)
-            palette_index <= '0;
+            rd_pxl_value <= '0;
         else begin
-            if (re)
-                palette_index <= pixels[RESOLUTION_X*pxl_y + pxl_x];
+            if (rd_en)
+                rd_pxl_value <= pixels[RESOLUTION_X*rd_pxl_y + rd_pxl_x];
             else
-                palette_index <= '0;
+                rd_pxl_value <= '0;
         end
     end
 

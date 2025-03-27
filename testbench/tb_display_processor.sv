@@ -13,27 +13,29 @@ module TbDisplayProcessor();
     logic [31:0] gpu_control;
 
     // instantiate device to be tested
-
     DisplayProcessor #(
-        .INIT_FILE           ("build/gputest.mem"),
-        .RESOLUTION_X        (RESOLUTION_X),
-        .RESOLUTION_Y        (RESOLUTION_Y),
-        .PALETTE_LENGTH      (PALETTE_LENGTH),
-        .COLOR_BITS          (COLOR_BITS)
+        .INIT_FILE             ("build/gputest.mem"),
+        .IO_REGISTERS_BYTES    (4096),
+        .RESOLUTION_X          (RESOLUTION_X),
+        .RESOLUTION_Y          (RESOLUTION_Y),
+        .PALETTE_LENGTH        (PALETTE_LENGTH),
+        .COLOR_BITS            (COLOR_BITS)
     ) u_DisplayProcessor (
-        .clk                 (gpu_clk),
-        .reset               (gpu_reset),
+        .clk                   (gpu_clk),
+        .reset                 (gpu_reset),
         // memory mapped i/o
-        .status              (gpu_status),
-        .control             (gpu_control),
+        .io_reg_addr           (io_reg_addr),
+        .io_reg_rd_data        (io_reg_rd_data),
+        .io_reg_wr_data        (io_reg_wr_data),
+        .io_reg_wr_en          (io_reg_wr_en),
         // color palette
-        .palette_wr_index    (),
-        .palette_wr_color    (),
-        .palette_wr_en       (),
+        .palette_wr_index      (palette_wr_index),
+        .palette_wr_color      (palette_wr_color),
+        .palette_wr_en         (palette_wr_en),
         // framebuffer
-        .fb_pxl_index        (),
-        .fb_pxl_value        (),
-        .fb_wr_en            ()
+        .fb_addr               (fb_addr),
+        .fb_wr_data            (fb_wr_data),
+        .fb_wr_en              (fb_wr_en)
     );
 
     // generate clock to sequence tests

@@ -62,95 +62,93 @@ module Gpu #(
     output logic [GREEN_BITS-1:0] vga_g,
     output logic [BLUE_BITS-1:0] vga_b
 );
-    logic [31:0] gpu_status, gpu_control;
 
-    AxiGpuRegisters #() axi_gpu_registers(
-        .s_axi_aclk(s_axi_aclk),
-        .s_axi_aresetn(s_axi_aresetn),
+    logic [11:0] io_reg_addr;
+    logic [31:0] io_reg_rd_data;
+    logic [31:0] io_reg_wr_data;
+    logic io_reg_wr_en;
 
-        .S_AXI_araddr(S_AXI_araddr),
-        .S_AXI_arburst(S_AXI_arburst),
-        .S_AXI_arcache(S_AXI_arcache),
-        .S_AXI_arlen(S_AXI_arlen),
-        .S_AXI_arlock(S_AXI_arlock),
-        .S_AXI_arprot(S_AXI_arprot),
-        .S_AXI_arready(S_AXI_arready),
-        .S_AXI_arsize(S_AXI_arsize),
-        .S_AXI_arvalid(S_AXI_arvalid),
-        .S_AXI_awaddr(S_AXI_awaddr),
-        .S_AXI_awburst(S_AXI_awburst),
-        .S_AXI_awcache(S_AXI_awcache),
-        .S_AXI_awlen(S_AXI_awlen),
-        .S_AXI_awlock(S_AXI_awlock),
-        .S_AXI_awprot(S_AXI_awprot),
-        .S_AXI_awready(S_AXI_awready),
-        .S_AXI_awsize(S_AXI_awsize),
-        .S_AXI_awvalid(S_AXI_awvalid),
-        .S_AXI_bready(S_AXI_bready),
-        .S_AXI_bresp(S_AXI_bresp),
-        .S_AXI_bvalid(S_AXI_bvalid),
-        .S_AXI_rdata(S_AXI_rdata),
-        .S_AXI_rlast(S_AXI_rlast),
-        .S_AXI_rready(S_AXI_rready),
-        .S_AXI_rresp(S_AXI_rresp),
-        .S_AXI_rvalid(S_AXI_rvalid),
-        .S_AXI_wdata(S_AXI_wdata),
-        .S_AXI_wlast(S_AXI_wlast),
-        .S_AXI_wready(S_AXI_wready),
-        .S_AXI_wstrb(S_AXI_wstrb),
-        .S_AXI_wvalid(S_AXI_wvalid),
-
-        .gpu_status(gpu_status),
-        .gpu_control(gpu_control)
+    AxiGpuIORegisters u_AxiGpuIORegisters (
+        // AXI4 interface
+        .S_AXI_araddr      (S_AXI_araddr),
+        .S_AXI_arburst     (S_AXI_arburst),
+        .S_AXI_arcache     (S_AXI_arcache),
+        .S_AXI_arlen       (S_AXI_arlen),
+        .S_AXI_arlock      (S_AXI_arlock),
+        .S_AXI_arprot      (S_AXI_arprot),
+        .S_AXI_arready     (S_AXI_arready),
+        .S_AXI_arsize      (S_AXI_arsize),
+        .S_AXI_arvalid     (S_AXI_arvalid),
+        .S_AXI_awaddr      (S_AXI_awaddr),
+        .S_AXI_awburst     (S_AXI_awburst),
+        .S_AXI_awcache     (S_AXI_awcache),
+        .S_AXI_awlen       (S_AXI_awlen),
+        .S_AXI_awlock      (S_AXI_awlock),
+        .S_AXI_awprot      (S_AXI_awprot),
+        .S_AXI_awready     (S_AXI_awready),
+        .S_AXI_awsize      (S_AXI_awsize),
+        .S_AXI_awvalid     (S_AXI_awvalid),
+        .S_AXI_bready      (S_AXI_bready),
+        .S_AXI_bresp       (S_AXI_bresp),
+        .S_AXI_bvalid      (S_AXI_bvalid),
+        .S_AXI_rdata       (S_AXI_rdata),
+        .S_AXI_rlast       (S_AXI_rlast),
+        .S_AXI_rready      (S_AXI_rready),
+        .S_AXI_rresp       (S_AXI_rresp),
+        .S_AXI_rvalid      (S_AXI_rvalid),
+        .S_AXI_wdata       (S_AXI_wdata),
+        .S_AXI_wlast       (S_AXI_wlast),
+        .S_AXI_wready      (S_AXI_wready),
+        .S_AXI_wstrb       (S_AXI_wstrb),
+        .S_AXI_wvalid      (S_AXI_wvalid),
+        .s_axi_aclk        (s_axi_aclk),
+        .s_axi_aresetn     (s_axi_aresetn),
+        // GPU interface
+        .io_reg_addr       (io_reg_addr),
+        .io_reg_clk        (gpu_clk),
+        .io_reg_wr_data    (io_reg_wr_data),
+        .io_reg_rd_data    (io_reg_rd_data),
+        .io_reg_en         ('1),
+        .io_reg_reset      (reset),
+        .io_reg_wr_en      ({4{io_reg_wr_en}})
     );
-
-    // handle clock domain crossing (s_axi_aclk -> gpu_clk)
-    logic [31:0] control;
-
-    Latency #(
-        .LENGTH(2),
-        .WIDTH(1*32)
-    ) gpu_reg_synchronizer (
-        .clk(gpu_clk),
-        .reset(reset),
-
-        .in({gpu_control}),
-        .out({control})
-    );
-
-    logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_pxl_index;
-    logic [$clog2(PALETTE_LENGTH)-1:0] fb_pxl_value;
-    logic fb_wr_en;
 
     logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index;
     logic [COLOR_BITS-1:0] palette_wr_color;
     logic palette_wr_en;
 
+    logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_addr;
+    logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_data;
+    logic fb_wr_en;
+
     DisplayProcessor #(
-        .INIT_FILE(INIT_FILE),
-        .RESOLUTION_X(RESOLUTION_X),
-        .RESOLUTION_Y(RESOLUTION_Y),
-        .PALETTE_LENGTH(PALETTE_LENGTH),
-        .COLOR_BITS(COLOR_BITS)
-    ) display_processor (
-        .clk(gpu_clk),
-        .reset(reset),
-
-        .status(gpu_status),
-        .control(control),
-
-        .fb_pxl_index(fb_pxl_index),
-        .fb_pxl_value(fb_pxl_value),
-        .fb_wr_en(fb_wr_en),
-
-        .palette_wr_index(palette_wr_index),
-        .palette_wr_color(palette_wr_color),
-        .palette_wr_en(palette_wr_en)
+        .INIT_FILE             (INIT_FILE),
+        .IO_REGISTERS_BYTES    (4096),
+        .RESOLUTION_X          (RESOLUTION_X),
+        .RESOLUTION_Y          (RESOLUTION_Y),
+        .PALETTE_LENGTH        (PALETTE_LENGTH),
+        .COLOR_BITS            (COLOR_BITS)
+    ) u_DisplayProcessor (
+        .clk                   (gpu_clk),
+        .reset                 (reset),
+        // memory mapped i/o
+        .io_reg_addr           (io_reg_addr),
+        .io_reg_rd_data        (io_reg_rd_data),
+        .io_reg_wr_data        (io_reg_wr_data),
+        .io_reg_wr_en          (io_reg_wr_en),
+        // color palette
+        .palette_wr_index      (palette_wr_index),
+        .palette_wr_color      (palette_wr_color),
+        .palette_wr_en         (palette_wr_en),
+        // framebuffer
+        .fb_addr               (fb_addr),
+        .fb_wr_data            (fb_wr_data),
+        .fb_wr_en              (fb_wr_en)
     );
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
     logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
-    logic [$clog2(PALETTE_LENGTH)-1:0] palettendex;
+    logic [$clog2(PALETTE_LENGTH)-1:0] palette_index;
     logic [COLOR_BITS-1:0] color;
 
     Framebuffer #(
@@ -161,15 +159,15 @@ module Gpu #(
         .reset(reset),
         
         .rd_clk(vga_clk),
-        .re('1),
-        .pxl_x(fb_rd_x),
-        .pxl_y(fb_rd_y),
-        .palette_index(palettendex),
+        .rd_en('1),
+        .rd_pxl_x(fb_rd_x),
+        .rd_pxl_y(fb_rd_y),
+        .rd_pxl_value(palette_index),
 
         .wr_clk(gpu_clk),
-        .we(fb_wr_en),
-        .pxl_index(fb_pxl_index),
-        .pxl_value(fb_pxl_value)
+        .wr_en(fb_wr_en),
+        .wr_pxl_addr(fb_addr),
+        .wr_pxl_value(fb_wr_data)
     );
 
     Palette #(
@@ -180,7 +178,7 @@ module Gpu #(
 
         .rd_clk            (vga_clk),
         .rd_en             ('1),
-        .rd_index          (palettendex),
+        .rd_index          (palette_index),
         .rd_color          (color),
 
         .wr_clk            (gpu_clk),

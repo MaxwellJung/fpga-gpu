@@ -1,7 +1,5 @@
-module AxiGpuRegisters #(
-    
-) (
-    // AXI4
+module AxiGpuIORegisters (
+    // AXI4 interface
     input logic [11:0]S_AXI_araddr,
     input logic [1:0]S_AXI_arburst,
     input logic [3:0]S_AXI_arcache,
@@ -41,9 +39,14 @@ module AxiGpuRegisters #(
     input logic s_axi_aclk,
     input logic s_axi_aresetn,
     
-    // registers
-    input logic [31:0] gpu_status,
-    output logic [31:0] gpu_control
+    // GPU interface
+    input logic [11:0] io_reg_addr,
+    input logic io_reg_clk,
+    input logic [31:0] io_reg_wr_data,
+    output logic [31:0] io_reg_rd_data,
+    input logic io_reg_en,
+    input logic io_reg_reset,
+    input logic [3:0] io_reg_wr_en
 );
     logic [11:0] reg_addr;
     logic reg_clk;
@@ -98,17 +101,23 @@ module AxiGpuRegisters #(
         .BRAM_PORTA_we(reg_we)
     );
 
-    GpuRegisters #() gpu_registers (
-        .clk(reg_clk),
-        .rst(reg_rst),
-        .en(reg_en),
-        .addr(reg_addr),
-        .dout(reg_dout),
-        .din(reg_din),
-        .we(reg_we),
-
-        .gpu_status(gpu_status),
-        .gpu_control(gpu_control)
+    GpuIORegisters #() u_GpuIORegisters (
+        // CPU side interface
+        .port_a_address    (reg_addr),
+        .port_a_clk        (reg_clk),
+        .port_a_wr_data    (reg_din),
+        .port_a_rd_data    (reg_dout),
+        .port_a_rd_en      (reg_en),
+        .port_a_reset      (reg_rst),
+        .port_a_wr_en      (reg_we),
+        // GPU side interface
+        .port_b_address    (io_reg_addr),
+        .port_b_clk        (io_reg_clk),
+        .port_b_wr_data    (io_reg_wr_data),
+        .port_b_rd_data    (io_reg_rd_data),
+        .port_b_rd_en      (io_reg_en),
+        .port_b_reset      (io_reg_reset),
+        .port_b_wr_en      (io_reg_wr_en)
     );
 
 endmodule
