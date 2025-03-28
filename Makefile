@@ -29,6 +29,7 @@ gputest: FORCE
 # convert to mem file
 	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.bin
 	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
+	cp ${BUILD_DIR}/gputest.mem ${DATA_DIR}/gpu_mem_init.mem
 # disassemble for debug
 	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${BUILD_DIR}/gputest.elf > ${BUILD_DIR}/gputest-objdump.txt
 

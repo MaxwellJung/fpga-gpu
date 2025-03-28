@@ -38,8 +38,8 @@ void pointR(uint32_t dx, uint32_t dy) {
 }
 
 void rect(uint32_t x, uint32_t y) {
-    for (int rect_y = cp_y; rect_y < y; ++rect_y) {
-        for (int rect_x = cp_x; rect_x < x; ++rect_x) {
+    for (int rect_y = cp_y; rect_y <= y; ++rect_y) {
+        for (int rect_x = cp_x; rect_x <= x; ++rect_x) {
             writePixel(rect_x, rect_y, color_index);
         }
     }

@@ -18,8 +18,8 @@ void main() {
     initFrameBuffer();
 
     while (true) {
-        // while (!isStartBitHigh());
-        
+        while (!isStartBitHigh());
+
         setBusyBit();
         clearStartBit();
 
@@ -45,24 +45,24 @@ void initColorPalette() {
 
 bool isStartBitHigh() {
     uint32_t* control_reg_ptr = (uint32_t*)(IO_CONTROL_REG_ADDR);
-    uint32_t start_bit = *control_reg_ptr & 0x00000001;
+    uint32_t start_bit = *control_reg_ptr & 0b1;
 
     return (start_bit == 1);
 }
 
 void setBusyBit() {
     uint32_t* status_reg_ptr = (uint32_t*)(IO_STATUS_REG_ADDR);
-    *status_reg_ptr |= 0x00000001;
+    *status_reg_ptr |= 0b1;
 }
 
 void clearBusyBit() {
     uint32_t* status_reg_ptr = (uint32_t*)(IO_STATUS_REG_ADDR);
-    *status_reg_ptr &= ~0x00000001;
+    *status_reg_ptr &= ~0b1;
 }
 
 void clearStartBit() {
     uint32_t* control_reg_ptr = (uint32_t*)(IO_CONTROL_REG_ADDR);
-    *control_reg_ptr &= ~0x00000001;
+    *control_reg_ptr &= ~0b1;
 }
 
 void executeCommands() {
