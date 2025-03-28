@@ -1,29 +1,32 @@
 #include <stdbool.h>
 #include <stdint.h>
+
 #include "io_reg.h"
 #include "palette.h"
 #include "framebuffer.h"
+#include "graphics.h"
 
 void initColorPalette();
-void initFrameBuffer();
 bool isStartBitHigh();
-void setBusyStatus();
+void setBusyBit();
+void clearBusyBit();
 void clearStartBit();
+void executeCommands();
 
 void main() {
     initColorPalette();
     initFrameBuffer();
 
     while (true) {
-        while (!isStartBitHigh());
+        // while (!isStartBitHigh());
         
-        setBusyStatus();
+        setBusyBit();
         clearStartBit();
 
-        for (int i = 0; i < 1000000; ++i);
+        executeCommands();
+
+        clearBusyBit();
     }
-    
-    return;
 }
 
 void initColorPalette() {
@@ -40,15 +43,6 @@ void initColorPalette() {
     }
 }
 
-void initFrameBuffer() {
-    for (int y = FRAMEBUFFER_HEIGHT-1; y >= 0; --y) {
-        for (int x = 0; x < FRAMEBUFFER_WIDTH; ++x) {
-            int pixel_index = FRAMEBUFFER_WIDTH*y + x;
-            *((uint32_t*)(FRAMEBUFFER_BASE_ADDR+pixel_index)) = pixel_index;
-        }
-    }
-}
-
 bool isStartBitHigh() {
     uint32_t* control_reg_ptr = (uint32_t*)(IO_CONTROL_REG_ADDR);
     uint32_t start_bit = *control_reg_ptr & 0x00000001;
@@ -56,12 +50,26 @@ bool isStartBitHigh() {
     return (start_bit == 1);
 }
 
-void setBusyStatus() {
+void setBusyBit() {
     uint32_t* status_reg_ptr = (uint32_t*)(IO_STATUS_REG_ADDR);
     *status_reg_ptr |= 0x00000001;
+}
+
+void clearBusyBit() {
+    uint32_t* status_reg_ptr = (uint32_t*)(IO_STATUS_REG_ADDR);
+    *status_reg_ptr &= ~0x00000001;
 }
 
 void clearStartBit() {
     uint32_t* control_reg_ptr = (uint32_t*)(IO_CONTROL_REG_ADDR);
     *control_reg_ptr &= ~0x00000001;
+}
+
+void executeCommands() {
+    // some long running graphics command
+    for (int i = 0; i < PALETTE_LENGTH; ++i) {
+        move(i,i);
+        pixelValue(i);
+        rect(FRAMEBUFFER_WIDTH-1-i, FRAMEBUFFER_HEIGHT-1-i);
+    }
 }

@@ -13,14 +13,14 @@ module main_memory #(
     output logic [WORD_BITS-1:0] port_a_rd_data,
     input logic port_a_rd_en,
     input logic [WORD_BITS-1:0] port_a_wr_data,
-    input logic port_a_wr_en,
+    input logic [BYTES_PER_WORD-1:0] port_a_wr_en,
 
     input logic port_b_reset,
     input logic [ADDR_BITS-1:0] port_b_address,
     output logic [WORD_BITS-1:0] port_b_rd_data,
     input logic port_b_rd_en,
     input logic [WORD_BITS-1:0] port_b_wr_data,
-    input logic port_b_wr_en
+    input logic [BYTES_PER_WORD-1:0] port_b_wr_en
 );
     logic [WORD_BITS-1:0] bram [WORD_COUNT];
     initial $readmemh(INIT_FILE, bram);
@@ -36,8 +36,10 @@ module main_memory #(
             if (port_a_rd_en)
                 port_a_rd_data <= bram[port_a_word_index];
 
-        if (port_a_wr_en) begin
-            bram[port_a_word_index] <= port_a_wr_data;
+        for (int i = 0; i < BYTES_PER_WORD; i++) begin
+            if (port_a_wr_en[i]) begin
+                bram[port_a_word_index][i*8 +: 8] <= port_a_wr_data[i*8 +: 8];
+            end
         end
     end
 
@@ -48,8 +50,10 @@ module main_memory #(
             if (port_b_rd_en)
                 port_b_rd_data <= bram[port_b_word_index];
 
-        if (port_b_wr_en) begin
-            bram[port_b_word_index] <= port_b_wr_data;
+        for (int j = 0; j < BYTES_PER_WORD; j++) begin
+            if (port_b_wr_en[j]) begin
+                bram[port_b_word_index][j*8 +: 8] <= port_b_wr_data[j*8 +: 8];
+            end
         end
     end
 

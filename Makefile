@@ -8,30 +8,34 @@ SRC_DIR := ./src
 DATA_DIR := ./data
 RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 # RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
+GCC-TARGET = -march=rv32i -mabi=ilp32
+GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
 all: gputest display-processor
 
 gputest: FORCE
 	mkdir -p $(BUILD_DIR)
-	${RISCV-GNU-TOOLCHAIN}-gcc -o ${SRC_DIR}/gputest.asm -S ${SRC_DIR}/main.c \
-		-O1 -g -march=rv32i -mabi=ilp32
-
-	${RISCV-GNU-TOOLCHAIN}-as -o ${BUILD_DIR}/gputest.o ${SRC_DIR}/gputest.asm \
-		-march=rv32i -mabi=ilp32 
-	${RISCV-GNU-TOOLCHAIN}-as -o ${BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm \
-		-march=rv32i -mabi=ilp32
-
-	${RISCV-GNU-TOOLCHAIN}-ld -o ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.o ${BUILD_DIR}/startup.o \
-		--format=elf32-littleriscv --script ${SRC_DIR}/gputest.ld
+# compile into assembly
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/main.asm -S ${SRC_DIR}/main.c
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/graphics.asm -S ${SRC_DIR}/graphics.c
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/framebuffer.asm -S ${SRC_DIR}/framebuffer.c
+# compile into object
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/main.o ${BUILD_DIR}/main.asm
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/graphics.o ${BUILD_DIR}/graphics.asm
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/framebuffer.o ${BUILD_DIR}/framebuffer.asm
+# link object into elf
+	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gputest.ld -o ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/*.o
+# convert to mem file
 	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.bin
-	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
-	
+	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gputest.bin > ${BUILD_DIR}/gputest.mem
+# disassemble for debug
 	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${BUILD_DIR}/gputest.elf > ${BUILD_DIR}/gputest-objdump.txt
 
 riscvtest: riscvtest.mem
 
 riscvtest.mem: riscvtest.bin
-	hexdump -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
+	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
 
 riscvtest.bin: riscvtest.out
 	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin

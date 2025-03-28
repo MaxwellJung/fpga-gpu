@@ -24,9 +24,10 @@ typedef enum logic [3:0] {
     ALU_ADD,
     ALU_SUB,
     ALU_AND,
-    ALUR,
+    ALU_OR,
     ALU_XOR,
     ALU_SLT,
+    ALU_SLTU,
     ALU_SLL,
     ALU_SRL,
     ALU_SRA,
@@ -70,10 +71,10 @@ typedef enum logic [1:0] {
 } result_src_t;
 
 typedef enum logic [1:0] {
-    LOAD_SIZE_WORD,
-    LOAD_SIZE_HALF,
-    LOAD_SIZE_BYTE
-} load_size_t;
+    MEM_SIZE_WORD,
+    MEM_SIZE_HALF,
+    MEM_SIZE_BYTE
+} mem_size_t;
 
 typedef enum logic {
     LOAD_SIGNED,

@@ -12,7 +12,7 @@ module Writeback (
 
     // input from control
     input result_src_t w_result_src,
-    input load_size_t w_load_size,
+    input mem_size_t w_mem_size,
     input load_sign_t w_load_sign,
 
     // output to register file
@@ -41,16 +41,16 @@ module Writeback (
         read_half = w_read_data[16*read_addr[1]+:16];
         read_byte = w_read_data[8*read_addr[1:0]+:8];
 
-        case (w_load_size)
-            LOAD_SIZE_WORD: read_data = read_word;
-            LOAD_SIZE_HALF: begin
+        case (w_mem_size)
+            MEM_SIZE_WORD: read_data = read_word;
+            MEM_SIZE_HALF: begin
                 case (w_load_sign)
                     LOAD_SIGNED: read_data = {{16{read_half[15]}}, read_half};
                     LOAD_UNSIGNED: read_data = {{16{1'b0}}, read_half};
                     default: read_data = {{16{read_half[15]}}, read_half};
                 endcase
             end
-            LOAD_SIZE_BYTE: begin
+            MEM_SIZE_BYTE: begin
                 case (w_load_sign)
                     LOAD_SIGNED: read_data = {{24{read_byte[7]}}, read_byte};
                     LOAD_UNSIGNED: read_data = {{24{1'b0}}, read_byte};

@@ -17,7 +17,7 @@ module DisplayProcessor #(
     output logic [$clog2(IO_REGISTERS_BYTES)-1:0] io_reg_addr,
     input logic [31:0] io_reg_rd_data,
     output logic [31:0] io_reg_wr_data,
-    output logic io_reg_wr_en,
+    output logic [3:0] io_reg_wr_en,
 
     // color palette
     output logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index,
@@ -54,14 +54,14 @@ module DisplayProcessor #(
     end
 
     logic inst_reset;
-    logic [31:0] inst_addr;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] inst_addr;
     logic [31:0] inst_rd_data;
     logic inst_rd_en;
 
     logic [31:0] dbus_addr;
     logic [31:0] dbus_rd_data;
     logic [31:0] dbus_wr_data;
-    logic dbus_wr_en;
+    logic [3:0] dbus_wr_en;
 
     RISCVCore u_RISCVCore (
         .clk                (clk),
@@ -83,10 +83,10 @@ module DisplayProcessor #(
         .fb_wr_en           ()
     );
 
-    logic [31:0] main_mem_addr;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] main_mem_addr;
     logic [31:0] main_mem_rd_data;
     logic [31:0] main_mem_wr_data;
-    logic main_mem_wr_en;
+    logic [3:0] main_mem_wr_en;
 
     logic [$clog2(PALETTE_BYTES)-1:0] palette_addr;
     logic [31:0] palette_wr_data;

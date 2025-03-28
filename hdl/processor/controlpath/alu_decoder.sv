@@ -34,6 +34,14 @@ module AluDecoder (
                         alu_control = ALU_SLT; // bge
                         invert_cond = 1'b1;
                     end
+                    3'b110: begin
+                        alu_control = ALU_SLTU; // bltu
+                        invert_cond = 1'b0;
+                    end
+                    3'b111: begin
+                        alu_control = ALU_SLTU; // bgeu
+                        invert_cond = 1'b1;
+                    end
                     default: begin
                         alu_control = ALU_NOOP; // NOOP
                         invert_cond = 1'b0;
@@ -58,7 +66,7 @@ module AluDecoder (
                     end
                     3'b001: alu_control = ALU_SLL; // sll, slli
                     3'b010: alu_control = ALU_SLT; // slt, slti
-                    3'b011: alu_control = ALU_NOOP; // sltu, sltiu
+                    3'b011: alu_control = ALU_SLTU; // sltu, sltiu
                     3'b100: alu_control = ALU_XOR; // xor, xori
                     3'b101: begin
                         case ({op[5], funct7[5]})
@@ -69,7 +77,7 @@ module AluDecoder (
                             default: alu_control = ALU_NOOP; // NOOP
                         endcase
                     end
-                    3'b110: alu_control = ALUR; // or, ori
+                    3'b110: alu_control = ALU_OR; // or, ori
                     3'b111: alu_control = ALU_AND; // and, andi
                     default: alu_control = ALU_NOOP; // NOOP
                 endcase

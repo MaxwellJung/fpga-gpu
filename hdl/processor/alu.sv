@@ -24,12 +24,14 @@ module Alu (
                 result = src_a - src_b;
             ALU_AND:
                 result = src_a & src_b;
-            ALUR:
+            ALU_OR:
                 result = src_a | src_b;
             ALU_XOR:
                 result = src_a ^ src_b;
             ALU_SLT:
                 result = (src_a < src_b) ? 1 : 0;
+            ALU_SLTU:
+                result = ($unsigned(src_a) < $unsigned(src_b)) ? 1 : 0;
             ALU_SLL:
                 result = src_a << src_b;
             ALU_SRL:

@@ -7,7 +7,7 @@ module Control (
 
     output logic d_reg_write,
     output result_src_t d_result_src,
-    output load_size_t d_load_size,
+    output mem_size_t d_mem_size,
     output load_sign_t d_load_sign,
     output logic d_mem_write,
     output logic d_fb_write,
@@ -45,10 +45,10 @@ module Control (
 
     always_comb begin
         case (funct3[1:0])
-            2'b00: d_load_size = LOAD_SIZE_BYTE;
-            2'b01: d_load_size = LOAD_SIZE_HALF;
-            2'b10: d_load_size = LOAD_SIZE_WORD;
-            default: d_load_size = LOAD_SIZE_WORD;
+            2'b00: d_mem_size = MEM_SIZE_BYTE;
+            2'b01: d_mem_size = MEM_SIZE_HALF;
+            2'b10: d_mem_size = MEM_SIZE_WORD;
+            default: d_mem_size = MEM_SIZE_WORD;
         endcase
 
         case (funct3[2])

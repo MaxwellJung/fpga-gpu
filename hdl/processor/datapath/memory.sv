@@ -1,3 +1,5 @@
+`include "./hdl/processor/defines.svh"
+
 module Memory #(
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
@@ -13,13 +15,14 @@ module Memory #(
     input logic [31:0] e_pc_plus_4,
 
     // control
+    input mem_size_t m_mem_size,
     input logic m_mem_write,
     input logic m_fb_write,
 
     // data bus
     output logic [31:0] dbus_addr,
     output logic [31:0] dbus_wr_data,
-    output logic dbus_wr_en,
+    output logic [3:0] dbus_wr_en,
 
     // framebuffer
     output logic fb_wr_en,
@@ -45,7 +48,12 @@ module Memory #(
     always_comb begin
         dbus_addr = m_alu_result;
         dbus_wr_data = m_write_data;
-        dbus_wr_en = m_mem_write;
+        case (m_mem_size)
+            MEM_SIZE_WORD: dbus_wr_en = {4{m_mem_write}};
+            MEM_SIZE_HALF: dbus_wr_en = {2'b0, {2{m_mem_write}}} << {dbus_addr[1], 1'b0};
+            MEM_SIZE_BYTE: dbus_wr_en = {3'b0, {1{m_mem_write}}} << dbus_addr[1:0];
+            default: dbus_wr_en = {4{m_mem_write}};
+        endcase
     end
 
     always_comb begin

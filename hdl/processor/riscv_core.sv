@@ -19,7 +19,7 @@ module RISCVCore #(
     output logic [31:0] dbus_addr,
     input logic [31:0] dbus_rd_data,
     output logic [31:0] dbus_wr_data,
-    output logic dbus_wr_en,
+    output logic [3:0] dbus_wr_en,
 
     // framebuffer
     output logic fb_wr_en,
@@ -36,11 +36,12 @@ module RISCVCore #(
     logic e_invert_cond;
     jump_src_t e_jump_src;
     logic e_pc_src;
+    mem_size_t m_mem_size;
     logic m_mem_write;
     logic m_fb_write;
     logic m_reg_write;
     result_src_t w_result_src;
-    load_size_t w_load_size;
+    mem_size_t w_mem_size;
     load_sign_t w_load_sign;
     logic w_reg_write;
     opcode_t op;
@@ -90,10 +91,11 @@ module RISCVCore #(
         .e_invert_cond      (e_invert_cond),
         .e_jump_src         (e_jump_src),
         .e_pc_src           (e_pc_src),
+        .m_mem_size         (m_mem_size),
         .m_mem_write        (m_mem_write),
         .m_fb_write         (m_fb_write),
         .w_result_src       (w_result_src),
-        .w_load_size        (w_load_size),
+        .w_mem_size         (w_mem_size),
         .w_load_sign        (w_load_sign),
         .w_reg_write        (w_reg_write),
         .op                 (op),
@@ -133,15 +135,16 @@ module RISCVCore #(
         .e_invert_cond    (e_invert_cond),
         .e_jump_src       (e_jump_src),
         .e_pc_src         (e_pc_src),
+        .m_mem_size       (m_mem_size),
         .m_mem_write      (m_mem_write),
         .m_fb_write       (m_fb_write),
-        .m_reg_write      (m_reg_write),
         .w_result_src     (w_result_src),
-        .w_load_size      (w_load_size),
+        .w_mem_size       (w_mem_size),
         .w_load_sign      (w_load_sign),
         .w_reg_write      (w_reg_write),
         // output to hazard
-        .e_result_src     (e_result_src)
+        .e_result_src     (e_result_src),
+        .m_reg_write      (m_reg_write)
     );
 
     Hazard hazard (

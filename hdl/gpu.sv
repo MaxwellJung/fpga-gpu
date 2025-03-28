@@ -66,7 +66,7 @@ module Gpu #(
     logic [11:0] io_reg_addr;
     logic [31:0] io_reg_rd_data;
     logic [31:0] io_reg_wr_data;
-    logic io_reg_wr_en;
+    logic [3:0] io_reg_wr_en;
 
     AxiGpuIORegisters u_AxiGpuIORegisters (
         // AXI4 interface
@@ -110,7 +110,7 @@ module Gpu #(
         .io_reg_rd_data    (io_reg_rd_data),
         .io_reg_en         ('1),
         .io_reg_reset      (reset),
-        .io_reg_wr_en      ({4{io_reg_wr_en}})
+        .io_reg_wr_en      (io_reg_wr_en)
     );
 
     logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index;

@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Mar  2 20:10:16 2025
+[*] Fri Mar 28 11:44:56 2025
 [*]
 [dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/display_processor_sim.vcd"
-[dumpfile_mtime] "Sun Mar  2 20:09:58 2025"
-[dumpfile_size] 17846453
+[dumpfile_mtime] "Fri Mar 28 11:44:30 2025"
+[dumpfile_size] 22833106
 [savefile] "/Users/maxwelljung/programming/fpga-gpu/gtkwave/display_processor_sim.gtkw"
-[timestart] 132800
-[size] 1920 941
-[pos] 1918 0
-*-15.262566 230000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[timestart] 0
+[size] 1512 835
+[pos] -1 -1
+*-15.262566 75800 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -43,10 +43,20 @@
 [sst_width] 253
 [signals_width] 292
 [sst_expanded] 1
-[sst_vpaned_height] 540
+[sst_vpaned_height] 333
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.clk
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.reset
+@22
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_index[7:0]
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_color[11:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_en
+@22
+TbDisplayProcessor.u_DisplayProcessor.fb_addr[16:0]
+TbDisplayProcessor.u_DisplayProcessor.fb_wr_data[7:0]
+@28
+TbDisplayProcessor.u_DisplayProcessor.fb_wr_en
 @200
 -
 @28
@@ -55,7 +65,7 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_stall
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_plus_4[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_prime[31:0]
-@200
+@201
 -
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_flush
@@ -85,7 +95,6 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_forward
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_a
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_b
 @22
-TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_control[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_result[31:0]
@@ -103,7 +112,6 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_fb_write
 @22
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_alu_result[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_read_data[31:0]
-@23
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_pc_plus_4[31:0]
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_result_src[1:0]

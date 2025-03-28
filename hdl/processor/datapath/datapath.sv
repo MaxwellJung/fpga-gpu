@@ -19,7 +19,7 @@ module Datapath #(
     output logic [31:0] dbus_addr,
     input logic [31:0] dbus_rd_data,
     output logic [31:0] dbus_wr_data,
-    output logic dbus_wr_en,
+    output logic [3:0] dbus_wr_en,
 
     // framebuffer
     output logic fb_wr_en,
@@ -35,10 +35,11 @@ module Datapath #(
     input logic e_invert_cond,
     input jump_src_t e_jump_src,
     input logic e_pc_src,
+    input mem_size_t m_mem_size,
     input logic m_mem_write,
     input logic m_fb_write,
     input result_src_t w_result_src,
-    input load_size_t w_load_size,
+    input mem_size_t w_mem_size,
     input load_sign_t w_load_sign,
     input logic w_reg_write,
     output opcode_t op,
@@ -178,6 +179,7 @@ module Datapath #(
         .e_rd               (e_rd),
         .e_pc_plus_4        (e_pc_plus_4),
         // control
+        .m_mem_size         (m_mem_size),
         .m_mem_write        (m_mem_write),
         .m_fb_write         (m_fb_write),
         // data bus
@@ -206,7 +208,7 @@ module Datapath #(
         .w_read_data     (dbus_rd_data),
         // input from control
         .w_result_src    (w_result_src),
-        .w_load_size     (w_load_size),
+        .w_mem_size      (w_mem_size),
         .w_load_sign     (w_load_sign),
         // output to register file
         .w_result        (w_result),

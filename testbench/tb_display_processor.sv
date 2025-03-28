@@ -2,6 +2,7 @@
 
 module TbDisplayProcessor();
     localparam GPU_CLK_PERIOD = 10; // 100MHz clock
+    localparam SIMU_CLK_CYCLES = 10000; // number of clock cycles to simulate
     localparam RESOLUTION_X = 400;
     localparam RESOLUTION_Y = 300;
     localparam PALETTE_LENGTH = 256;
@@ -51,7 +52,7 @@ module TbDisplayProcessor();
         // hold gpu_reset for 22 ns
         gpu_reset <= 1; # 22; gpu_reset <= 0;
 
-        #(10000*GPU_CLK_PERIOD)
+        #(SIMU_CLK_CYCLES*GPU_CLK_PERIOD)
 
         $finish;
     end
