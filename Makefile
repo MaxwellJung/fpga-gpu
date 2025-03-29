@@ -9,7 +9,7 @@ DATA_DIR := ./data
 RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 # RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 GCC-TARGET = -march=rv32i -mabi=ilp32
-GCC-OPTIONS = -Os -g ${GCC-TARGET}
+GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
 all: gputest display-processor
 
