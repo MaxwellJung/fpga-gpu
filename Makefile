@@ -9,7 +9,7 @@ DATA_DIR := ./data
 RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 # RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 GCC-TARGET = -march=rv32i -mabi=ilp32
-GCC-OPTIONS = -O1 -g ${GCC-TARGET}
+GCC-OPTIONS = -Os -g ${GCC-TARGET}
 
 all: gputest display-processor
 
@@ -19,12 +19,16 @@ gputest: FORCE
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/main.asm -S ${SRC_DIR}/main.c
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/graphics.asm -S ${SRC_DIR}/graphics.c
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/framebuffer.asm -S ${SRC_DIR}/framebuffer.c
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/palette.asm -S ${SRC_DIR}/palette.c
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/io_reg.asm -S ${SRC_DIR}/io_reg.c
 # compile into object
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/main.o ${BUILD_DIR}/main.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/graphics.o ${BUILD_DIR}/graphics.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/framebuffer.o ${BUILD_DIR}/framebuffer.asm
-# link object into elf
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/palette.o ${BUILD_DIR}/palette.asm
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/io_reg.o ${BUILD_DIR}/io_reg.asm
+# link objects into elf
 	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gputest.ld -o ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/*.o
 # convert to mem file
 	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gputest.elf ${BUILD_DIR}/gputest.bin

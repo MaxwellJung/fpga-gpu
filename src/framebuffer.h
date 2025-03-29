@@ -8,6 +8,7 @@
 #define FRAMEBUFFER_HEIGHT  300
 #define FRAMEBUFFER_LENGTH  (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT)
 
+// set ith pixel to ith color index
 void initFrameBuffer();
 void writePixel(uint32_t x, uint32_t y, uint32_t color_index);
 

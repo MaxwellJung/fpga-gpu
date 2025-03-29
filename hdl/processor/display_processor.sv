@@ -2,7 +2,7 @@
 
 module DisplayProcessor #(
     parameter INIT_FILE = "build/gputest.mem",
-    parameter MAIN_MEMORY_BYTES = 1024,
+    parameter MAIN_MEMORY_BYTES = 2048,
     parameter IO_REGISTERS_BYTES = 4096,
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
