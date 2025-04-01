@@ -31,10 +31,7 @@ int main()
     print("Start Test\n\r");
 
     while (1){
-        clearDisplay();
-        drawIndexImage();
-        drawHStripes();
-        drawVStripes();
+        testGPU();
     };
 
     cleanup_platform();

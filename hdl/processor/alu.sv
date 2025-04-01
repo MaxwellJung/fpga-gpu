@@ -33,11 +33,11 @@ module Alu (
             ALU_SLTU:
                 result = ($unsigned(src_a) < $unsigned(src_b)) ? 1 : 0;
             ALU_SLL:
-                result = src_a << src_b;
+                result = src_a << src_b[4:0];
             ALU_SRL:
-                result = src_a >> src_b;
+                result = src_a >> src_b[4:0];
             ALU_SRA:
-                result = src_a >>> src_b;
+                result = src_a >>> src_b[4:0];
             ALU_EQUAL:
                 result = (src_a == src_b) ? 1 : 0;
             ALU_XY_ADD:

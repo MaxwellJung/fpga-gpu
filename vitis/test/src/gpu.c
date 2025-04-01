@@ -8,51 +8,35 @@
 #include "xil_io.h"
 
 int initGPU() {
-    Xil_Out32(GPU_BASEADDR+CURRENT_POS_X_OFFSET, 0);
-    Xil_Out32(GPU_BASEADDR+CURRENT_POS_Y_OFFSET, 0);
-    Xil_Out32(GPU_BASEADDR+INDEX_OFFSET, 0);
+    Xil_Out32(COMMAND0_REG_ADDR, 0);
+    Xil_Out32(COMMAND0_REG_ADDR+4, 0);
+    Xil_Out32(COMMAND0_REG_ADDR+8, 0);
+    Xil_Out32(CONTROL_REG_ADDR, 0);
 
     return XST_SUCCESS;
 }
 
-void clearDisplay() {
-    for (uint32_t y = 0; y < RESOLUTION_Y; y++) {
-        for (uint32_t x = 0; x < RESOLUTION_X; x++) {
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_X_OFFSET, x);
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_Y_OFFSET, y);
-            Xil_Out32(GPU_BASEADDR+INDEX_OFFSET, 0b11100000);
-        }
-    }
-}
+void testGPU() {
+    for (int i = 0; i < 256; i++) {
+        // Wait if busy
+        while(Xil_In8(STATUS_REG_ADDR));
 
-void drawIndexImage() {
-    uint32_t pixel_index = 0;
-    for (uint32_t y = 0; y < RESOLUTION_Y; y++) {
-        for (uint32_t x = 0; x < RESOLUTION_X; x++) {
-            pixel_index = RESOLUTION_X*y + x;
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_X_OFFSET, x);
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_Y_OFFSET, y);
-            Xil_Out32(GPU_BASEADDR+INDEX_OFFSET, pixel_index);
-        }
-    }
-}
+        // move(i, i)
+        Xil_Out32(COMMAND0_REG_ADDR, 1);
+        Xil_Out16(COMMAND0_REG_ADDR+4, i);
+        Xil_Out16(COMMAND0_REG_ADDR+6, i);
 
-void drawHStripes() {
-    for (uint32_t y = 0; y < RESOLUTION_Y; y++) {
-        for (uint32_t x = 0; x < RESOLUTION_X; x++) {
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_X_OFFSET, x);
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_Y_OFFSET, y);
-            Xil_Out32(GPU_BASEADDR+INDEX_OFFSET, y);
-        }
-    }
-}
+        // pixelValue(i)
+        Xil_Out32(COMMAND1_REG_ADDR, 9);
+        Xil_Out8(COMMAND1_REG_ADDR+4, i);
 
-void drawVStripes() {
-    for (uint32_t y = 0; y < RESOLUTION_Y; y++) {
-        for (uint32_t x = 0; x < RESOLUTION_X; x++) {
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_X_OFFSET, x);
-            Xil_Out32(GPU_BASEADDR+CURRENT_POS_Y_OFFSET, y);
-            Xil_Out32(GPU_BASEADDR+INDEX_OFFSET, x);
-        }
+        // rect(RESOLUTION_X-1-i, RESOLUTION_Y-1-i)
+        Xil_Out32(COMMAND2_REG_ADDR, 7);
+        Xil_Out16(COMMAND2_REG_ADDR+4, RESOLUTION_X-1-i);
+        Xil_Out16(COMMAND2_REG_ADDR+6, RESOLUTION_Y-1-i);
+
+        // Execute 3 commands
+        Xil_Out8(CONTROL_REG_ADDR+1, 3);
+        Xil_Out8(CONTROL_REG_ADDR, 1);
     }
 }

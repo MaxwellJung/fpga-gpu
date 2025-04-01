@@ -200,6 +200,7 @@
 			xlnx,ip-name = "GpuTop";
 			xlnx,edk-iptype = "PERIPHERAL";
 			reg = <0xc0000000 0x1000>;
+			xlnx,init-file = "/home/maxwelljung/programming/fpga-gpu/build/gputest.mem";
 			xlnx,name = "GpuTop_0";
 		};
 		axi_gpio_0: gpio@40000000 {

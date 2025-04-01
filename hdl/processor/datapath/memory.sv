@@ -47,7 +47,7 @@ module Memory #(
 
     always_comb begin
         dbus_addr = m_alu_result;
-        dbus_wr_data = m_write_data;
+        dbus_wr_data = m_write_data << (8*dbus_addr[1:0]);
         case (m_mem_size)
             MEM_SIZE_WORD: dbus_wr_en = {4{m_mem_write}};
             MEM_SIZE_HALF: dbus_wr_en = {2'b0, {2{m_mem_write}}} << {dbus_addr[1], 1'b0};

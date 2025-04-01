@@ -81,4 +81,12 @@ typedef enum logic {
     LOAD_UNSIGNED
 } load_sign_t;
 
+typedef enum logic [3:0] {
+    SELECT_NONE = 4'b0000,
+    SELECT_MAIN_MEMORY = 4'b0001,
+    SELECT_IO_REGISTERS = 4'b0010,
+    SELECT_PALETTE = 4'b0100,
+    SELECT_FRAMEBUFFER = 4'b1000
+} device_select_t;
+
 `endif // DEFINES_H

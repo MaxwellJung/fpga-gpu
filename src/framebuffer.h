@@ -3,12 +3,13 @@
 
 #include <stdint.h>
 
-#define FRAMEBUFFER_BASE_ADDR  0xC0020000
+#define FRAMEBUFFER_BASE_ADDR  0xE0000000
 #define FRAMEBUFFER_WIDTH  400
 #define FRAMEBUFFER_HEIGHT  300
 #define FRAMEBUFFER_LENGTH  (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT)
 
+// set ith pixel to ith color index
 void initFrameBuffer();
-void writePixel(uint32_t x, uint32_t y, uint32_t color_index);
+void writePixel(uint16_t x, uint16_t y, uint8_t color_index);
 
 #endif // _FRAMEBUFFER_H

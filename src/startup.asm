@@ -1,5 +1,5 @@
 .globl startup
-.equ STACK_POINTER_TOP, 1024
+.equ STACK_POINTER_TOP, 2048
 
 .balign 4
 .section .text.startup

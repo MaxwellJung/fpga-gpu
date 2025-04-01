@@ -1,15 +1,15 @@
 [*]
-[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri Mar 28 11:44:56 2025
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Mon Mar 31 04:43:41 2025
 [*]
-[dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/display_processor_sim.vcd"
-[dumpfile_mtime] "Fri Mar 28 11:44:30 2025"
-[dumpfile_size] 22833106
-[savefile] "/Users/maxwelljung/programming/fpga-gpu/gtkwave/display_processor_sim.gtkw"
-[timestart] 0
-[size] 1512 835
+[dumpfile] "/home/maxwelljung/programming/fpga-gpu/build/sim/display_processor_sim.vcd"
+[dumpfile_mtime] "Mon Mar 31 04:39:31 2025"
+[dumpfile_size] 22666810
+[savefile] "/home/maxwelljung/programming/fpga-gpu/gtkwave/display_processor_sim.gtkw"
+[timestart] 40948500
+[size] 1920 1052
 [pos] -1 -1
-*-15.262566 75800 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-15.770779 41110000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -41,22 +41,16 @@
 [treeopen] TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.
 [treeopen] TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.
 [sst_width] 253
-[signals_width] 292
+[signals_width] 296
 [sst_expanded] 1
-[sst_vpaned_height] 333
+[sst_vpaned_height] 442
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.clk
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.reset
 @22
-TbDisplayProcessor.u_DisplayProcessor.palette_wr_index[7:0]
-TbDisplayProcessor.u_DisplayProcessor.palette_wr_color[11:0]
-@28
-TbDisplayProcessor.u_DisplayProcessor.palette_wr_en
-@22
-TbDisplayProcessor.u_DisplayProcessor.fb_addr[16:0]
-TbDisplayProcessor.u_DisplayProcessor.fb_wr_data[7:0]
-@28
-TbDisplayProcessor.u_DisplayProcessor.fb_wr_en
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_addr[31:0]
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_data[31:0]
+TbDisplayProcessor.u_DisplayProcessor.palette_wr_en[3:0]
 @200
 -
 @28
@@ -65,13 +59,49 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_stall
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_plus_4[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_prime[31:0]
-@201
+@200
 -
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_flush
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_stall
-@22
+@c00022
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+@28
+(0)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(1)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(2)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(3)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(4)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(5)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(6)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(7)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(8)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(9)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(10)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(11)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(12)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(13)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(14)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(15)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(16)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(17)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(18)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(19)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(20)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(21)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(22)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(23)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(24)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(25)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(26)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(27)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(28)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(29)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(30)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+(31)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+@1401200
+-group_end
+@22
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.op[6:0]
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.funct3[2:0]
@@ -82,8 +112,44 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2[4:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rd[4:0]
 @28
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_src[2:0]
-@22
+@c00022
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+@28
+(0)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(1)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(2)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(3)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(4)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(5)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(6)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(7)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(8)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(9)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(10)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(11)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(12)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(13)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(14)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(15)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(16)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(17)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(18)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(19)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(20)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(21)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(22)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(23)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(24)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(25)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(26)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(27)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(28)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(29)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(30)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+(31)TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+@1401200
+-group_end
+@22
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs1_value[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2_value[31:0]
 @200
@@ -95,8 +161,10 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_forward
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_a
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_b
 @22
+TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_control[3:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b[31:0]
+@23
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_result[31:0]
 @200
 -

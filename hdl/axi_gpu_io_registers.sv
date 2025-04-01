@@ -101,7 +101,10 @@ module AxiGpuIORegisters (
         .BRAM_PORTA_we(reg_we)
     );
 
-    GpuIORegisters #() u_GpuIORegisters (
+    BlockMemory #(
+        .CAPACITY_BYTES    (128),
+        .BYTES_PER_WORD    (4)
+    ) u_BlockMemory (
         // CPU side interface
         .port_a_address    (reg_addr),
         .port_a_clk        (reg_clk),

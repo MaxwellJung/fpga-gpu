@@ -17,7 +17,8 @@ module VideoController #(
     parameter RED_BITS = 4,
     parameter GREEN_BITS = 4,
     parameter BLUE_BITS = 4,
-    localparam COLOR_BITS = RED_BITS + GREEN_BITS + BLUE_BITS
+    parameter ALPHA_BITS = 4,
+    localparam COLOR_BITS = RED_BITS + GREEN_BITS + BLUE_BITS + ALPHA_BITS
 ) (
     input logic clk,
     input logic reset,
@@ -73,6 +74,6 @@ module VideoController #(
         end
     end
 
-    assign {vga_r, vga_g, vga_b} = (h_visible & v_visible) ? color : '0;
+    assign {vga_r, vga_g, vga_b} = (h_visible & v_visible) ? color[COLOR_BITS-1:ALPHA_BITS] : '0;
 
 endmodule

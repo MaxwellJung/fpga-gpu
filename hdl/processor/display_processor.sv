@@ -1,63 +1,37 @@
 `include "./hdl/processor/defines.svh"
 
-module DisplayProcessor #(
-    parameter INIT_FILE = "build/gputest.mem",
-    parameter MAIN_MEMORY_BYTES = 1024,
-    parameter IO_REGISTERS_BYTES = 4096,
-    parameter RESOLUTION_X = 400,
-    parameter RESOLUTION_Y = 300,
-    parameter PALETTE_LENGTH = 256,
-    localparam PALETTE_BYTES = 2*PALETTE_LENGTH,
-    parameter COLOR_BITS = 12
-) (
+module DisplayProcessor (
     input logic clk,
     input logic reset,
 
-    // memory mapped i/o
-    output logic [$clog2(IO_REGISTERS_BYTES)-1:0] io_reg_addr,
+    // Instruction memory
+    output logic inst_reset,
+    output logic [31:0] inst_addr,
+    input logic [31:0] inst_rd_data,
+    output logic inst_rd_en,
+
+    // Data memory
+    output logic [31:0] data_mem_addr,
+    input logic [31:0] data_mem_rd_data,
+    output logic [31:0] data_mem_wr_data,
+    output logic [3:0] data_mem_wr_en,
+
+    // I/O reg
+    output logic [31:0] io_reg_addr,
     input logic [31:0] io_reg_rd_data,
     output logic [31:0] io_reg_wr_data,
     output logic [3:0] io_reg_wr_en,
 
     // color palette
-    output logic [$clog2(PALETTE_LENGTH)-1:0] palette_wr_index,
-    output logic [COLOR_BITS-1:0] palette_wr_color,
-    output logic palette_wr_en,
+    output logic [31:0] palette_wr_addr,
+    output logic [31:0] palette_wr_data,
+    output logic [3:0] palette_wr_en,
 
     // framebuffer
-    output logic [$clog2(RESOLUTION_X*RESOLUTION_Y)-1:0] fb_addr,
-    output logic [$clog2(PALETTE_LENGTH)-1:0] fb_wr_data,
-    output logic fb_wr_en
+    output logic [31:0] fb_wr_addr,
+    output logic [31:0] fb_wr_data,
+    output logic [3:0] fb_wr_en
 );
-    struct packed {
-        logic [$clog2(RESOLUTION_X)-1:0] x;
-        logic [$clog2(RESOLUTION_Y)-1:0] y;
-    } current_position;
-    logic [31:0] fill;
-    logic [$clog2(PALETTE_LENGTH)-1:0] index;
-    logic [31:0] wmode;
-    logic [31:0] mask;
-    logic [31:0] pattern;
-
-    always_ff @(posedge clk) begin
-        if (reset) begin
-            current_position.x <= '0;
-            current_position.y <= '0;
-            fill <= '0;
-            index <= '0;
-            wmode <= '0;
-            mask <= '0;
-            pattern <= '0;
-        end else begin
-
-        end
-    end
-
-    logic inst_reset;
-    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] inst_addr;
-    logic [31:0] inst_rd_data;
-    logic inst_rd_en;
-
     logic [31:0] dbus_addr;
     logic [31:0] dbus_rd_data;
     logic [31:0] dbus_wr_data;
@@ -83,74 +57,59 @@ module DisplayProcessor #(
         .fb_wr_en           ()
     );
 
-    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] main_mem_addr;
-    logic [31:0] main_mem_rd_data;
-    logic [31:0] main_mem_wr_data;
-    logic [3:0] main_mem_wr_en;
-
-    logic [$clog2(PALETTE_BYTES)-1:0] palette_addr;
-    logic [31:0] palette_wr_data;
-
-    MemoryMapper #(
-        .MAIN_MEMORY_BYTES         (MAIN_MEMORY_BYTES),
-        .IO_REGISTERS_BYTES        (4096),
-        .PALETTE_BYTES             (2*256),
-        .FRAMEBUFFER_BYTES         (400*300)
-    ) u_MemoryMapper (
-        .clk                       (clk),
-        .reset                     (reset),
-        // Data bus
-        .bus_addr                  (dbus_addr),
-        .bus_rd_data               (dbus_rd_data),
-        .bus_wr_data               (dbus_wr_data),
-        .bus_wr_en                 (dbus_wr_en),
-        // Main memory
-        .main_mem_addr             (main_mem_addr),
-        .main_mem_rd_data          (main_mem_rd_data),
-        .main_mem_wr_data          (main_mem_wr_data),
-        .main_mem_wr_en            (main_mem_wr_en),
-        // IO registers
-        .io_reg_addr               (io_reg_addr),
-        .io_reg_rd_data            (io_reg_rd_data),
-        .io_reg_wr_data            (io_reg_wr_data),
-        .io_reg_wr_en              (io_reg_wr_en),
-        // Palette
-        .palette_addr              (palette_addr),
-        .palette_rd_data           (),
-        .palette_wr_data           (palette_wr_data),
-        .palette_wr_en             (palette_wr_en),
-        // Framebuffer
-        .fb_addr                   (fb_addr),
-        .fb_rd_data                (),
-        .fb_wr_data                (fb_wr_data),
-        .fb_wr_en                  (fb_wr_en)
+    device_select_t m_device_select, w_device_select;
+    AddressDecoder u_AddressDecoder (
+        .bus_addr         (dbus_addr),
+        .device_select    (m_device_select)
     );
-
-    main_memory #(
-        .INIT_FILE         (INIT_FILE),
-        .WORD_BITS         (32),
-        .CAPACITY_BYTES    (MAIN_MEMORY_BYTES)
-    ) u_main_memory (
-        .clk               (clk),
-        // instruction
-        .port_a_reset      (inst_reset),
-        .port_a_address    (inst_addr),
-        .port_a_rd_data    (inst_rd_data),
-        .port_a_rd_en      (inst_rd_en),
-        .port_a_wr_data    ('0),
-        .port_a_wr_en      ('0),
-        // data
-        .port_b_reset      ('0),
-        .port_b_address    (main_mem_addr),
-        .port_b_rd_data    (main_mem_rd_data),
-        .port_b_rd_en      ('1),
-        .port_b_wr_data    (main_mem_wr_data),
-        .port_b_wr_en      (main_mem_wr_en)
-    );
+    always_ff @(posedge clk) begin
+        if (reset)
+            w_device_select <= SELECT_NONE;
+        else
+            w_device_select <= m_device_select;
+    end
 
     always_comb begin
-        palette_wr_index = palette_addr>>1;
-        palette_wr_color = palette_wr_data[0+:COLOR_BITS];
+        data_mem_addr = '0;
+        io_reg_addr = '0;
+        palette_wr_addr = '0;
+        fb_wr_addr = '0;
+        case (m_device_select)
+            SELECT_MAIN_MEMORY: data_mem_addr = dbus_addr;
+            SELECT_IO_REGISTERS: io_reg_addr = dbus_addr;
+            SELECT_PALETTE: palette_wr_addr = dbus_addr;
+            SELECT_FRAMEBUFFER: fb_wr_addr = dbus_addr;
+        endcase
+
+        dbus_rd_data = '0;
+        case (w_device_select)
+            SELECT_MAIN_MEMORY: dbus_rd_data = data_mem_rd_data;
+            SELECT_IO_REGISTERS: dbus_rd_data = io_reg_rd_data;
+            SELECT_PALETTE: dbus_rd_data = '0;
+            SELECT_FRAMEBUFFER: dbus_rd_data = '0;
+        endcase
+
+        data_mem_wr_data = '0;
+        io_reg_wr_data = '0;
+        palette_wr_data = '0;
+        fb_wr_data = '0;
+        case (m_device_select)
+            SELECT_MAIN_MEMORY: data_mem_wr_data = dbus_wr_data;
+            SELECT_IO_REGISTERS: io_reg_wr_data = dbus_wr_data;
+            SELECT_PALETTE: palette_wr_data = dbus_wr_data;
+            SELECT_FRAMEBUFFER: fb_wr_data = dbus_wr_data;
+        endcase
+
+        data_mem_wr_en = '0;
+        io_reg_wr_en = '0;
+        palette_wr_en = '0;
+        fb_wr_en = '0;
+        case (m_device_select)
+            SELECT_MAIN_MEMORY: data_mem_wr_en = dbus_wr_en;
+            SELECT_IO_REGISTERS: io_reg_wr_en = dbus_wr_en;
+            SELECT_PALETTE: palette_wr_en = dbus_wr_en;
+            SELECT_FRAMEBUFFER: fb_wr_en = dbus_wr_en;
+        endcase
     end
 
 endmodule
