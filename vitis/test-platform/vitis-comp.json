@@ -3,8 +3,8 @@
   "type": "PLATFORM",
   "configuration": {
     "description": "",
-    "xsa": "/home/maxwelljung/programming/fpga-gpu/xsa/design_1_wrapper.xsa",
-    "xsaPathInPlatform": "test-platform/hw/design_1_wrapper.xsa",
+    "xsa": "/home/maxwelljung/programming/fpga-gpu/xsa/test.xsa",
+    "xsaPathInPlatform": "test-platform/hw/test.xsa",
     "emulationXsa": "",
     "emulationXsaPathInPlatform": "",
     "isCustomFSBL": false,

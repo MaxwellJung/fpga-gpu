@@ -1,14 +1,14 @@
 [*]
 [*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
-[*] Mon Mar 31 04:43:41 2025
+[*] Wed Apr  2 05:21:45 2025
 [*]
 [dumpfile] "/home/maxwelljung/programming/fpga-gpu/build/sim/display_processor_sim.vcd"
-[dumpfile_mtime] "Mon Mar 31 04:39:31 2025"
-[dumpfile_size] 22666810
+[dumpfile_mtime] "Wed Apr  2 05:07:55 2025"
+[dumpfile_size] 25105786
 [savefile] "/home/maxwelljung/programming/fpga-gpu/gtkwave/display_processor_sim.gtkw"
 [timestart] 40948500
 [size] 1920 1052
-[pos] -1 -1
+[pos] 1919 -1
 *-15.770779 41110000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
@@ -50,7 +50,12 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.reset
 @22
 TbDisplayProcessor.u_DisplayProcessor.palette_wr_addr[31:0]
 TbDisplayProcessor.u_DisplayProcessor.palette_wr_data[31:0]
+@23
 TbDisplayProcessor.u_DisplayProcessor.palette_wr_en[3:0]
+@22
+TbDisplayProcessor.u_DisplayProcessor.fb_wr_addr[31:0]
+TbDisplayProcessor.u_DisplayProcessor.fb_wr_data[31:0]
+TbDisplayProcessor.u_DisplayProcessor.fb_wr_en[3:0]
 @200
 -
 @28
@@ -164,7 +169,6 @@ TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_control[3:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a[31:0]
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b[31:0]
-@23
 TbDisplayProcessor.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_result[31:0]
 @200
 -

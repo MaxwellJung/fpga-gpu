@@ -30,10 +30,10 @@ void testGPU() {
         Xil_Out32(COMMAND1_REG_ADDR, 9);
         Xil_Out8(COMMAND1_REG_ADDR+4, i);
 
-        // rect(RESOLUTION_X-1-i, RESOLUTION_Y-1-i)
+        // rect(RESOLUTION_X-1, RESOLUTION_Y-1)
         Xil_Out32(COMMAND2_REG_ADDR, 7);
-        Xil_Out16(COMMAND2_REG_ADDR+4, RESOLUTION_X-1-i);
-        Xil_Out16(COMMAND2_REG_ADDR+6, RESOLUTION_Y-1-i);
+        Xil_Out16(COMMAND2_REG_ADDR+4, RESOLUTION_X-1);
+        Xil_Out16(COMMAND2_REG_ADDR+6, RESOLUTION_Y-1);
 
         // Execute 3 commands
         Xil_Out8(CONTROL_REG_ADDR+1, 3);

@@ -11,7 +11,7 @@ RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 GCC-TARGET = -march=rv32i -mabi=ilp32
 GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
-all: gputest display-processor
+all: gputest
 
 gputest: FORCE
 	mkdir -p $(BUILD_DIR)
@@ -70,7 +70,7 @@ bitstream: FORCE
 
 # Icarus
 
-display-processor: FORCE
+display-processor: gputest
 	mkdir -p $(dir $(BUILD_DIR)/display_processor_sim.vvp)
 	iverilog -g2005-sv -o $(BUILD_DIR)/display_processor_sim.vvp \
 		-s TbDisplayProcessor \
