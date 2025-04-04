@@ -1,7 +1,7 @@
 module Gpu #(
-    parameter INIT_FILE = "build/gputest.mem",
+    parameter GPU_FIRMWARE_FILE = "build/gpu_firmware.mem",
     parameter MAIN_MEMORY_BYTES = 2048,
-    parameter IO_REG_BYTES = 4096,
+    parameter IO_REG_BYTES = 4*(1+1+4*3),
 
     parameter PIXEL_BITS = 8,
     localparam PALETTE_LENGTH = (1<<PIXEL_BITS),
@@ -25,47 +25,16 @@ module Gpu #(
     input logic vga_clk,
     input logic reset,
 
-    // AXI4 host interface
-    input logic [11:0]S_AXI_araddr,
-    input logic [1:0]S_AXI_arburst,
-    input logic [3:0]S_AXI_arcache,
-    input logic [7:0]S_AXI_arlen,
-    input logic S_AXI_arlock,
-    input logic [2:0]S_AXI_arprot,
-    output logic S_AXI_arready,
-    input logic [2:0]S_AXI_arsize,
-    input logic S_AXI_arvalid,
+    // I/O register interface
+    input logic [11:0] cpu_io_reg_addr,
+    input logic cpu_io_reg_clk,
+    input  logic [31:0] cpu_io_reg_din,
+    output logic [31:0] cpu_io_reg_dout,
+    input logic cpu_io_reg_en,
+    input logic cpu_io_reg_rst,
+    input logic [3:0] cpu_io_reg_we,
 
-    input logic [11:0]S_AXI_awaddr,
-    input logic [1:0]S_AXI_awburst,
-    input logic [3:0]S_AXI_awcache,
-    input logic [7:0]S_AXI_awlen,
-    input logic S_AXI_awlock,
-    input logic [2:0]S_AXI_awprot,
-    output logic S_AXI_awready,
-    input logic [2:0]S_AXI_awsize,
-    input logic S_AXI_awvalid,
-
-    input logic S_AXI_bready,
-    output logic [1:0]S_AXI_bresp,
-    output logic S_AXI_bvalid,
-
-    output logic [31:0]S_AXI_rdata,
-    output logic S_AXI_rlast,
-    input logic S_AXI_rready,
-    output logic [1:0]S_AXI_rresp,
-    output logic S_AXI_rvalid,
-
-    input logic [31:0]S_AXI_wdata,
-    input logic S_AXI_wlast,
-    output logic S_AXI_wready,
-    input logic [3:0]S_AXI_wstrb,
-    input logic S_AXI_wvalid,
-
-    input logic s_axi_aclk,
-    input logic s_axi_aresetn,
-
-    // video interface
+    // Video out interface
     output logic vga_hs,
     output logic vga_vs,
     output logic [RED_BITS-1:0] vga_r,
@@ -82,10 +51,10 @@ module Gpu #(
     logic [31:0] data_mem_wr_data;
     logic [3:0] data_mem_wr_en;
 
-    logic [$clog2(IO_REG_BYTES)-1:0] io_reg_addr;
-    logic [31:0] io_reg_rd_data;
-    logic [31:0] io_reg_wr_data;
-    logic [3:0] io_reg_wr_en;
+    logic [$clog2(IO_REG_BYTES)-1:0] gpu_io_reg_addr;
+    logic [31:0] gpu_io_reg_rd_data;
+    logic [31:0] gpu_io_reg_wr_data;
+    logic [3:0] gpu_io_reg_wr_en;
 
     logic [$clog2(PALETTE_BYTES)-1:0] palette_wr_addr;
     logic [31:0] palette_wr_data;
@@ -109,10 +78,10 @@ module Gpu #(
         .data_mem_wr_data      (data_mem_wr_data),
         .data_mem_wr_en        (data_mem_wr_en),
         // I/O reg
-        .io_reg_addr           (io_reg_addr),
-        .io_reg_rd_data        (io_reg_rd_data),
-        .io_reg_wr_data        (io_reg_wr_data),
-        .io_reg_wr_en          (io_reg_wr_en),
+        .io_reg_addr           (gpu_io_reg_addr),
+        .io_reg_rd_data        (gpu_io_reg_rd_data),
+        .io_reg_wr_data        (gpu_io_reg_wr_data),
+        .io_reg_wr_en          (gpu_io_reg_wr_en),
         // color palette
         .palette_wr_addr       (palette_wr_addr),
         .palette_wr_data       (palette_wr_data),
@@ -123,20 +92,21 @@ module Gpu #(
         .fb_wr_en              (fb_wr_en)
     );
 
-    main_memory #(
-        .INIT_FILE         (INIT_FILE),
+    BlockMemory #(
+        .INIT_FILE         (GPU_FIRMWARE_FILE),
         .CAPACITY_BYTES    (MAIN_MEMORY_BYTES),
         .BYTES_PER_WORD    (4)
     ) u_main_memory (
-        .clk               (gpu_clk),
-        // instruction
+        // Port A
+        .port_a_clk        (gpu_clk),
         .port_a_reset      (inst_reset),
         .port_a_address    (inst_addr),
         .port_a_rd_data    (inst_rd_data),
         .port_a_rd_en      (inst_rd_en),
         .port_a_wr_data    ('0),
         .port_a_wr_en      ('0),
-        // data
+        // Port B
+        .port_b_clk        (gpu_clk),
         .port_b_reset      ('0),
         .port_b_address    (data_mem_addr),
         .port_b_rd_data    (data_mem_rd_data),
@@ -145,49 +115,26 @@ module Gpu #(
         .port_b_wr_en      (data_mem_wr_en)
     );
 
-    AxiGpuIORegisters u_AxiGpuIORegisters (
-        // AXI4 interface
-        .S_AXI_araddr      (S_AXI_araddr),
-        .S_AXI_arburst     (S_AXI_arburst),
-        .S_AXI_arcache     (S_AXI_arcache),
-        .S_AXI_arlen       (S_AXI_arlen),
-        .S_AXI_arlock      (S_AXI_arlock),
-        .S_AXI_arprot      (S_AXI_arprot),
-        .S_AXI_arready     (S_AXI_arready),
-        .S_AXI_arsize      (S_AXI_arsize),
-        .S_AXI_arvalid     (S_AXI_arvalid),
-        .S_AXI_awaddr      (S_AXI_awaddr),
-        .S_AXI_awburst     (S_AXI_awburst),
-        .S_AXI_awcache     (S_AXI_awcache),
-        .S_AXI_awlen       (S_AXI_awlen),
-        .S_AXI_awlock      (S_AXI_awlock),
-        .S_AXI_awprot      (S_AXI_awprot),
-        .S_AXI_awready     (S_AXI_awready),
-        .S_AXI_awsize      (S_AXI_awsize),
-        .S_AXI_awvalid     (S_AXI_awvalid),
-        .S_AXI_bready      (S_AXI_bready),
-        .S_AXI_bresp       (S_AXI_bresp),
-        .S_AXI_bvalid      (S_AXI_bvalid),
-        .S_AXI_rdata       (S_AXI_rdata),
-        .S_AXI_rlast       (S_AXI_rlast),
-        .S_AXI_rready      (S_AXI_rready),
-        .S_AXI_rresp       (S_AXI_rresp),
-        .S_AXI_rvalid      (S_AXI_rvalid),
-        .S_AXI_wdata       (S_AXI_wdata),
-        .S_AXI_wlast       (S_AXI_wlast),
-        .S_AXI_wready      (S_AXI_wready),
-        .S_AXI_wstrb       (S_AXI_wstrb),
-        .S_AXI_wvalid      (S_AXI_wvalid),
-        .s_axi_aclk        (s_axi_aclk),
-        .s_axi_aresetn     (s_axi_aresetn),
-        // GPU interface
-        .io_reg_addr       (io_reg_addr),
-        .io_reg_clk        (gpu_clk),
-        .io_reg_wr_data    (io_reg_wr_data),
-        .io_reg_rd_data    (io_reg_rd_data),
-        .io_reg_en         ('1),
-        .io_reg_reset      (reset),
-        .io_reg_wr_en      (io_reg_wr_en)
+    BlockMemory #(
+        .CAPACITY_BYTES    (128),
+        .BYTES_PER_WORD    (4)
+    ) u_io_registers (
+        // CPU side interface
+        .port_a_address    (cpu_io_reg_addr),
+        .port_a_clk        (cpu_io_reg_clk),
+        .port_a_wr_data    (cpu_io_reg_din),
+        .port_a_rd_data    (cpu_io_reg_dout),
+        .port_a_rd_en      (cpu_io_reg_en),
+        .port_a_reset      (cpu_io_reg_rst),
+        .port_a_wr_en      (cpu_io_reg_we),
+        // GPU side interface
+        .port_b_address    (gpu_io_reg_addr),
+        .port_b_clk        (gpu_clk),
+        .port_b_wr_data    (gpu_io_reg_wr_data),
+        .port_b_rd_data    (gpu_io_reg_rd_data),
+        .port_b_rd_en      ('1),
+        .port_b_reset      (reset),
+        .port_b_wr_en      (gpu_io_reg_wr_en)
     );
 
     logic [$clog2(PALETTE_LENGTH)-1:0] palette_index;
@@ -211,23 +158,22 @@ module Gpu #(
 
     logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
     logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
+
     Framebuffer #(
-        .RESOLUTION_X          (RESOLUTION_X),
-        .RESOLUTION_Y          (RESOLUTION_Y),
-        .PIXEL_BITS            (PIXEL_BITS)
+        .RESOLUTION_X     (RESOLUTION_X),
+        .RESOLUTION_Y     (RESOLUTION_Y),
+        .PXL_BITS         (PIXEL_BITS)
     ) u_Framebuffer (
-        .reset                 (reset),
-
-        .wr_clk                (gpu_clk),
-        .wr_pxl_addr           (fb_wr_addr),
-        .wr_pxl_data           (fb_wr_data),
-        .wr_en                 (fb_wr_en),
-
-        .rd_clk                (vga_clk),
-        .rd_en                 ('1),
-        .rd_pxl_x              (fb_rd_x),
-        .rd_pxl_y              (fb_rd_y),
-        .rd_pxl_value          (palette_index)
+        .wr_clk           (gpu_clk),
+        .wr_tile_index    ({16{fb_wr_addr[$clog2(RESOLUTION_X*RESOLUTION_Y/16)-1:0]}}),
+        .wr_pxl_data      ({16{fb_wr_data}}),
+        .wr_en            ({16{fb_wr_en}}),
+        .rd_clk           (vga_clk),
+        .rd_reset         (reset),
+        .rd_en            ('1),
+        .rd_pxl_x         (fb_rd_x),
+        .rd_pxl_y         (fb_rd_y),
+        .rd_pxl_value     (palette_index)
     );
 
     VideoController #(

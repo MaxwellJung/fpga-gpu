@@ -48,13 +48,13 @@ module AxiGpuIORegisters (
     input logic io_reg_reset,
     input logic [3:0] io_reg_wr_en
 );
-    logic [11:0] reg_addr;
-    logic reg_clk;
-    logic [31:0] reg_din;
-    logic [31:0] reg_dout;
-    logic reg_en;
-    logic reg_rst;
-    logic [3:0] reg_we;
+    logic [11:0] cpu_io_reg_addr;
+    logic cpu_io_reg_clk;
+    logic [31:0] cpu_io_reg_din;
+    logic [31:0] cpu_io_reg_dout;
+    logic cpu_io_reg_en;
+    logic cpu_io_reg_rst;
+    logic [3:0] cpu_io_reg_we;
 
     AxiBramController AxiBramController_0 (
         .s_axi_aclk(s_axi_aclk),
@@ -92,35 +92,13 @@ module AxiGpuIORegisters (
         .S_AXI_wstrb(S_AXI_wstrb),
         .S_AXI_wvalid(S_AXI_wvalid),
 
-        .BRAM_PORTA_addr(reg_addr),
-        .BRAM_PORTA_clk(reg_clk),
-        .BRAM_PORTA_din(reg_din),
-        .BRAM_PORTA_dout(reg_dout),
-        .BRAM_PORTA_en(reg_en),
-        .BRAM_PORTA_rst(reg_rst),
-        .BRAM_PORTA_we(reg_we)
-    );
-
-    BlockMemory #(
-        .CAPACITY_BYTES    (128),
-        .BYTES_PER_WORD    (4)
-    ) u_BlockMemory (
-        // CPU side interface
-        .port_a_address    (reg_addr),
-        .port_a_clk        (reg_clk),
-        .port_a_wr_data    (reg_din),
-        .port_a_rd_data    (reg_dout),
-        .port_a_rd_en      (reg_en),
-        .port_a_reset      (reg_rst),
-        .port_a_wr_en      (reg_we),
-        // GPU side interface
-        .port_b_address    (io_reg_addr),
-        .port_b_clk        (io_reg_clk),
-        .port_b_wr_data    (io_reg_wr_data),
-        .port_b_rd_data    (io_reg_rd_data),
-        .port_b_rd_en      (io_reg_en),
-        .port_b_reset      (io_reg_reset),
-        .port_b_wr_en      (io_reg_wr_en)
+        .BRAM_PORTA_addr(cpu_io_reg_addr),
+        .BRAM_PORTA_clk(cpu_io_reg_clk),
+        .BRAM_PORTA_din(cpu_io_reg_din),
+        .BRAM_PORTA_dout(cpu_io_reg_dout),
+        .BRAM_PORTA_en(cpu_io_reg_en),
+        .BRAM_PORTA_rst(cpu_io_reg_rst),
+        .BRAM_PORTA_we(cpu_io_reg_we)
     );
 
 endmodule

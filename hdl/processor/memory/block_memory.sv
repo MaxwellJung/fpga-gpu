@@ -4,13 +4,12 @@ module BlockMemory #(
     parameter CAPACITY_BYTES = 128,
     parameter BYTES_PER_WORD = 4,
     localparam WORD_BITS = BYTES_PER_WORD*8,
-    localparam WORD_COUNT = CAPACITY_BYTES/BYTES_PER_WORD,
-    localparam ADDR_BITS = $clog2(CAPACITY_BYTES)
+    localparam WORD_COUNT = CAPACITY_BYTES/BYTES_PER_WORD
 ) (
     // Port A
     input logic port_a_clk,
     input logic port_a_reset,
-    input logic [ADDR_BITS-1:0] port_a_address,
+    input logic [$clog2(CAPACITY_BYTES)-1:0] port_a_address,
     output logic [WORD_BITS-1:0] port_a_rd_data,
     input logic port_a_rd_en,
     input logic [WORD_BITS-1:0] port_a_wr_data,
@@ -19,7 +18,7 @@ module BlockMemory #(
     // Port B
     input logic port_b_clk,
     input logic port_b_reset,
-    input logic [ADDR_BITS-1:0] port_b_address,
+    input logic [$clog2(CAPACITY_BYTES)-1:0] port_b_address,
     output logic [WORD_BITS-1:0] port_b_rd_data,
     input logic port_b_rd_en,
     input logic [WORD_BITS-1:0] port_b_wr_data,
@@ -29,8 +28,8 @@ module BlockMemory #(
     initial $readmemh(INIT_FILE, bram);
 
     logic [$clog2(WORD_COUNT)-1:0] port_a_word_index, port_b_word_index;
-    assign port_a_word_index = port_a_address[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
-    assign port_b_word_index = port_b_address[ADDR_BITS-1:$clog2(BYTES_PER_WORD)];
+    assign port_a_word_index = port_a_address[$clog2(CAPACITY_BYTES)-1:$clog2(BYTES_PER_WORD)];
+    assign port_b_word_index = port_b_address[$clog2(CAPACITY_BYTES)-1:$clog2(BYTES_PER_WORD)];
 
     int i;
     always_ff @(posedge port_a_clk) begin

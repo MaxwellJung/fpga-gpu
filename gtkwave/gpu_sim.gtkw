@@ -1,77 +1,132 @@
 [*]
-[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri Feb 14 00:14:42 2025
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Fri Apr  4 05:40:08 2025
 [*]
-[dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/gpu_sim.vcd"
-[dumpfile_mtime] "Fri Feb 14 00:14:41 2025"
-[dumpfile_size] 609897137
-[savefile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/gpu_sim.gtkw"
+[dumpfile] "/home/maxwelljung/programming/fpga-gpu/build/sim/gpu_sim.vcd"
+[dumpfile_mtime] "Fri Apr  4 05:39:55 2025"
+[dumpfile_size] 27216395
+[savefile] "/home/maxwelljung/programming/fpga-gpu/gtkwave/gpu_sim.gtkw"
 [timestart] 0
-[size] 1920 1027
+[size] 1920 1052
 [pos] -1 -1
-*-15.814085 85800 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-[markername] AA
-[markername] BB
-[markername] CC
-[markername] DD
-[markername] EE
-[markername] FF
-[markername] GG
-[markername] HH
-[markername] II
-[markername] JJ
-[markername] KK
-[markername] LL
-[markername] MM
-[markername] NN
-[markername] OO
-[markername] PP
-[markername] QQ
-[markername] RR
-[markername] SS
-[markername] TT
-[markername] UU
-[markername] VV
-[markername] WW
-[markername] XX
-[markername] YY
-[markername] ZZ
-[treeopen] tb_gpu.
-[treeopen] tb_gpu.dut.
-[sst_width] 253
-[signals_width] 219
+*-15.927277 75000 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] TbGpu.
+[treeopen] TbGpu.u_Gpu.
+[treeopen] TbGpu.u_Gpu.u_DisplayProcessor.
+[treeopen] TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.
+[treeopen] TbGpu.u_Gpu.video_controller.
+[treeopen] TbGpu.u_Gpu.video_controller.vga_timing_generator_0.
+[sst_width] 284
+[signals_width] 335
 [sst_expanded] 1
-[sst_vpaned_height] 309
+[sst_vpaned_height] 306
 @28
-tb_gpu.gpu_clk
-tb_gpu.reset
-tb_gpu.vga_clk
-tb_gpu.VGA_HS
-tb_gpu.VGA_VS
-@c00022
-tb_gpu.VGA_R[3:0]
-@28
-(0)tb_gpu.VGA_R[3:0]
-(1)tb_gpu.VGA_R[3:0]
-(2)tb_gpu.VGA_R[3:0]
-(3)tb_gpu.VGA_R[3:0]
-@1401200
--group_end
+TbGpu.u_Gpu.gpu_clk
+TbGpu.u_Gpu.vga_clk
+TbGpu.u_Gpu.reset
+TbGpu.u_Gpu.vga_hs
+TbGpu.u_Gpu.vga_vs
 @22
-tb_gpu.VGA_G[3:0]
-tb_gpu.VGA_B[3:0]
-tb_gpu.dut.video_controller_0.vga_r_o[3:0]
-tb_gpu.dut.video_controller_0.vga_g_o[3:0]
-tb_gpu.dut.video_controller_0.vga_b_o[3:0]
+TbGpu.u_Gpu.vga_r[3:0]
+TbGpu.u_Gpu.vga_g[3:0]
+TbGpu.u_Gpu.vga_b[3:0]
 @200
 -
-@24
-tb_gpu.dut.video_controller_0.fb_rd_x_o[9:0]
-tb_gpu.dut.video_controller_0.fb_rd_y_o[9:0]
+@22
+TbGpu.u_Gpu.palette_wr_addr[8:0]
+TbGpu.u_Gpu.palette_wr_data[31:0]
+@28
+TbGpu.u_Gpu.palette_wr_en[3:0]
+@22
+TbGpu.u_Gpu.fb_wr_addr[16:0]
+TbGpu.u_Gpu.fb_wr_data[31:0]
+@28
+TbGpu.u_Gpu.fb_wr_en[3:0]
+@201
+-
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_plus_4[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_pc_prime[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_fetch.f_stall
 @200
 -
-@24
-tb_gpu.dut.framebuffer_0.palette_index_o[7:0]
-tb_gpu.dut.palette_0.rd_color_o[11:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_flush
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_ext[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_imm_src[2:0]
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_instruction[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_pc[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_pc_plus_4[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rd[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs1[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs1_value[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_rs2_value[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_decode.d_stall
+@200
+-
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_control[3:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_result[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_a
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_alu_src_b
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_flush
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_forward_a[1:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_forward_b[1:0]
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_imm_ext[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_invert_cond
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_jump_src
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_pc[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_pc_plus_4[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_pc_target[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_rd[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_rs1[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_rs1_value[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_rs2[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_rs2_value[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_a_rs1[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_src_b_rs2[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_take_branch
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Execute.e_write_data[31:0]
+@200
+-
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_alu_result[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_fb_write
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_mem_size[1:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_mem_write
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_pc_plus_4[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_rd[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Memory.m_write_data[31:0]
+@200
+-
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_alu_result[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_load_sign
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_mem_size[1:0]
+@22
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_pc_plus_4[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_rd[4:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_read_data[31:0]
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_result[31:0]
+@28
+TbGpu.u_Gpu.u_DisplayProcessor.u_RISCVCore.u_Datapath.u_Writeback.w_result_src[1:0]
 [pattern_trace] 1
 [pattern_trace] 0

@@ -1,5 +1,5 @@
 module GpuTop #(
-    parameter INIT_FILE = "build/gputest.mem"
+    parameter GPU_FIRMWARE_FILE = "build/gpu_firmware.mem"
 ) (
     input wire gpu_clk,
     input wire vga_clk,
@@ -52,12 +52,17 @@ module GpuTop #(
     output wire [3:0] vga_g,
     output wire [3:0] vga_b
 );
-    Gpu #(
-        .INIT_FILE(INIT_FILE)
-    ) gpu_0 (
-        .gpu_clk(gpu_clk),
-        .vga_clk(vga_clk),
-        .reset(reset),
+    wire [11:0] cpu_io_reg_addr;
+    wire cpu_io_reg_clk;
+    wire [31:0] cpu_io_reg_din;
+    wire [31:0] cpu_io_reg_dout;
+    wire cpu_io_reg_en;
+    wire cpu_io_reg_rst;
+    wire [3:0] cpu_io_reg_we;
+
+    AxiBramController u_AxiBramController (
+        .s_axi_aclk(s_axi_aclk),
+        .s_axi_aresetn(s_axi_aresetn),
 
         .S_AXI_araddr(S_AXI_araddr),
         .S_AXI_arburst(S_AXI_arburst),
@@ -90,14 +95,36 @@ module GpuTop #(
         .S_AXI_wready(S_AXI_wready),
         .S_AXI_wstrb(S_AXI_wstrb),
         .S_AXI_wvalid(S_AXI_wvalid),
-        .s_axi_aclk(s_axi_aclk),
-        .s_axi_aresetn(s_axi_aresetn),
 
-        .vga_hs(vga_hs),
-        .vga_vs(vga_vs),
-        .vga_r(vga_r),
-        .vga_g(vga_g),
-        .vga_b(vga_b)
+        .BRAM_PORTA_addr(cpu_io_reg_addr),
+        .BRAM_PORTA_clk(cpu_io_reg_clk),
+        .BRAM_PORTA_din(cpu_io_reg_din),
+        .BRAM_PORTA_dout(cpu_io_reg_dout),
+        .BRAM_PORTA_en(cpu_io_reg_en),
+        .BRAM_PORTA_rst(cpu_io_reg_rst),
+        .BRAM_PORTA_we(cpu_io_reg_we)
+    );
+
+    Gpu #(
+        .GPU_FIRMWARE_FILE             (GPU_FIRMWARE_FILE)
+    ) u_Gpu (
+        .gpu_clk               (gpu_clk),
+        .vga_clk               (vga_clk),
+        .reset                 (reset),
+        // I/O register interface
+        .cpu_io_reg_addr       (cpu_io_reg_addr),
+        .cpu_io_reg_clk        (cpu_io_reg_clk),
+        .cpu_io_reg_din        (cpu_io_reg_din),
+        .cpu_io_reg_dout       (cpu_io_reg_dout),
+        .cpu_io_reg_en         (cpu_io_reg_en),
+        .cpu_io_reg_rst        (cpu_io_reg_rst),
+        .cpu_io_reg_we         (cpu_io_reg_we),
+        // Video out interface
+        .vga_hs                (vga_hs),
+        .vga_vs                (vga_vs),
+        .vga_r                 (vga_r),
+        .vga_g                 (vga_g),
+        .vga_b                 (vga_b)
     );
 
 endmodule
