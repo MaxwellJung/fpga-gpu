@@ -16,11 +16,16 @@ module Gpu #(
     parameter VGA_X = 800,
     parameter VGA_Y = 600,
     parameter DOWNSCALE = 2,
+    parameter TILE_WIDTH = 4,
+    parameter TILE_HEIGHT = 4,
     localparam RESOLUTION_X = VGA_X/DOWNSCALE,
     localparam RESOLUTION_Y = VGA_Y/DOWNSCALE,
     localparam BYTES_PER_PIXEL = (PIXEL_BITS-1)/8 + 1,
     localparam PIXELS_PER_FRAME = RESOLUTION_X*RESOLUTION_Y,
     localparam FRAMEBUFFER_BYTES = PIXELS_PER_FRAME*BYTES_PER_PIXEL,
+
+    localparam CORE_COUNT = TILE_WIDTH*TILE_HEIGHT,
+    localparam FB_BYTES_PER_CORE = FRAMEBUFFER_BYTES/CORE_COUNT,
 
     parameter SYNC_LATENCY = 3 // latency between video controller requesting pixel to palette outputting pixel
 ) (
@@ -63,14 +68,15 @@ module Gpu #(
     logic [31:0] palette_wr_data;
     logic [3:0] palette_wr_en;
 
-    logic [$clog2(FRAMEBUFFER_BYTES)-1:0] fb_wr_addr;
+    logic [$clog2(FB_BYTES_PER_CORE)-1:0] fb_wr_addr;
     logic [31:0] fb_wr_data;
     logic [3:0] fb_wr_en;
 
     DisplayProcessor #(
+        .MAIN_MEMORY_BYTES     (MAIN_MEMORY_BYTES),
         .IO_REG_BYTES          (IO_REG_BYTES),
         .PALETTE_BYTES         (PALETTE_BYTES),
-        .FRAMEBUFFER_BYTES     (FRAMEBUFFER_BYTES)
+        .FRAMEBUFFER_BYTES     (FB_BYTES_PER_CORE)
     ) u_DisplayProcessor (
         .clk                   (gpu_clk),
         .reset                 (reset),
@@ -174,9 +180,9 @@ module Gpu #(
         .PXL_BITS         (PIXEL_BITS)
     ) u_Framebuffer (
         .wr_clk           (gpu_clk),
-        .wr_tile_index    ({16{fb_wr_addr[$clog2(RESOLUTION_X*RESOLUTION_Y/16)-1:0]}}),
-        .wr_pxl_data      ({16{fb_wr_data}}),
-        .wr_en            ({16{fb_wr_en}}),
+        .wr_tile_index    ({CORE_COUNT{fb_wr_addr}}),
+        .wr_pxl_data      ({CORE_COUNT{fb_wr_data}}),
+        .wr_en            ({CORE_COUNT{fb_wr_en}}),
         .rd_clk           (vga_clk),
         .rd_reset         (reset),
         .rd_en            ('1),

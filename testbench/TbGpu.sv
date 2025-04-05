@@ -38,6 +38,7 @@ module TbGpu();
 
     // check results
     initial begin
+        $dumpfile("./build/sim/TbGpu.vcd"); 
         $dumpvars(0, TbGpu);
 
         // hold reset for 2 VGA clk
