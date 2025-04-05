@@ -10,6 +10,7 @@ def main():
     # index_image()
     # random_image()
     # test_image()
+    # zero()
 
 def rgb332_color_palette():
     for i in range(256):
@@ -47,6 +48,10 @@ def test_image():
     for pixel in pixels:
         s = '{0:02b}{1:02b}{2:02b}'.format(pixel[0], pixel[1], pixel[2])
         print(s)
+
+def zero():
+    for i in range(128):
+        print('{0:08b}'.format(0))
 
 
 if __name__ == '__main__':

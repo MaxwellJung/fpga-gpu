@@ -25,17 +25,7 @@ RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 GCC-TARGET = -march=rv32i -mabi=ilp32
 GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
-all: ${BUILD_DIR}/gpu_firmware.mem ${VERILATOR_OBJ_DIR}/Gpu
-
-# Verilator
-${VERILATOR_OBJ_DIR}/%: ${VERILATOR_OBJ_DIR}/%.mk
-	make -C ${VERILATOR_OBJ_DIR} -f V$(notdir $<)
-
-${VERILATOR_OBJ_DIR}/%.mk: ${HDL_FILES}
-	verilator ${VFLAGS} \
-		-Ihdl -Ihdl/processor -Ihdl/processor/controlpath -Ihdl/processor/datapath -Ihdl/processor/memory \
-		-cc $(basename $(notdir $@)).sv --exe ${TESTBENCH_DIR}/$(basename $(notdir $@))_sim.cpp -o $(basename $(notdir $@)) \
-		-CFLAGS "${SDL_CFLAGS}" -LDFLAGS "${SDL_LDFLAGS}"
+all: ${VERILATOR_OBJ_DIR}/Gpu $(SIM_DIR)/gpu_sim.vcd
 
 # RISCV Compiler
 ${BUILD_DIR}/%.mem: ${BUILD_DIR}/%.bin
@@ -59,6 +49,27 @@ $(BUILD_DIR)/%.s.o: ${SRC_DIR}/%.s
 	mkdir -p $(BUILD_DIR)
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} $< -o $@
 
+
+# Verilator
+${VERILATOR_OBJ_DIR}/%: ${BUILD_DIR}/gpu_firmware.mem ${VERILATOR_OBJ_DIR}/%.mk
+	make -C ${VERILATOR_OBJ_DIR} -f V$(notdir $(shell echo $(word 2,$^)))
+
+${VERILATOR_OBJ_DIR}/%.mk: ${HDL_FILES}
+	verilator ${VFLAGS} \
+		-Ihdl -Ihdl/processor -Ihdl/processor/controlpath -Ihdl/processor/datapath -Ihdl/processor/memory \
+		-cc $(basename $(notdir $@)).sv --exe ${TESTBENCH_DIR}/$(basename $(notdir $@))_sim.cpp -o $(basename $(notdir $@)) \
+		-CFLAGS "${SDL_CFLAGS}" -LDFLAGS "${SDL_LDFLAGS}"
+
+# Icarus
+$(SIM_DIR)/gpu_sim.vcd: ${BUILD_DIR}/gpu_firmware.mem FORCE
+	mkdir -p $(dir $@)
+	iverilog -o $(BUILD_DIR)/gpu_sim.vvp \
+		-g2005-sv \
+		-s TbGpu ./testbench/TbGpu.sv \
+		$(HDL_FILES)
+	vvp $(BUILD_DIR)/gpu_sim.vvp
+	mkdir -p $(dir $(SIM_DIR)/gpu_sim.vcd)
+	mv dump.vcd $(SIM_DIR)/gpu_sim.vcd
 
 # Vivado
 vivado: FORCE

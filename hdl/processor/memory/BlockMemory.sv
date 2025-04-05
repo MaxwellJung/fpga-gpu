@@ -1,6 +1,6 @@
 // Copied from https://docs.amd.com/r/en-US/ug901-vivado-synthesis/Initializing-Block-RAM-From-an-External-Data-File-Verilog
 module BlockMemory #(
-    parameter INIT_FILE = "",
+    parameter INIT_FILE = "./data/zero.mem",
     parameter CAPACITY_BYTES = 128,
     parameter BYTES_PER_WORD = 4,
     localparam WORD_BITS = BYTES_PER_WORD*8,
