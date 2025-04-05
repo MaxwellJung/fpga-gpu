@@ -1,4 +1,4 @@
-module register_file #(
+module RegisterFile #(
     parameter REG_COUNT = 32,
     parameter REG_WIDTH = 32
 ) (

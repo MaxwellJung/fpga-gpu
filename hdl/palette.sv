@@ -17,7 +17,7 @@ module Palette #(
     input logic [$clog2(PALETTE_LENGTH)-1:0] rd_index,
     output logic [COLOR_BITS-1:0] rd_color
 );
-    logic [ADDR_BITS-1:0] rd_color_addr, delayed_rd_color_addr;
+    logic [ADDR_BITS-1:0] rd_color_addr;
     assign rd_color_addr = BYTES_PER_COLOR*rd_index;
     logic column_index;
     always @(posedge rd_clk) column_index <= rd_color_addr[1];
@@ -41,7 +41,7 @@ module Palette #(
         .port_b_reset      (reset),
         .port_b_address    (rd_color_addr),
         .port_b_rd_data    (rd_color_data),
-        .port_b_rd_en      ('1),
+        .port_b_rd_en      (rd_en),
         .port_b_wr_data    ('0),
         .port_b_wr_en      ('0)
     );

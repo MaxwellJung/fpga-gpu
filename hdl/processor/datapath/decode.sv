@@ -1,12 +1,14 @@
 `include "./hdl/processor/defines.svh"
 
-module decode (
+module Decode #(
+    parameter MAIN_MEMORY_BYTES = 2048
+) (
     input logic clk,
     input logic reset,
 
     // input from fetch stage
-    input logic [31:0] f_pc,
-    input logic [31:0] f_pc_plus_4,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc_plus_4,
 
     // input from instruction memory
     input logic [31:0] d_instruction,
@@ -31,12 +33,12 @@ module decode (
     // output to execute pipeline
     output logic [31:0] d_rs1_value,
     output logic [31:0] d_rs2_value,
-    output logic [31:0] d_pc,
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc,
     output logic [4:0] d_rs1,
     output logic [4:0] d_rs2,
     output logic [4:0] d_rd,
     output logic [31:0] d_imm_ext,
-    output logic [31:0] d_pc_plus_4
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc_plus_4
 );
     always_ff @(posedge clk) begin
         if (reset || d_flush) begin
@@ -53,7 +55,7 @@ module decode (
         {funct7, d_rs2, d_rs1, funct3, d_rd, op} = d_instruction;
     end
 
-    register_file u_register_file (
+    RegisterFile u_register_file (
         .clk          (clk),
         .reset        (reset),
 

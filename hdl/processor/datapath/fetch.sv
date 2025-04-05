@@ -1,16 +1,18 @@
-module fetch (
+module Fetch #(
+    parameter MAIN_MEMORY_BYTES = 2048
+) (
     input logic clk,
     input logic reset,
     
     input logic f_stall,
 
     input logic e_pc_src,
-    input logic [31:0] e_pc_target,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_target,
 
-    output logic [31:0] f_pc,
-    output logic [31:0] f_pc_plus_4
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc,
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc_plus_4
 );
-    logic [31:0] f_pc_prime;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc_prime;
     always_comb begin
         f_pc_plus_4 = f_pc + 4;
         case (e_pc_src)

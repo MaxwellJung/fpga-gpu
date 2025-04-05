@@ -1,6 +1,7 @@
 `include "./hdl/processor/defines.svh"
 
 module Memory #(
+    parameter MAIN_MEMORY_BYTES = 2048,
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
     parameter PALETTE_LENGTH = 256
@@ -12,7 +13,7 @@ module Memory #(
     input logic [31:0] e_alu_result,
     input logic [31:0] e_write_data,
     input logic [4:0] e_rd,
-    input logic [31:0] e_pc_plus_4,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_plus_4,
 
     // control
     input mem_size_t m_mem_size,
@@ -33,7 +34,7 @@ module Memory #(
     // output to next pipeline
     output logic [31:0] m_alu_result,
     output logic [4:0] m_rd,
-    output logic [31:0] m_pc_plus_4
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] m_pc_plus_4
 );
     logic [31:0] m_write_data;
     always_ff @(posedge clk) begin
@@ -58,9 +59,9 @@ module Memory #(
 
     always_comb begin
         fb_wr_en = m_fb_write;
-        fb_wr_pxl_x = m_alu_result[15:0];
-        fb_wr_pxl_y = m_alu_result[31:16];
-        fb_wr_pxl_value = m_write_data;
+        fb_wr_pxl_x = m_alu_result[0+:$clog2(RESOLUTION_X)];
+        fb_wr_pxl_y = m_alu_result[16+:$clog2(RESOLUTION_Y)];
+        fb_wr_pxl_value = m_write_data[$clog2(PALETTE_LENGTH)-1:0];
     end
 
 endmodule

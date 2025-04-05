@@ -1,11 +1,13 @@
-module Writeback (
+module Writeback #(
+    parameter MAIN_MEMORY_BYTES = 2048
+) (
     input logic clk,
     input logic reset,
 
     // input from memory stage
     input logic [31:0] m_alu_result,
     input logic [4:0] m_rd,
-    input logic [31:0] m_pc_plus_4,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] m_pc_plus_4,
 
     // input from data memory
     input logic [31:0] w_read_data,
@@ -20,7 +22,7 @@ module Writeback (
     output logic [4:0] w_rd
 );
     logic [31:0] w_alu_result;
-    logic [31:0] w_pc_plus_4;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] w_pc_plus_4;
     always_ff @(posedge clk) begin
         if (reset) begin
             {w_alu_result, w_rd, w_pc_plus_4} <= '0;
@@ -65,7 +67,7 @@ module Writeback (
         case (w_result_src)
             RESULT_SRC_ALU: w_result = w_alu_result;
             RESULT_SRC_MEMORY: w_result = read_data;
-            RESULT_SRC_PC_PLUS_4: w_result = w_pc_plus_4;
+            RESULT_SRC_PC_PLUS_4: w_result = {{(32-$clog2(MAIN_MEMORY_BYTES)){1'b0}}, w_pc_plus_4};
             default: w_result = '0;
         endcase
     end

@@ -24,7 +24,9 @@ module BlockMemory #(
     input logic [WORD_BITS-1:0] port_b_wr_data,
     input logic [BYTES_PER_WORD-1:0] port_b_wr_en
 );
+    // verilator lint_off MULTIDRIVEN
     logic [WORD_BITS-1:0] bram [WORD_COUNT];
+    // verilator lint_on MULTIDRIVEN
     initial $readmemh(INIT_FILE, bram);
 
     logic [$clog2(WORD_COUNT)-1:0] port_a_word_index, port_b_word_index;

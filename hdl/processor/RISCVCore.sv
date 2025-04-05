@@ -1,17 +1,17 @@
 `include "./hdl/processor/defines.svh"
 
 module RISCVCore #(
+    parameter MAIN_MEMORY_BYTES = 2048,
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
-    parameter PALETTE_LENGTH = 256,
-    parameter COLOR_BITS = 12
+    parameter PALETTE_LENGTH = 256
 ) (
     input logic clk,
     input logic reset,
 
     // instr bus
     output logic inst_reset,
-    output logic [31:0] inst_addr,
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] inst_addr,
     input logic [31:0] inst_rd_data,
     output logic inst_rd_en,
     

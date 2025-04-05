@@ -1,17 +1,17 @@
 `include "./hdl/processor/defines.svh"
 
 module Datapath #(
+    parameter MAIN_MEMORY_BYTES = 2048,
     parameter RESOLUTION_X = 400,
     parameter RESOLUTION_Y = 300,
-    parameter PALETTE_LENGTH = 256,
-    parameter COLOR_BITS = 12
+    parameter PALETTE_LENGTH = 256
 ) (
     input logic clk,
     input logic reset,
 
     // instr bus
     output logic inst_reset,
-    output logic [31:0] inst_addr,
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] inst_addr,
     input logic [31:0] inst_rd_data,
     output logic inst_rd_en,
 
@@ -62,11 +62,13 @@ module Datapath #(
     output logic [4:0] m_rd,
     output logic [4:0] w_rd
 );
-    logic [31:0] e_pc_target;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_target;
 
-    logic [31:0] f_pc;
-    logic [31:0] f_pc_plus_4;
-    fetch u_fetch (
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] f_pc_plus_4;
+    Fetch #(
+        .MAIN_MEMORY_BYTES(MAIN_MEMORY_BYTES)
+    ) u_fetch (
         .clk            (clk),
         .reset          (reset),
         .f_stall        (f_stall),
@@ -86,12 +88,14 @@ module Datapath #(
 
     logic [31:0] d_rs1_value;
     logic [31:0] d_rs2_value;
-    logic [31:0] d_pc;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc;
     logic [4:0] d_rd;
     logic [31:0] d_imm_ext;
-    logic [31:0] d_pc_plus_4;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc_plus_4;
 
-    decode u_decode (
+    Decode #(
+        .MAIN_MEMORY_BYTES(MAIN_MEMORY_BYTES)
+    )  u_decode (
         .clk              (clk),
         .reset            (reset),
         // input from fetch stage
@@ -127,9 +131,11 @@ module Datapath #(
 
     logic [31:0] e_alu_result;
     logic [31:0] e_write_data;
-    logic [31:0] e_pc_plus_4;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_plus_4;
 
-    Execute u_Execute (
+    Execute #(
+        .MAIN_MEMORY_BYTES(MAIN_MEMORY_BYTES)
+    )  u_Execute (
         .clk              (clk),
         .reset            (reset),
         // input from previous pipeline
@@ -165,8 +171,9 @@ module Datapath #(
         .e_pc_plus_4      (e_pc_plus_4)
     );
 
-    logic [31:0] m_pc_plus_4;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] m_pc_plus_4;
     Memory #(
+        .MAIN_MEMORY_BYTES  (MAIN_MEMORY_BYTES),
         .RESOLUTION_X       (RESOLUTION_X),
         .RESOLUTION_Y       (RESOLUTION_Y),
         .PALETTE_LENGTH     (PALETTE_LENGTH)
@@ -197,7 +204,9 @@ module Datapath #(
         .m_pc_plus_4        (m_pc_plus_4)
     );
 
-    Writeback u_Writeback (
+    Writeback #(
+        .MAIN_MEMORY_BYTES(MAIN_MEMORY_BYTES)
+    )  u_Writeback (
         .clk             (clk),
         .reset           (reset),
         // input from memory stage

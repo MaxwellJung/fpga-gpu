@@ -1,4 +1,4 @@
-module GpuTop #(
+module AxiGpu #(
     parameter GPU_FIRMWARE_FILE = "build/gpu_firmware.mem"
 ) (
     input wire gpu_clk,

@@ -1,18 +1,20 @@
 `include "./hdl/processor/defines.svh"
 
-module Execute (
+module Execute #(
+    parameter MAIN_MEMORY_BYTES = 2048
+) (
     input logic clk,
     input logic reset,
     
     // input from previous pipeline
     input logic [31:0] d_rs1_value,
     input logic [31:0] d_rs2_value,
-    input logic [31:0] d_pc,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc,
     input logic [4:0] d_rs1,
     input logic [4:0] d_rs2,
     input logic [4:0] d_rd,
     input logic [31:0] d_imm_ext,
-    input logic [31:0] d_pc_plus_4,
+    input logic [$clog2(MAIN_MEMORY_BYTES)-1:0] d_pc_plus_4,
 
     // forward
     input logic [31:0] m_alu_result,
@@ -31,18 +33,18 @@ module Execute (
     input jump_src_t e_jump_src,
     output logic [4:0] e_rs1,
     output logic [4:0] e_rs2,
-    output logic [31:0] e_pc_target,
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_target,
     output logic e_take_branch,
 
     // output to next pipeline
     output logic [31:0] e_alu_result,
     output logic [31:0] e_write_data,
     output logic [4:0] e_rd,
-    output logic [31:0] e_pc_plus_4
+    output logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc_plus_4
 );
     logic [31:0] e_rs1_value;
     logic [31:0] e_rs2_value;
-    logic [31:0] e_pc;
+    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] e_pc;
     logic [31:0] e_imm_ext;
     always_ff @(posedge clk) begin
         if (reset || e_flush) begin
@@ -65,7 +67,7 @@ module Execute (
 
         case (e_alu_src_a)
             ALU_SRC_A_REG: e_src_a = e_src_a_rs1;
-            ALU_SRC_A_PC: e_src_a = e_pc;
+            ALU_SRC_A_PC: e_src_a = {{(32-$clog2(MAIN_MEMORY_BYTES)){1'b0}}, e_pc};
             default: e_src_a = '0;
     endcase
     end
@@ -102,9 +104,9 @@ module Execute (
     always_comb begin
         case (e_jump_src)
             JUMP_SRC_PC:
-                e_pc_target = e_pc + e_imm_ext;
+                e_pc_target = e_pc + e_imm_ext[$clog2(MAIN_MEMORY_BYTES)-1:0];
             JUMP_SRC_REG: // equivalent to (e_src_a + e_imm_ext)
-                e_pc_target = e_alu_result;
+                e_pc_target = e_alu_result[$clog2(MAIN_MEMORY_BYTES)-1:0];
             default: begin // unknown jump
                 e_pc_target = '0;
             end

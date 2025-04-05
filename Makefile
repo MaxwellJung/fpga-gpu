@@ -1,56 +1,66 @@
-HDL_DIR := ./hdl
-BUILD_DIR := ./build
-SIM_DIR := $(BUILD_DIR)/sim
 SRC_DIR := ./src
+# Find all the ASM, C, and C++ files we want to compile
+# Note the single quotes around the * expressions. The shell will incorrectly expand these otherwise, but we want to send the * directly to the find command.
+SRCS := $(shell basename $(shell find $(SRC_DIR) -name '*.cpp' -or -name '*.c' -or -name '*.s'))
+
+BUILD_DIR := ./build
+# Prepends BUILD_DIR and appends .o to every src file
+# As an example, ./your_dir/hello.cpp turns into ./build/./your_dir/hello.cpp.o
+OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
+
 DATA_DIR := ./data
+
+HDL_DIR := ./hdl
 HDL_FILES := $(shell find $(HDL_DIR) -name '*.sv' -or -name '*.v')
+VERILATOR_OBJ_DIR := ./obj_dir
+SIM_DIR := $(BUILD_DIR)/sim
+TESTBENCH_DIR := ./testbench
+
+VFLAGS := -j 0 -Wall -Wno-PINCONNECTEMPTY -Wno-UNUSEDSIGNAL -O3 --x-assign fast --x-initial fast --noassert
+SDL_CFLAGS := `sdl2-config --cflags`
+SDL_LDFLAGS := `sdl2-config --libs`
 
 RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 # RISCV-GNU-TOOLCHAIN = riscv64-unknown-linux-gnu
 GCC-TARGET = -march=rv32i -mabi=ilp32
 GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
-all: gpu_firmware
+all: ${BUILD_DIR}/gpu_firmware.mem ${VERILATOR_OBJ_DIR}/Gpu
 
-gpu_firmware: FORCE
-	mkdir -p $(BUILD_DIR)
-# compile into assembly
-	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/main.asm -S ${SRC_DIR}/main.c
-	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/graphics.asm -S ${SRC_DIR}/graphics.c
-	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/framebuffer.asm -S ${SRC_DIR}/framebuffer.c
-	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/palette.asm -S ${SRC_DIR}/palette.c
-	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${BUILD_DIR}/io_reg.asm -S ${SRC_DIR}/io_reg.c
-# compile into object
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/main.o ${BUILD_DIR}/main.asm
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/graphics.o ${BUILD_DIR}/graphics.asm
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/framebuffer.o ${BUILD_DIR}/framebuffer.asm
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/palette.o ${BUILD_DIR}/palette.asm
-	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${BUILD_DIR}/io_reg.o ${BUILD_DIR}/io_reg.asm
-# link objects into elf
-	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gpu_firmware.ld -o ${BUILD_DIR}/gpu_firmware.elf ${BUILD_DIR}/*.o
-# convert to mem file
-	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/gpu_firmware.elf ${BUILD_DIR}/gpu_firmware.bin
-	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/gpu_firmware.bin > ${BUILD_DIR}/gpu_firmware.mem
-	cp ${BUILD_DIR}/gpu_firmware.mem ${DATA_DIR}/gpu_mem_init.mem
-# disassemble for debug
+# Verilator
+${VERILATOR_OBJ_DIR}/%: ${VERILATOR_OBJ_DIR}/%.mk
+	make -C ${VERILATOR_OBJ_DIR} -f V$(notdir $<)
+
+${VERILATOR_OBJ_DIR}/%.mk: ${HDL_FILES}
+	verilator ${VFLAGS} \
+		-Ihdl -Ihdl/processor -Ihdl/processor/controlpath -Ihdl/processor/datapath -Ihdl/processor/memory \
+		-cc $(basename $(notdir $@)).sv --exe ${TESTBENCH_DIR}/$(basename $(notdir $@))_sim.cpp -o $(basename $(notdir $@)) \
+		-CFLAGS "${SDL_CFLAGS}" -LDFLAGS "${SDL_LDFLAGS}"
+
+# RISCV Compiler
+${BUILD_DIR}/%.mem: ${BUILD_DIR}/%.bin
+	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/$(basename $(notdir $@)).bin > ${BUILD_DIR}/$(basename $(notdir $@)).mem
+
+${BUILD_DIR}/%.bin: ${BUILD_DIR}/%.elf
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${BUILD_DIR}/$(basename $(notdir $@)).elf ${BUILD_DIR}/$(basename $(notdir $@)).bin
+
+${BUILD_DIR}/gpu_firmware.elf: $(OBJS)
+	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gpu_firmware.ld -o ${BUILD_DIR}/gpu_firmware.elf $^
 	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${BUILD_DIR}/gpu_firmware.elf > ${BUILD_DIR}/gpu_firmware-objdump.txt
 
-riscvtest: riscvtest.mem
-
-riscvtest.mem: riscvtest.bin
-	hexdump -v -e '1/4 "%08X" "\n"' ${BUILD_DIR}/riscvtest.bin > ${BUILD_DIR}/riscvtest.mem
-
-riscvtest.bin: riscvtest.out
-	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary --only-section=.text ${BUILD_DIR}/riscvtest.out ${BUILD_DIR}/riscvtest.bin
-
-riscvtest.out: ${SRC_DIR}/riscvtest.asm
+# Build step for C source
+$(BUILD_DIR)/%.c.o: $(SRC_DIR)/%.c
 	mkdir -p $(BUILD_DIR)
-	${RISCV-GNU-TOOLCHAIN}-as -march=rv32i ${SRC_DIR}/riscvtest.asm -o ${BUILD_DIR}/riscvtest.out
-	${RISCV-GNU-TOOLCHAIN}-objdump -d ${BUILD_DIR}/riscvtest.out > ${BUILD_DIR}/riscvtest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -S $< -o $(BUILD_DIR)/$(basename $(notdir $<)).s
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} $(BUILD_DIR)/$(basename $(notdir $<)).s -o $@
+
+# Build step for assembly source
+$(BUILD_DIR)/%.s.o: ${SRC_DIR}/%.s
+	mkdir -p $(BUILD_DIR)
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} $< -o $@
+
 
 # Vivado
-
 vivado: FORCE
 	vivado -mode batch -source ./scripts/init_vivado.tcl	
 
@@ -66,21 +76,8 @@ implement: FORCE
 bitstream: FORCE
 	vivado -mode batch -source ./scripts/bitstream.tcl
 
-
-# Icarus
-
-gpu: gpu_firmware
-	mkdir -p $(dir $(BUILD_DIR)/gpu_sim.vvp)
-	iverilog -g2005-sv -o $(BUILD_DIR)/gpu_sim.vvp \
-		-s TbGpu \
-		./testbench/tb_gpu.sv \
-		$(HDL_FILES)
-	vvp $(BUILD_DIR)/gpu_sim.vvp
-	mkdir -p $(dir $(SIM_DIR)/gpu_sim.vcd)
-	mv dump.vcd $(SIM_DIR)/gpu_sim.vcd
-
 .PHONY: clean
 clean:
-	rm -r $(BUILD_DIR)
+	rm -rf $(BUILD_DIR) ${VERILATOR_OBJ_DIR}
 
 FORCE: ;

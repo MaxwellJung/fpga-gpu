@@ -1,4 +1,4 @@
-module micro_sd (
+module MicroSD (
     input   wire reset,
     input   wire sck,
     input   wire cs,

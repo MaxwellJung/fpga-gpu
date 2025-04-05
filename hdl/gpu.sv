@@ -13,11 +13,14 @@ module Gpu #(
     localparam BYTES_PER_COLOR = (COLOR_BITS-1)/8 + 1,
     localparam PALETTE_BYTES = PALETTE_LENGTH*BYTES_PER_COLOR,
 
-    parameter RESOLUTION_X = 400,
-    parameter RESOLUTION_Y = 300,
+    parameter VGA_X = 800,
+    parameter VGA_Y = 600,
+    parameter DOWNSCALE = 2,
+    localparam RESOLUTION_X = VGA_X/DOWNSCALE,
+    localparam RESOLUTION_Y = VGA_Y/DOWNSCALE,
     localparam BYTES_PER_PIXEL = (PIXEL_BITS-1)/8 + 1,
-    localparam FRAMEBUFFER_LENGTH = RESOLUTION_X*RESOLUTION_Y,
-    localparam FRAMEBUFFER_BYTES = FRAMEBUFFER_LENGTH*BYTES_PER_PIXEL,
+    localparam PIXELS_PER_FRAME = RESOLUTION_X*RESOLUTION_Y,
+    localparam FRAMEBUFFER_BYTES = PIXELS_PER_FRAME*BYTES_PER_PIXEL,
 
     parameter SYNC_LATENCY = 3 // latency between video controller requesting pixel to palette outputting pixel
 ) (
@@ -26,7 +29,7 @@ module Gpu #(
     input logic reset,
 
     // I/O register interface
-    input logic [11:0] cpu_io_reg_addr,
+    input logic [$clog2(IO_REG_BYTES)-1:0] cpu_io_reg_addr,
     input logic cpu_io_reg_clk,
     input  logic [31:0] cpu_io_reg_din,
     output logic [31:0] cpu_io_reg_dout,
@@ -64,7 +67,11 @@ module Gpu #(
     logic [31:0] fb_wr_data;
     logic [3:0] fb_wr_en;
 
-    DisplayProcessor u_DisplayProcessor (
+    DisplayProcessor #(
+        .IO_REG_BYTES          (IO_REG_BYTES),
+        .PALETTE_BYTES         (PALETTE_BYTES),
+        .FRAMEBUFFER_BYTES     (FRAMEBUFFER_BYTES)
+    ) u_DisplayProcessor (
         .clk                   (gpu_clk),
         .reset                 (reset),
         // Instruction memory
@@ -116,7 +123,7 @@ module Gpu #(
     );
 
     BlockMemory #(
-        .CAPACITY_BYTES    (128),
+        .CAPACITY_BYTES    (IO_REG_BYTES),
         .BYTES_PER_WORD    (4)
     ) u_io_registers (
         // CPU side interface
@@ -156,8 +163,10 @@ module Gpu #(
         .rd_color           (color)
     );
 
-    logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
-    logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
+    logic [$clog2(VGA_X)-1:0] screen_pxl_x;
+    logic [$clog2(VGA_Y)-1:0] screen_pxl_y;
+    logic [$clog2(RESOLUTION_X)-1:0] fb_pxl_x = screen_pxl_x[$clog2(DOWNSCALE)+:$clog2(RESOLUTION_X)];
+    logic [$clog2(RESOLUTION_Y)-1:0] fb_pxl_y = screen_pxl_y[$clog2(DOWNSCALE)+:$clog2(RESOLUTION_Y)];
 
     Framebuffer #(
         .RESOLUTION_X     (RESOLUTION_X),
@@ -171,19 +180,19 @@ module Gpu #(
         .rd_clk           (vga_clk),
         .rd_reset         (reset),
         .rd_en            ('1),
-        .rd_pxl_x         (fb_rd_x),
-        .rd_pxl_y         (fb_rd_y),
+        .rd_pxl_x         (fb_pxl_x),
+        .rd_pxl_y         (fb_pxl_y),
         .rd_pxl_value     (palette_index)
     );
 
     VideoController #(
         .SYNC_LATENCY(SYNC_LATENCY)
-    ) video_controller (
+    ) u_VideoController (
         .clk(vga_clk),
         .reset(reset),
 
-        .fb_rd_x(fb_rd_x),
-        .fb_rd_y(fb_rd_y),
+        .screen_pxl_x(screen_pxl_x),
+        .screen_pxl_y(screen_pxl_y),
         .color(color),
 
         .vga_hs(vga_hs),

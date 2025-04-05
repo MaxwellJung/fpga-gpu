@@ -29,9 +29,11 @@ module Framebuffer #(
     assign {tile_index_y, tile_offset_y} = rd_pxl_y;
 
     logic [$clog2(PXL_PER_TILE)-1:0] mem_index;
-    assign mem_index = tile_offset_y*TILE_WIDTH + tile_offset_x;
+    assign mem_index = tile_offset_y*TILE_WIDTH 
+                       + {{($clog2(PXL_PER_TILE)-$clog2(TILE_WIDTH)){1'b0}}, tile_offset_x};
     logic [$clog2((RESOLUTION_X/TILE_WIDTH)*(RESOLUTION_Y/TILE_HEIGHT))-1:0] rd_tile_index;
-    assign rd_tile_index = tile_index_y*(RESOLUTION_X/TILE_WIDTH) + tile_index_x;
+    assign rd_tile_index = tile_index_y*(RESOLUTION_X/TILE_WIDTH) 
+                           + {{($clog2((RESOLUTION_X/TILE_WIDTH)*(RESOLUTION_Y/TILE_HEIGHT))-($clog2(RESOLUTION_X)-$clog2(TILE_WIDTH))){1'b0}}, tile_index_x};
 
     logic [$clog2(PXLS_PER_DATA)-1:0] column_index;
     always @(posedge rd_clk) column_index <= rd_tile_index[$clog2(PXLS_PER_DATA)-1:0];

@@ -23,8 +23,8 @@ module VideoController #(
     input logic clk,
     input logic reset,
 
-    output logic [$clog2(H_VIS_AREA_PXL)-1:0] fb_rd_x,
-    output logic [$clog2(V_VIS_AREA_PXL)-1:0] fb_rd_y,
+    output logic [$clog2(H_VIS_AREA_PXL)-1:0] screen_pxl_x,
+    output logic [$clog2(V_VIS_AREA_PXL)-1:0] screen_pxl_y,
     input logic [COLOR_BITS-1:0] color,
 
     output logic vga_hs,
@@ -36,7 +36,7 @@ module VideoController #(
 );
     logic [$clog2(H_WHOLE_LINE_PXL)-1:0] h_pxl_count;
     logic [$clog2(V_WHOLE_FRAME_PXL)-1:0] v_pxl_count;
-    logic h_visible, v_visible, frame_end;
+    logic h_visible, v_visible;
 
     VgaTimingGenerator #(
         .H_VIS_AREA_PXL(H_VIS_AREA_PXL),
@@ -66,11 +66,11 @@ module VideoController #(
 
     always_ff @(posedge clk) begin
         if (reset) begin
-            fb_rd_x <= '0;
-            fb_rd_y <= '0;
+            screen_pxl_x <= '0;
+            screen_pxl_y <= '0;
         end else begin
-            fb_rd_x <= (h_pxl_count < H_VIS_AREA_PXL) ? h_pxl_count>>1 : 0;
-            fb_rd_y <= (v_pxl_count < V_VIS_AREA_PXL) ? ((V_VIS_AREA_PXL-1) - v_pxl_count)>>1 : 0;
+            screen_pxl_x <= (h_pxl_count < H_VIS_AREA_PXL) ? h_pxl_count[$clog2(H_VIS_AREA_PXL)-1:0] : 0;
+            screen_pxl_y <= (v_pxl_count < V_VIS_AREA_PXL) ? ((V_VIS_AREA_PXL-1) - v_pxl_count) : 0;
         end
     end
 
