@@ -13,19 +13,18 @@ module Gpu #(
     localparam BYTES_PER_COLOR = (COLOR_BITS-1)/8 + 1,
     localparam PALETTE_BYTES = PALETTE_LENGTH*BYTES_PER_COLOR,
 
-    parameter VGA_X = 800,
-    parameter VGA_Y = 600,
+    parameter VGA_RES_X = 800,
+    parameter VGA_RES_Y = 600,
     parameter DOWNSCALE = 2,
-    parameter TILE_WIDTH = 4,
-    parameter TILE_HEIGHT = 4,
-    localparam RESOLUTION_X = VGA_X/DOWNSCALE,
-    localparam RESOLUTION_Y = VGA_Y/DOWNSCALE,
+    parameter TILE_WIDTH = 2,
+    parameter TILE_HEIGHT = 2,
+    localparam FB_RES_X = VGA_RES_X/DOWNSCALE,
+    localparam FB_RES_Y = VGA_RES_Y/DOWNSCALE,
     localparam BYTES_PER_PIXEL = (PIXEL_BITS-1)/8 + 1,
-    localparam PIXELS_PER_FRAME = RESOLUTION_X*RESOLUTION_Y,
-    localparam FRAMEBUFFER_BYTES = PIXELS_PER_FRAME*BYTES_PER_PIXEL,
+    localparam PXLS_PER_FRAME = FB_RES_X*FB_RES_Y,
+    localparam FB_BYTES = PXLS_PER_FRAME*BYTES_PER_PIXEL,
 
     localparam CORE_COUNT = TILE_WIDTH*TILE_HEIGHT,
-    localparam FB_BYTES_PER_CORE = FRAMEBUFFER_BYTES/CORE_COUNT,
 
     parameter SYNC_LATENCY = 3 // latency between video controller requesting pixel to palette outputting pixel
 ) (
@@ -68,7 +67,7 @@ module Gpu #(
     logic [31:0] palette_wr_data;
     logic [3:0] palette_wr_en;
 
-    logic [$clog2(FB_BYTES_PER_CORE)-1:0] fb_wr_addr;
+    logic [$clog2(FB_BYTES/CORE_COUNT)-1:0] fb_wr_addr;
     logic [31:0] fb_wr_data;
     logic [3:0] fb_wr_en;
 
@@ -76,7 +75,7 @@ module Gpu #(
         .MAIN_MEMORY_BYTES     (MAIN_MEMORY_BYTES),
         .IO_REG_BYTES          (IO_REG_BYTES),
         .PALETTE_BYTES         (PALETTE_BYTES),
-        .FRAMEBUFFER_BYTES     (FB_BYTES_PER_CORE)
+        .FRAMEBUFFER_BYTES     (FB_BYTES/CORE_COUNT)
     ) u_DisplayProcessor (
         .clk                   (gpu_clk),
         .reset                 (reset),
@@ -169,15 +168,17 @@ module Gpu #(
         .rd_color           (color)
     );
 
-    logic [$clog2(VGA_X)-1:0] screen_pxl_x;
-    logic [$clog2(VGA_Y)-1:0] screen_pxl_y;
-    logic [$clog2(RESOLUTION_X)-1:0] fb_pxl_x = screen_pxl_x[$clog2(DOWNSCALE)+:$clog2(RESOLUTION_X)];
-    logic [$clog2(RESOLUTION_Y)-1:0] fb_pxl_y = screen_pxl_y[$clog2(DOWNSCALE)+:$clog2(RESOLUTION_Y)];
+    logic [$clog2(VGA_RES_X)-1:0] screen_pxl_x;
+    logic [$clog2(VGA_RES_Y)-1:0] screen_pxl_y;
+    logic [$clog2(FB_RES_X)-1:0] fb_pxl_x = screen_pxl_x[$clog2(DOWNSCALE)+:$clog2(FB_RES_X)];
+    logic [$clog2(FB_RES_Y)-1:0] fb_pxl_y = screen_pxl_y[$clog2(DOWNSCALE)+:$clog2(FB_RES_Y)];
 
     Framebuffer #(
-        .RESOLUTION_X     (RESOLUTION_X),
-        .RESOLUTION_Y     (RESOLUTION_Y),
-        .PXL_BITS         (PIXEL_BITS)
+        .RES_X            (FB_RES_X),
+        .RES_Y            (FB_RES_Y),
+        .PXL_BITS         (PIXEL_BITS),
+        .TILE_WIDTH       (TILE_WIDTH),
+        .TILE_HEIGHT      (TILE_HEIGHT)
     ) u_Framebuffer (
         .wr_clk           (gpu_clk),
         .wr_tile_index    ({CORE_COUNT{fb_wr_addr}}),
