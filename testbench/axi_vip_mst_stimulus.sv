@@ -1,10 +1,10 @@
 // Copied from https://www.adiuvoengineering.com/post/microzed-chronicles-verifying-axi-peripherals
 import axi_vip_pkg::*;
-import GpuTest_axi_vip_0_0_pkg::*;
+import AxiGpuSim_axi_vip_0_0_pkg::*;
 
 module axi_vip_mst_stimulus();
 
-    GpuTest_axi_vip_0_0_mst_t  agent;
+    AxiGpuSim_axi_vip_0_0_mst_t  agent;
     axi_transaction                                          wr_trans;            // Write transaction
     axi_transaction                                          rd_trans;            // Read transaction
     xil_axi_uint                                             mtestWID;            // Write ID  

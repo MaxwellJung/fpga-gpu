@@ -1,6 +1,6 @@
 
 ################################################################
-# This is a generated script based on design: gpu
+# This is a generated script based on design: AxiGpu
 #
 # Though there are limitations about the generated script,
 # the main purpose of this utility is to make learning
@@ -41,12 +41,12 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 ################################################################
 
 # To test this script, run the following commands from Vivado Tcl console:
-# source gpu_script.tcl
+# source AxiGpu_script.tcl
 
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# GpuControllerWrapper
+# GpuWrapper
 
 # Please add the sources of those modules before sourcing this Tcl script.
 
@@ -63,7 +63,7 @@ if { $list_projs eq "" } {
 
 # CHANGE DESIGN NAME HERE
 variable design_name
-set design_name gpu
+set design_name AxiGpu
 
 # If you do not already have an existing IP Integrator design open,
 # you can create a design using the following command:
@@ -138,8 +138,6 @@ set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
 xilinx.com:ip:axi_bram_ctrl:4.1\
-xilinx.com:ip:blk_mem_gen:8.4\
-xilinx.com:ip:fifo_generator:13.2\
 "
 
    set list_ips_missing ""
@@ -165,7 +163,7 @@ xilinx.com:ip:fifo_generator:13.2\
 set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
-GpuControllerWrapper\
+GpuWrapper\
 "
 
    set list_mods_missing ""
@@ -230,12 +228,11 @@ proc create_root_design { parentCell } {
   # Create interface ports
   set S_AXI [ create_bd_intf_port -mode Slave -vlnv xilinx.com:interface:aximm_rtl:1.0 S_AXI ]
   set_property -dict [ list \
-   CONFIG.ADDR_WIDTH {32} \
+   CONFIG.ADDR_WIDTH {15} \
    CONFIG.ARUSER_WIDTH {0} \
    CONFIG.AWUSER_WIDTH {0} \
    CONFIG.BUSER_WIDTH {0} \
    CONFIG.DATA_WIDTH {32} \
-   CONFIG.FREQ_HZ {150000000} \
    CONFIG.HAS_BRESP {1} \
    CONFIG.HAS_BURST {1} \
    CONFIG.HAS_CACHE {1} \
@@ -246,142 +243,90 @@ proc create_root_design { parentCell } {
    CONFIG.HAS_RRESP {1} \
    CONFIG.HAS_WSTRB {1} \
    CONFIG.ID_WIDTH {0} \
-   CONFIG.MAX_BURST_LENGTH {1} \
-   CONFIG.NUM_READ_OUTSTANDING {1} \
+   CONFIG.MAX_BURST_LENGTH {256} \
+   CONFIG.NUM_READ_OUTSTANDING {2} \
    CONFIG.NUM_READ_THREADS {1} \
-   CONFIG.NUM_WRITE_OUTSTANDING {1} \
+   CONFIG.NUM_WRITE_OUTSTANDING {2} \
    CONFIG.NUM_WRITE_THREADS {1} \
    CONFIG.PROTOCOL {AXI4} \
    CONFIG.READ_WRITE_MODE {READ_WRITE} \
    CONFIG.RUSER_BITS_PER_BYTE {0} \
    CONFIG.RUSER_WIDTH {0} \
-   CONFIG.SUPPORTS_NARROW_BURST {0} \
+   CONFIG.SUPPORTS_NARROW_BURST {1} \
    CONFIG.WUSER_BITS_PER_BYTE {0} \
    CONFIG.WUSER_WIDTH {0} \
    ] $S_AXI
 
 
   # Create ports
-  set VGA_RGB [ create_bd_port -dir O -from 11 -to 0 VGA_RGB ]
-  set gpu_clk_i [ create_bd_port -dir I gpu_clk_i ]
-  set reset_i [ create_bd_port -dir I -type rst reset_i ]
-  set_property -dict [ list \
-   CONFIG.POLARITY {ACTIVE_HIGH} \
- ] $reset_i
-  set s_axi_aclk [ create_bd_port -dir I -type clk -freq_hz 150000000 s_axi_aclk ]
-  set_property -dict [ list \
-   CONFIG.ASSOCIATED_BUSIF {S_AXI} \
-   CONFIG.ASSOCIATED_RESET {s_axi_aresetn} \
- ] $s_axi_aclk
-  set s_axi_aresetn [ create_bd_port -dir I -type rst s_axi_aresetn ]
-  set vga_clk_i [ create_bd_port -dir I vga_clk_i ]
+  set VGA_B [ create_bd_port -dir O -from 3 -to 0 VGA_B ]
+  set VGA_G [ create_bd_port -dir O -from 3 -to 0 VGA_G ]
   set VGA_HS [ create_bd_port -dir O VGA_HS ]
+  set VGA_R [ create_bd_port -dir O -from 3 -to 0 VGA_R ]
   set VGA_VS [ create_bd_port -dir O VGA_VS ]
+  set gpu_clk [ create_bd_port -dir I -type clk gpu_clk ]
+  set reset [ create_bd_port -dir I -type rst reset ]
+  set s_axi_aclk [ create_bd_port -dir I -type clk s_axi_aclk ]
+  set s_axi_aresetn [ create_bd_port -dir I -type rst s_axi_aresetn ]
+  set vga_clk [ create_bd_port -dir I -type clk vga_clk ]
 
   # Create instance: axi_bram_ctrl_0, and set properties
   set axi_bram_ctrl_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_bram_ctrl:4.1 axi_bram_ctrl_0 ]
   set_property CONFIG.SINGLE_PORT_BRAM {1} $axi_bram_ctrl_0
 
 
-  # Create instance: blk_mem_gen_0, and set properties
-  set blk_mem_gen_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:blk_mem_gen:8.4 blk_mem_gen_0 ]
-  set_property -dict [list \
-    CONFIG.Enable_32bit_Address {true} \
-    CONFIG.Memory_Type {True_Dual_Port_RAM} \
-    CONFIG.use_bram_block {BRAM_Controller} \
-  ] $blk_mem_gen_0
-
-
-  # Create instance: fifo_generator_0, and set properties
-  set fifo_generator_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:fifo_generator:13.2 fifo_generator_0 ]
-  set_property -dict [list \
-    CONFIG.Almost_Empty_Flag {true} \
-    CONFIG.Almost_Full_Flag {true} \
-    CONFIG.Empty_Threshold_Assert_Value {5} \
-    CONFIG.Fifo_Implementation {Independent_Clocks_Block_RAM} \
-    CONFIG.Full_Threshold_Assert_Value {252} \
-    CONFIG.Input_Data_Width {8} \
-    CONFIG.Input_Depth {256} \
-    CONFIG.Programmable_Empty_Type {Single_Programmable_Empty_Threshold_Constant} \
-    CONFIG.Programmable_Full_Type {Single_Programmable_Full_Threshold_Constant} \
-  ] $fifo_generator_0
-
-
-  # Create instance: GpuControllerWrapper_0, and set properties
-  set block_name GpuControllerWrapper
-  set block_cell_name GpuControllerWrapper_0
-  if { [catch {set GpuControllerWrapper_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+  # Create instance: GpuWrapper_0, and set properties
+  set block_name GpuWrapper
+  set block_cell_name GpuWrapper_0
+  if { [catch {set GpuWrapper_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
-   } elseif { $GpuControllerWrapper_0 eq "" } {
+   } elseif { $GpuWrapper_0 eq "" } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
   
   # Create interface connections
-  connect_bd_intf_net -intf_net axi_bram_ctrl_0_BRAM_PORTA [get_bd_intf_pins blk_mem_gen_0/BRAM_PORTA] [get_bd_intf_pins axi_bram_ctrl_0/BRAM_PORTA]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M05_AXI [get_bd_intf_ports S_AXI] [get_bd_intf_pins axi_bram_ctrl_0/S_AXI]
+  connect_bd_intf_net -intf_net Conn1 [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_ports S_AXI]
 
   # Create port connections
-  connect_bd_net -net GpuControllerWrapper_0_VGA_HS  [get_bd_pins GpuControllerWrapper_0/VGA_HS] \
+  connect_bd_net -net GpuWrapper_0_cpu_io_reg_dout  [get_bd_pins GpuWrapper_0/cpu_io_reg_dout] \
+  [get_bd_pins axi_bram_ctrl_0/bram_rddata_a]
+  connect_bd_net -net GpuWrapper_0_vga_b  [get_bd_pins GpuWrapper_0/vga_b] \
+  [get_bd_ports VGA_B]
+  connect_bd_net -net GpuWrapper_0_vga_g  [get_bd_pins GpuWrapper_0/vga_g] \
+  [get_bd_ports VGA_G]
+  connect_bd_net -net GpuWrapper_0_vga_hs  [get_bd_pins GpuWrapper_0/vga_hs] \
   [get_bd_ports VGA_HS]
-  connect_bd_net -net GpuControllerWrapper_0_VGA_RGB  [get_bd_pins GpuControllerWrapper_0/VGA_RGB] \
-  [get_bd_ports VGA_RGB]
-  connect_bd_net -net GpuControllerWrapper_0_VGA_VS  [get_bd_pins GpuControllerWrapper_0/VGA_VS] \
+  connect_bd_net -net GpuWrapper_0_vga_r  [get_bd_pins GpuWrapper_0/vga_r] \
+  [get_bd_ports VGA_R]
+  connect_bd_net -net GpuWrapper_0_vga_vs  [get_bd_pins GpuWrapper_0/vga_vs] \
   [get_bd_ports VGA_VS]
-  connect_bd_net -net GpuControllerWrapper_0_bram_addr_o  [get_bd_pins GpuControllerWrapper_0/bram_addr_o] \
-  [get_bd_pins blk_mem_gen_0/addrb]
-  connect_bd_net -net GpuControllerWrapper_0_bram_clk_o  [get_bd_pins GpuControllerWrapper_0/bram_clk_o] \
-  [get_bd_pins blk_mem_gen_0/clkb]
-  connect_bd_net -net GpuControllerWrapper_0_bram_din_o  [get_bd_pins GpuControllerWrapper_0/bram_din_o] \
-  [get_bd_pins blk_mem_gen_0/dinb]
-  connect_bd_net -net GpuControllerWrapper_0_bram_en_o  [get_bd_pins GpuControllerWrapper_0/bram_en_o] \
-  [get_bd_pins blk_mem_gen_0/enb]
-  connect_bd_net -net GpuControllerWrapper_0_bram_rst_o  [get_bd_pins GpuControllerWrapper_0/bram_rst_o] \
-  [get_bd_pins blk_mem_gen_0/rstb]
-  connect_bd_net -net GpuControllerWrapper_0_bram_we_o  [get_bd_pins GpuControllerWrapper_0/bram_we_o] \
-  [get_bd_pins blk_mem_gen_0/web]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_rd_clk_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_rd_clk_o] \
-  [get_bd_pins fifo_generator_0/rd_clk]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_rd_en_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_rd_en_o] \
-  [get_bd_pins fifo_generator_0/rd_en]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_reset_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_reset_o] \
-  [get_bd_pins fifo_generator_0/rst]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_wr_clk_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_wr_clk_o] \
-  [get_bd_pins fifo_generator_0/wr_clk]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_wr_en_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_wr_en_o] \
-  [get_bd_pins fifo_generator_0/wr_en]
-  connect_bd_net -net GpuControllerWrapper_0_pxl_fifo_write_data_o  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_write_data_o] \
-  [get_bd_pins fifo_generator_0/din]
-  connect_bd_net -net blk_mem_gen_0_doutb  [get_bd_pins blk_mem_gen_0/doutb] \
-  [get_bd_pins GpuControllerWrapper_0/bram_dout_i]
-  connect_bd_net -net clk_wiz_0_vga_clk  [get_bd_ports vga_clk_i] \
-  [get_bd_pins GpuControllerWrapper_0/vga_clk_i]
-  connect_bd_net -net fifo_generator_0_almost_empty  [get_bd_pins fifo_generator_0/almost_empty] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_almost_empty_i]
-  connect_bd_net -net fifo_generator_0_almost_full  [get_bd_pins fifo_generator_0/almost_full] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_almost_full_i]
-  connect_bd_net -net fifo_generator_0_dout  [get_bd_pins fifo_generator_0/dout] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_read_data_i]
-  connect_bd_net -net fifo_generator_0_empty  [get_bd_pins fifo_generator_0/empty] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_empty_i]
-  connect_bd_net -net fifo_generator_0_full  [get_bd_pins fifo_generator_0/full] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_full_i]
-  connect_bd_net -net fifo_generator_0_prog_empty  [get_bd_pins fifo_generator_0/prog_empty] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_prog_empty_i]
-  connect_bd_net -net fifo_generator_0_prog_full  [get_bd_pins fifo_generator_0/prog_full] \
-  [get_bd_pins GpuControllerWrapper_0/pxl_fifo_prog_full_i]
-  connect_bd_net -net gpu_clk_i_1  [get_bd_ports gpu_clk_i] \
-  [get_bd_pins GpuControllerWrapper_0/gpu_clk_i]
-  connect_bd_net -net microblaze_riscv_0_Clk  [get_bd_ports s_axi_aclk] \
+  connect_bd_net -net axi_bram_ctrl_0_bram_addr_a  [get_bd_pins axi_bram_ctrl_0/bram_addr_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_addr]
+  connect_bd_net -net axi_bram_ctrl_0_bram_clk_a  [get_bd_pins axi_bram_ctrl_0/bram_clk_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_clk]
+  connect_bd_net -net axi_bram_ctrl_0_bram_en_a  [get_bd_pins axi_bram_ctrl_0/bram_en_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_en]
+  connect_bd_net -net axi_bram_ctrl_0_bram_rst_a  [get_bd_pins axi_bram_ctrl_0/bram_rst_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_rst]
+  connect_bd_net -net axi_bram_ctrl_0_bram_we_a  [get_bd_pins axi_bram_ctrl_0/bram_we_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_we]
+  connect_bd_net -net axi_bram_ctrl_0_bram_wrdata_a  [get_bd_pins axi_bram_ctrl_0/bram_wrdata_a] \
+  [get_bd_pins GpuWrapper_0/cpu_io_reg_din]
+  connect_bd_net -net gpu_clk_1  [get_bd_ports gpu_clk] \
+  [get_bd_pins GpuWrapper_0/gpu_clk]
+  connect_bd_net -net reset_1  [get_bd_ports reset] \
+  [get_bd_pins GpuWrapper_0/reset]
+  connect_bd_net -net s_axi_aclk_1  [get_bd_ports s_axi_aclk] \
   [get_bd_pins axi_bram_ctrl_0/s_axi_aclk]
-  connect_bd_net -net reset_i_1  [get_bd_ports reset_i] \
-  [get_bd_pins GpuControllerWrapper_0/reset_i]
-  connect_bd_net -net rst_clk_wiz_0_200M_peripheral_aresetn  [get_bd_ports s_axi_aresetn] \
+  connect_bd_net -net s_axi_aresetn_1  [get_bd_ports s_axi_aresetn] \
   [get_bd_pins axi_bram_ctrl_0/s_axi_aresetn]
+  connect_bd_net -net vga_clk_1  [get_bd_ports vga_clk] \
+  [get_bd_pins GpuWrapper_0/vga_clk]
 
   # Create address segments
-  assign_bd_address -offset 0xC0000000 -range 0x00020000 -target_address_space [get_bd_addr_spaces S_AXI] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
+  assign_bd_address -offset 0x00000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces S_AXI] [get_bd_addr_segs axi_bram_ctrl_0/S_AXI/Mem0] -force
 
 
   # Restore current instance

@@ -30,6 +30,7 @@ verilator: ${VERILATOR_OBJ_DIR}/Gpu.mk
 verilator-sim: ${VERILATOR_OBJ_DIR}/Gpu.exe
 icarus: $(BUILD_DIR)/TbGpu.vvp
 icarus-sim: $(SIM_DIR)/TbGpu.vcd
+gpu-firmware: ${BUILD_DIR}/gpu_firmware.mem
 
 ############## RISCV Compiler ##############
 ${BUILD_DIR}/%.mem: ${BUILD_DIR}/%.bin

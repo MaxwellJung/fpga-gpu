@@ -1,9 +1,9 @@
 `timescale 1ns / 1ps
 `include "axi_vip_mst_stimulus.sv"
 
-module tb_gpu();
+module TbAxiGpu();
 
-  GpuTest DUT();
+  AxiGpuSim DUT();
   
   axi_vip_mst_stimulus mst();
   initial begin

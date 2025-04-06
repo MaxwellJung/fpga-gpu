@@ -1,6 +1,6 @@
 
 ################################################################
-# This is a generated script based on design: GpuTest
+# This is a generated script based on design: AxiGpuSim
 #
 # Though there are limitations about the generated script,
 # the main purpose of this utility is to make learning
@@ -41,14 +41,14 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 ################################################################
 
 # To test this script, run the following commands from Vivado Tcl console:
-# source GpuTest_script.tcl
+# source AxiGpuSim_script.tcl
 
 
 # The design that will be created by this Tcl script contains the following 
-# module references:
-# GpuTop
+# block design container source references:
+# AxiGpu
 
-# Please add the sources of those modules before sourcing this Tcl script.
+# Please add the sources before sourcing this Tcl script.
 
 # If there is no project opened, this script will create a
 # project, but make sure you do not have an existing project
@@ -63,7 +63,7 @@ if { $list_projs eq "" } {
 
 # CHANGE DESIGN NAME HERE
 variable design_name
-set design_name GpuTest
+set design_name AxiGpuSim
 
 # If you do not already have an existing IP Integrator design open,
 # you can create a design using the following command:
@@ -137,8 +137,8 @@ set bCheckIPsPassed 1
 set bCheckIPs 1
 if { $bCheckIPs == 1 } {
    set list_check_ips "\ 
-xilinx.com:ip:axi_vip:1.1\
 xilinx.com:ip:sim_clk_gen:1.0\
+xilinx.com:ip:axi_vip:1.1\
 "
 
    set list_ips_missing ""
@@ -159,27 +159,40 @@ xilinx.com:ip:sim_clk_gen:1.0\
 }
 
 ##################################################################
-# CHECK Modules
+# CHECK Block Design Container Sources
 ##################################################################
-set bCheckModules 1
-if { $bCheckModules == 1 } {
-   set list_check_mods "\ 
-GpuTop\
+set bCheckSources 1
+set list_bdc_active "AxiGpu"
+
+array set map_bdc_missing {}
+set map_bdc_missing(ACTIVE) ""
+set map_bdc_missing(BDC) ""
+
+if { $bCheckSources == 1 } {
+   set list_check_srcs "\ 
+AxiGpu \
 "
 
-   set list_mods_missing ""
-   common::send_gid_msg -ssname BD::TCL -id 2020 -severity "INFO" "Checking if the following modules exist in the project's sources: $list_check_mods ."
+   common::send_gid_msg -ssname BD::TCL -id 2056 -severity "INFO" "Checking if the following sources for block design container exist in the project: $list_check_srcs .\n\n"
 
-   foreach mod_vlnv $list_check_mods {
-      if { [can_resolve_reference $mod_vlnv] == 0 } {
-         lappend list_mods_missing $mod_vlnv
+   foreach src $list_check_srcs {
+      if { [can_resolve_reference $src] == 0 } {
+         if { [lsearch $list_bdc_active $src] != -1 } {
+            set map_bdc_missing(ACTIVE) "$map_bdc_missing(ACTIVE) $src"
+         } else {
+            set map_bdc_missing(BDC) "$map_bdc_missing(BDC) $src"
+         }
       }
    }
 
-   if { $list_mods_missing ne "" } {
-      catch {common::send_gid_msg -ssname BD::TCL -id 2021 -severity "ERROR" "The following module(s) are not found in the project: $list_mods_missing" }
-      common::send_gid_msg -ssname BD::TCL -id 2022 -severity "INFO" "Please add source files for the missing module(s) above."
+   if { [llength $map_bdc_missing(ACTIVE)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2057 -severity "ERROR" "The following source(s) of Active variants are not found in the project: $map_bdc_missing(ACTIVE)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
       set bCheckIPsPassed 0
+   }
+   if { [llength $map_bdc_missing(BDC)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2059 -severity "WARNING" "The following source(s) of variants are not found in the project: $map_bdc_missing(BDC)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
    }
 }
 
@@ -230,6 +243,11 @@ proc create_root_design { parentCell } {
 
   # Create ports
 
+  # Create instance: axi_clk_gen, and set properties
+  set axi_clk_gen [ create_bd_cell -type ip -vlnv xilinx.com:ip:sim_clk_gen:1.0 axi_clk_gen ]
+  set_property CONFIG.RESET_POLARITY {ACTIVE_LOW} $axi_clk_gen
+
+
   # Create instance: axi_vip_0, and set properties
   set axi_vip_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_vip:1.1 axi_vip_0 ]
   set_property -dict [list \
@@ -257,24 +275,6 @@ proc create_root_design { parentCell } {
   ] $axi_vip_0
 
 
-  # Create instance: GpuTop_0, and set properties
-  set block_name GpuTop
-  set block_cell_name GpuTop_0
-  if { [catch {set GpuTop_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $GpuTop_0 eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-    set_property CONFIG.INIT_FILE {/home/maxwelljung/programming/fpga-gpu/build/gputest.mem} $GpuTop_0
-
-
-  # Create instance: axi_clk_gen, and set properties
-  set axi_clk_gen [ create_bd_cell -type ip -vlnv xilinx.com:ip:sim_clk_gen:1.0 axi_clk_gen ]
-  set_property CONFIG.RESET_POLARITY {ACTIVE_LOW} $axi_clk_gen
-
-
   # Create instance: gpu_clk_gen, and set properties
   set gpu_clk_gen [ create_bd_cell -type ip -vlnv xilinx.com:ip:sim_clk_gen:1.0 gpu_clk_gen ]
   set_property CONFIG.RESET_POLARITY {ACTIVE_HIGH} $gpu_clk_gen
@@ -285,25 +285,39 @@ proc create_root_design { parentCell } {
   set_property CONFIG.FREQ_HZ {40000000} $vga_clk_gen
 
 
+  # Create instance: AxiGpu_0, and set properties
+  set AxiGpu_0 [ create_bd_cell -type container -reference AxiGpu AxiGpu_0 ]
+  set_property -dict [list \
+    CONFIG.ACTIVE_SIM_BD {AxiGpu.bd} \
+    CONFIG.ACTIVE_SYNTH_BD {AxiGpu.bd} \
+    CONFIG.ENABLE_DFX {0} \
+    CONFIG.LIST_SIM_BD {AxiGpu.bd} \
+    CONFIG.LIST_SYNTH_BD {AxiGpu.bd} \
+    CONFIG.LOCK_PROPAGATE {0} \
+  ] $AxiGpu_0
+
+
+  set_property SELECTED_SIM_MODEL rtl  $AxiGpu_0
+
   # Create interface connections
-  connect_bd_intf_net -intf_net axi_vip_0_M_AXI [get_bd_intf_pins GpuTop_0/S_AXI] [get_bd_intf_pins axi_vip_0/M_AXI]
+  connect_bd_intf_net -intf_net axi_vip_0_M_AXI [get_bd_intf_pins axi_vip_0/M_AXI] [get_bd_intf_pins AxiGpu_0/S_AXI]
 
   # Create port connections
   connect_bd_net -net gpu_clk_gen_clk  [get_bd_pins gpu_clk_gen/clk] \
-  [get_bd_pins GpuTop_0/gpu_clk]
+  [get_bd_pins AxiGpu_0/gpu_clk]
   connect_bd_net -net gpu_clk_gen_sync_rst  [get_bd_pins gpu_clk_gen/sync_rst] \
-  [get_bd_pins GpuTop_0/reset]
+  [get_bd_pins AxiGpu_0/reset]
   connect_bd_net -net sim_clk_gen_0_clk  [get_bd_pins axi_clk_gen/clk] \
   [get_bd_pins axi_vip_0/aclk] \
-  [get_bd_pins GpuTop_0/s_axi_aclk]
+  [get_bd_pins AxiGpu_0/s_axi_aclk]
   connect_bd_net -net sim_clk_gen_0_sync_rst  [get_bd_pins axi_clk_gen/sync_rst] \
   [get_bd_pins axi_vip_0/aresetn] \
-  [get_bd_pins GpuTop_0/s_axi_aresetn]
+  [get_bd_pins AxiGpu_0/s_axi_aresetn]
   connect_bd_net -net vga_clk_gen_clk  [get_bd_pins vga_clk_gen/clk] \
-  [get_bd_pins GpuTop_0/vga_clk]
+  [get_bd_pins AxiGpu_0/vga_clk]
 
   # Create address segments
-  assign_bd_address -offset 0x00000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces axi_vip_0/Master_AXI] [get_bd_addr_segs GpuTop_0/S_AXI/reg0] -force
+  assign_bd_address -offset 0xC0000000 -range 0x00002000 -target_address_space [get_bd_addr_spaces axi_vip_0/Master_AXI] [get_bd_addr_segs AxiGpu_0/axi_bram_ctrl_0/S_AXI/Mem0] -force
 
 
   # Restore current instance
