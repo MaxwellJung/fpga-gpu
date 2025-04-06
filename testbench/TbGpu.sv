@@ -13,19 +13,19 @@ module TbGpu();
         .vga_clk               (vga_clk),
         .reset                 (reset),
         // I/O register interface
-        .cpu_io_reg_addr       (cpu_io_reg_addr),
-        .cpu_io_reg_clk        (cpu_io_reg_clk),
-        .cpu_io_reg_din        (cpu_io_reg_din),
-        .cpu_io_reg_dout       (cpu_io_reg_dout),
-        .cpu_io_reg_en         (cpu_io_reg_en),
-        .cpu_io_reg_rst        (cpu_io_reg_rst),
-        .cpu_io_reg_we         (cpu_io_reg_we),
+        .cpu_io_reg_addr       (),
+        .cpu_io_reg_clk        (),
+        .cpu_io_reg_din        (),
+        .cpu_io_reg_dout       (),
+        .cpu_io_reg_en         (),
+        .cpu_io_reg_rst        (),
+        .cpu_io_reg_we         (),
         // Video out interface
-        .vga_hs                (vga_hs),
-        .vga_vs                (vga_vs),
-        .vga_r                 (vga_r),
-        .vga_g                 (vga_g),
-        .vga_b                 (vga_b)
+        .vga_hs                (),
+        .vga_vs                (),
+        .vga_r                 (),
+        .vga_g                 (),
+        .vga_b                 ()
     );
 
     // generate clock

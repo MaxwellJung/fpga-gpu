@@ -1,20 +1,49 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sat Apr  5 19:42:42 2025
+[*] Sun Apr  6 07:01:41 2025
 [*]
 [dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/TbGpu.vcd"
-[dumpfile_mtime] "Sat Apr  5 19:35:58 2025"
-[dumpfile_size] 277444568
+[dumpfile_mtime] "Sun Apr  6 06:57:33 2025"
+[dumpfile_size] 873886437
 [savefile] "/Users/maxwelljung/programming/fpga-gpu/gtkwave/TbGpu.gtkw"
-[timestart] 41991000
-[size] 1512 835
+[timestart] 39274000
+[size] 1920 1027
 [pos] -1 -1
-*-18.000000 42734000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-19.200001 41350000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
 [treeopen] TbGpu.
+[treeopen] TbGpu.u_Gpu.
+[treeopen] TbGpu.u_Gpu.u_Framebuffer.
+[treeopen] TbGpu.u_Gpu.u_Framebuffer.genblk1[0].
 [sst_width] 255
-[signals_width] 266
+[signals_width] 327
 [sst_expanded] 1
-[sst_vpaned_height] 241
+[sst_vpaned_height] 308
 @28
 TbGpu.u_Gpu.gpu_clk
 TbGpu.u_Gpu.reset
@@ -26,28 +55,81 @@ TbGpu.u_Gpu.vga_g[3:0]
 TbGpu.u_Gpu.vga_b[3:0]
 @200
 -
-@c00022
-TbGpu.u_Gpu.palette_wr_addr[8:0]
+@22
+TbGpu.u_Gpu.u_Palette.wr_addr[8:0]
+TbGpu.u_Gpu.u_Palette.wr_data[31:0]
 @28
-(0)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(1)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(2)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(3)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(4)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(5)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(6)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(7)TbGpu.u_Gpu.palette_wr_addr[8:0]
-(8)TbGpu.u_Gpu.palette_wr_addr[8:0]
+TbGpu.u_Gpu.u_Palette.wr_en[1:0]
+@c00022
+TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+@28
+(0)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(1)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(2)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(3)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(4)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(5)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(6)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(7)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(8)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(9)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(10)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(11)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(12)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(13)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(14)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(15)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(16)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(17)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(18)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(19)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(20)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(21)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(22)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(23)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(24)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(25)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(26)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(27)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(28)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(29)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(30)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(31)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(32)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(33)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(34)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(35)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(36)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(37)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(38)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(39)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(40)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(41)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(42)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(43)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(44)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(45)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(46)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(47)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(48)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(49)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(50)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(51)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(52)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(53)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(54)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(55)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(56)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(57)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(58)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
+(59)TbGpu.u_Gpu.u_Framebuffer.wr_tile_index[59:0]
 @1401200
 -group_end
 @22
-TbGpu.u_Gpu.palette_wr_data[31:0]
+TbGpu.u_Gpu.u_Framebuffer.wr_pxl_data[127:0]
 @28
-TbGpu.u_Gpu.palette_wr_en[3:0]
-@22
-TbGpu.u_Gpu.fb_wr_addr[12:0]
-TbGpu.u_Gpu.fb_wr_data[31:0]
-@29
-TbGpu.u_Gpu.fb_wr_en[3:0]
+TbGpu.u_Gpu.u_Framebuffer.wr_en[15:0]
+@200
+-
 [pattern_trace] 1
 [pattern_trace] 0

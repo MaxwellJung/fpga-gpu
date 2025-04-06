@@ -8,6 +8,10 @@ StatusReg* status_reg = &(((IORegisters*)(IO_REG_BASE_ADDR))->status);
 ControlReg* control_reg =  &(((IORegisters*)(IO_REG_BASE_ADDR))->control);
 CommandReg* command_list = ((IORegisters*)(IO_REG_BASE_ADDR))->command_list;
 
+uint32_t getThreadId() {
+    return ((IORegisters*)(IO_REG_BASE_ADDR))->thread_id;
+}
+
 bool isStartBitHigh() {
     return control_reg->start == 1;
 }

@@ -53,11 +53,13 @@ typedef struct {
 } CommandReg;
 
 typedef struct {
+    uint32_t thread_id;
     StatusReg status;
     ControlReg control;
     CommandReg command_list[NUM_COMMANDS];
 } IORegisters;
 
+uint32_t getThreadId();
 bool isStartBitHigh();
 void setBusyBit();
 void clearBusyBit();
