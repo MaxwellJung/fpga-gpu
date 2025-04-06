@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Sun Apr  6 07:01:41 2025
+[*] Sun Apr  6 07:25:19 2025
 [*]
 [dumpfile] "/Users/maxwelljung/programming/fpga-gpu/build/sim/TbGpu.vcd"
-[dumpfile_mtime] "Sun Apr  6 06:57:33 2025"
-[dumpfile_size] 873886437
+[dumpfile_mtime] "Sun Apr  6 07:12:55 2025"
+[dumpfile_size] 877832123
 [savefile] "/Users/maxwelljung/programming/fpga-gpu/gtkwave/TbGpu.gtkw"
-[timestart] 39274000
+[timestart] 0
 [size] 1920 1027
 [pos] -1 -1
-*-19.200001 41350000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-27.177147 50260000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -38,7 +38,15 @@
 [markername] ZZ
 [treeopen] TbGpu.
 [treeopen] TbGpu.u_Gpu.
-[treeopen] TbGpu.u_Gpu.u_Framebuffer.
+[treeopen] TbGpu.u_Gpu.genblk1[0].gen_core_0.
+[treeopen] TbGpu.u_Gpu.genblk1[0].gen_core_0.u_DisplayProcessor.
+[treeopen] TbGpu.u_Gpu.genblk1[0].gen_core_0.u_DisplayProcessor.u_RISCVCore.
+[treeopen] TbGpu.u_Gpu.genblk1[0].gen_core_0.u_DisplayProcessor.u_RISCVCore.u_Datapath.
+[treeopen] TbGpu.u_Gpu.genblk1[1].
+[treeopen] TbGpu.u_Gpu.genblk1[1].gen_cores.
+[treeopen] TbGpu.u_Gpu.genblk1[1].gen_cores.u_DisplayProcessor.
+[treeopen] TbGpu.u_Gpu.genblk1[1].gen_cores.u_DisplayProcessor.u_RISCVCore.
+[treeopen] TbGpu.u_Gpu.genblk1[1].gen_cores.u_DisplayProcessor.u_RISCVCore.u_Datapath.
 [treeopen] TbGpu.u_Gpu.u_Framebuffer.genblk1[0].
 [sst_width] 255
 [signals_width] 327
@@ -47,12 +55,17 @@
 @28
 TbGpu.u_Gpu.gpu_clk
 TbGpu.u_Gpu.reset
+TbGpu.u_Gpu.vga_clk
 TbGpu.u_Gpu.vga_hs
 TbGpu.u_Gpu.vga_vs
-@22
 TbGpu.u_Gpu.vga_r[3:0]
 TbGpu.u_Gpu.vga_g[3:0]
 TbGpu.u_Gpu.vga_b[3:0]
+@200
+-
+@24
+TbGpu.u_Gpu.fb_pxl_x[8:0]
+TbGpu.u_Gpu.fb_pxl_y[8:0]
 @200
 -
 @22
