@@ -46,9 +46,16 @@ if { [string first $scripts_vivado_version $current_vivado_version] == -1 } {
 
 # The design that will be created by this Tcl script contains the following 
 # module references:
-# GpuTop, micro_sd
+# MicroSD
 
 # Please add the sources of those modules before sourcing this Tcl script.
+
+
+# The design that will be created by this Tcl script contains the following 
+# block design container source references:
+# AxiGpu
+
+# Please add the sources before sourcing this Tcl script.
 
 # If there is no project opened, this script will create a
 # project, but make sure you do not have an existing project
@@ -177,8 +184,7 @@ xilinx.com:ip:axi_quad_spi:3.2\
 set bCheckModules 1
 if { $bCheckModules == 1 } {
    set list_check_mods "\ 
-GpuTop\
-micro_sd\
+MicroSD\
 "
 
    set list_mods_missing ""
@@ -194,6 +200,44 @@ micro_sd\
       catch {common::send_gid_msg -ssname BD::TCL -id 2021 -severity "ERROR" "The following module(s) are not found in the project: $list_mods_missing" }
       common::send_gid_msg -ssname BD::TCL -id 2022 -severity "INFO" "Please add source files for the missing module(s) above."
       set bCheckIPsPassed 0
+   }
+}
+
+##################################################################
+# CHECK Block Design Container Sources
+##################################################################
+set bCheckSources 1
+set list_bdc_active "AxiGpu"
+
+array set map_bdc_missing {}
+set map_bdc_missing(ACTIVE) ""
+set map_bdc_missing(BDC) ""
+
+if { $bCheckSources == 1 } {
+   set list_check_srcs "\ 
+AxiGpu \
+"
+
+   common::send_gid_msg -ssname BD::TCL -id 2056 -severity "INFO" "Checking if the following sources for block design container exist in the project: $list_check_srcs .\n\n"
+
+   foreach src $list_check_srcs {
+      if { [can_resolve_reference $src] == 0 } {
+         if { [lsearch $list_bdc_active $src] != -1 } {
+            set map_bdc_missing(ACTIVE) "$map_bdc_missing(ACTIVE) $src"
+         } else {
+            set map_bdc_missing(BDC) "$map_bdc_missing(BDC) $src"
+         }
+      }
+   }
+
+   if { [llength $map_bdc_missing(ACTIVE)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2057 -severity "ERROR" "The following source(s) of Active variants are not found in the project: $map_bdc_missing(ACTIVE)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
+      set bCheckIPsPassed 0
+   }
+   if { [llength $map_bdc_missing(BDC)] > 0 } {
+      catch {common::send_gid_msg -ssname BD::TCL -id 2059 -severity "WARNING" "The following source(s) of variants are not found in the project: $map_bdc_missing(BDC)" }
+      common::send_gid_msg -ssname BD::TCL -id 2060 -severity "INFO" "Please add source files for the missing source(s) above."
    }
 }
 
@@ -356,13 +400,13 @@ proc write_mig_file_design_1_mig_7series_0_0 { str_mig_prj_filepath } {
 ##################################################################
 
 
-# Hierarchical cell: microsd
-proc create_hier_cell_microsd { parentCell nameHier } {
+# Hierarchical cell: SpiMicroSD
+proc create_hier_cell_SpiMicroSD { parentCell nameHier } {
 
   variable script_folder
 
   if { $parentCell eq "" || $nameHier eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2092 -severity "ERROR" "create_hier_cell_microsd() - Empty argument(s)!"}
+     catch {common::send_gid_msg -ssname BD::TCL -id 2092 -severity "ERROR" "create_hier_cell_SpiMicroSD() - Empty argument(s)!"}
      return
   }
 
@@ -405,17 +449,6 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   create_bd_pin -dir I -type rst s_axi_aresetn
   create_bd_pin -dir O -type intr ip2intc_irpt
 
-  # Create instance: micro_sd_0, and set properties
-  set block_name micro_sd
-  set block_cell_name micro_sd_0
-  if { [catch {set micro_sd_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $micro_sd_0 eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-  
   # Create instance: axi_quad_spi_0, and set properties
   set axi_quad_spi_0 [ create_bd_cell -type ip -vlnv xilinx.com:ip:axi_quad_spi:3.2 axi_quad_spi_0 ]
   set_property -dict [list \
@@ -426,37 +459,48 @@ proc create_hier_cell_microsd { parentCell nameHier } {
   ] $axi_quad_spi_0
 
 
+  # Create instance: MicroSD_0, and set properties
+  set block_name MicroSD
+  set block_cell_name MicroSD_0
+  if { [catch {set MicroSD_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   } elseif { $MicroSD_0 eq "" } {
+     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
+     return 1
+   }
+  
   # Create interface connections
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M04_AXI [get_bd_intf_pins AXI_LITE] [get_bd_intf_pins axi_quad_spi_0/AXI_LITE]
 
   # Create port connections
-  connect_bd_net -net axi_quad_spi_0_io0_o  [get_bd_pins axi_quad_spi_0/io0_o] \
-  [get_bd_pins micro_sd_0/mosi]
+  connect_bd_net -net MicroSD_0_miso  [get_bd_pins MicroSD_0/miso] \
+  [get_bd_pins axi_quad_spi_0/io1_i]
+  connect_bd_net -net MicroSD_0_sd_clk  [get_bd_pins MicroSD_0/sd_clk] \
+  [get_bd_pins SD_SCK]
+  connect_bd_net -net MicroSD_0_sd_cmd  [get_bd_pins MicroSD_0/sd_cmd] \
+  [get_bd_pins SD_CMD]
+  connect_bd_net -net MicroSD_0_sd_dat3  [get_bd_pins MicroSD_0/sd_dat3] \
+  [get_bd_pins SD_DAT3]
+  connect_bd_net -net MicroSD_0_sd_vdd  [get_bd_pins MicroSD_0/sd_vdd] \
+  [get_bd_pins SD_RESET]
+  connect_bd_net -net SD_DAT0_1  [get_bd_pins SD_DAT0] \
+  [get_bd_pins MicroSD_0/sd_dat0]
+  connect_bd_net -net axi_quad_spi_0_io0_t  [get_bd_pins axi_quad_spi_0/io0_t] \
+  [get_bd_pins MicroSD_0/mosi]
   connect_bd_net -net axi_quad_spi_0_ip2intc_irpt  [get_bd_pins axi_quad_spi_0/ip2intc_irpt] \
   [get_bd_pins ip2intc_irpt]
   connect_bd_net -net axi_quad_spi_0_sck_o  [get_bd_pins axi_quad_spi_0/sck_o] \
-  [get_bd_pins micro_sd_0/sck]
+  [get_bd_pins MicroSD_0/sck]
   connect_bd_net -net axi_quad_spi_0_ss_o  [get_bd_pins axi_quad_spi_0/ss_o] \
-  [get_bd_pins micro_sd_0/cs]
-  connect_bd_net -net micro_sd_0_miso  [get_bd_pins micro_sd_0/miso] \
-  [get_bd_pins axi_quad_spi_0/io1_i]
-  connect_bd_net -net micro_sd_0_sd_clk  [get_bd_pins micro_sd_0/sd_clk] \
-  [get_bd_pins SD_SCK]
-  connect_bd_net -net micro_sd_0_sd_cmd  [get_bd_pins micro_sd_0/sd_cmd] \
-  [get_bd_pins SD_CMD]
-  connect_bd_net -net micro_sd_0_sd_dat3  [get_bd_pins micro_sd_0/sd_dat3] \
-  [get_bd_pins SD_DAT3]
-  connect_bd_net -net micro_sd_0_sd_vdd  [get_bd_pins micro_sd_0/sd_vdd] \
-  [get_bd_pins SD_RESET]
+  [get_bd_pins MicroSD_0/cs]
   connect_bd_net -net microblaze_riscv_0_Clk  [get_bd_pins s_axi_aclk] \
   [get_bd_pins axi_quad_spi_0/s_axi_aclk] \
   [get_bd_pins axi_quad_spi_0/ext_spi_clk]
+  connect_bd_net -net reset_1  [get_bd_pins reset] \
+  [get_bd_pins MicroSD_0/reset]
   connect_bd_net -net rst_clk_wiz_0_200M_peripheral_aresetn  [get_bd_pins s_axi_aresetn] \
   [get_bd_pins axi_quad_spi_0/s_axi_aresetn]
-  connect_bd_net -net rst_clk_wiz_0_200M_peripheral_reset  [get_bd_pins reset] \
-  [get_bd_pins micro_sd_0/reset]
-  connect_bd_net -net sd_dat0_0_1  [get_bd_pins SD_DAT0] \
-  [get_bd_pins micro_sd_0/sd_dat0]
 
   # Restore current instance
   current_bd_instance $oldCurInst
@@ -755,23 +799,25 @@ proc create_root_design { parentCell } {
   ] $axi_gpio_1
 
 
-  # Create instance: microsd
-  create_hier_cell_microsd [current_bd_instance .] microsd
+  # Create instance: SpiMicroSD
+  create_hier_cell_SpiMicroSD [current_bd_instance .] SpiMicroSD
 
-  # Create instance: GpuTop_0, and set properties
-  set block_name GpuTop
-  set block_cell_name GpuTop_0
-  if { [catch {set GpuTop_0 [create_bd_cell -type module -reference $block_name $block_cell_name] } errmsg] } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2095 -severity "ERROR" "Unable to add referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   } elseif { $GpuTop_0 eq "" } {
-     catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
-     return 1
-   }
-    set_property CONFIG.INIT_FILE {/home/maxwelljung/programming/fpga-gpu/data/gpu_mem_init.mem} $GpuTop_0
+  # Create instance: AxiGpu_0, and set properties
+  set AxiGpu_0 [ create_bd_cell -type container -reference AxiGpu AxiGpu_0 ]
+  set_property -dict [list \
+    CONFIG.ACTIVE_SIM_BD {AxiGpu.bd} \
+    CONFIG.ACTIVE_SYNTH_BD {AxiGpu.bd} \
+    CONFIG.ENABLE_DFX {0} \
+    CONFIG.LIST_SIM_BD {AxiGpu.bd} \
+    CONFIG.LIST_SYNTH_BD {AxiGpu.bd} \
+    CONFIG.LOCK_PROPAGATE {0} \
+  ] $AxiGpu_0
 
+
+  set_property SELECTED_SIM_MODEL rtl  $AxiGpu_0
 
   # Create interface connections
+  connect_bd_intf_net -intf_net S_AXI_1 [get_bd_intf_pins AxiGpu_0/S_AXI] [get_bd_intf_pins microblaze_riscv_0_axi_periph/M05_AXI]
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO [get_bd_intf_ports led_16bits] [get_bd_intf_pins axi_gpio_0/GPIO]
   connect_bd_intf_net -intf_net axi_gpio_0_GPIO2 [get_bd_intf_ports rgb_led] [get_bd_intf_pins axi_gpio_0/GPIO2]
   connect_bd_intf_net -intf_net axi_gpio_1_GPIO [get_bd_intf_ports dip_switches_16bits] [get_bd_intf_pins axi_gpio_1/GPIO]
@@ -783,8 +829,7 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M01_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M01_AXI] [get_bd_intf_pins axi_gpio_0/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M02_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M02_AXI] [get_bd_intf_pins axi_uartlite_0/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M03_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M03_AXI] [get_bd_intf_pins axi_timer_0/S_AXI]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M04_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M04_AXI] [get_bd_intf_pins microsd/AXI_LITE]
-  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M05_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M05_AXI] [get_bd_intf_pins GpuTop_0/S_AXI]
+  connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M04_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M04_AXI] [get_bd_intf_pins SpiMicroSD/AXI_LITE]
   connect_bd_intf_net -intf_net microblaze_riscv_0_axi_periph_M06_AXI [get_bd_intf_pins microblaze_riscv_0_axi_periph/M06_AXI] [get_bd_intf_pins axi_gpio_1/S_AXI]
   connect_bd_intf_net -intf_net microblaze_riscv_0_debug [get_bd_intf_pins mdm_1/MBDEBUG_0] [get_bd_intf_pins microblaze_riscv_0/DEBUG]
   connect_bd_intf_net -intf_net microblaze_riscv_0_dlmb_1 [get_bd_intf_pins microblaze_riscv_0/DLMB] [get_bd_intf_pins microblaze_riscv_0_local_memory/DLMB]
@@ -795,43 +840,43 @@ proc create_root_design { parentCell } {
   connect_bd_intf_net -intf_net ram_interconnect_M00_AXI [get_bd_intf_pins ram_interconnect/M00_AXI] [get_bd_intf_pins mig_7series_0/S_AXI]
 
   # Create port connections
+  connect_bd_net -net AxiGpu_0_VGA_B  [get_bd_pins AxiGpu_0/VGA_B] \
+  [get_bd_ports VGA_B]
+  connect_bd_net -net AxiGpu_0_VGA_G  [get_bd_pins AxiGpu_0/VGA_G] \
+  [get_bd_ports VGA_G]
+  connect_bd_net -net AxiGpu_0_VGA_HS  [get_bd_pins AxiGpu_0/VGA_HS] \
+  [get_bd_ports VGA_HS]
+  connect_bd_net -net AxiGpu_0_VGA_R  [get_bd_pins AxiGpu_0/VGA_R] \
+  [get_bd_ports VGA_R]
+  connect_bd_net -net AxiGpu_0_VGA_VS  [get_bd_pins AxiGpu_0/VGA_VS] \
+  [get_bd_ports VGA_VS]
   connect_bd_net -net CLK100MHZ_1  [get_bd_ports CLK100MHZ] \
   [get_bd_pins util_ds_buf_0/BUFG_I]
   connect_bd_net -net CPU_RESETN_1  [get_bd_ports CPU_RESETN] \
   [get_bd_pins mig_7series_0/sys_rst] \
   [get_bd_pins clk_wiz_0/resetn] \
   [get_bd_pins rst_clk_wiz_0_200M/ext_reset_in]
-  connect_bd_net -net GpuTop_0_vga_b_o  [get_bd_pins GpuTop_0/vga_b] \
-  [get_bd_ports VGA_B]
-  connect_bd_net -net GpuTop_0_vga_g_o  [get_bd_pins GpuTop_0/vga_g] \
-  [get_bd_ports VGA_G]
-  connect_bd_net -net GpuTop_0_vga_hs_o  [get_bd_pins GpuTop_0/vga_hs] \
-  [get_bd_ports VGA_HS]
-  connect_bd_net -net GpuTop_0_vga_r_o  [get_bd_pins GpuTop_0/vga_r] \
-  [get_bd_ports VGA_R]
-  connect_bd_net -net GpuTop_0_vga_vs_o  [get_bd_pins GpuTop_0/vga_vs] \
-  [get_bd_ports VGA_VS]
   connect_bd_net -net axi_gpio_1_ip2intc_irpt  [get_bd_pins axi_gpio_1/ip2intc_irpt] \
   [get_bd_pins microblaze_riscv_0_xlconcat/In1]
   connect_bd_net -net axi_timer_0_interrupt  [get_bd_pins axi_timer_0/interrupt] \
   [get_bd_pins microblaze_riscv_0_xlconcat/In0]
   connect_bd_net -net clk_wiz_0_clk_out2  [get_bd_pins clk_wiz_0/ddr_clk] \
   [get_bd_pins mig_7series_0/clk_ref_i]
-  connect_bd_net -net clk_wiz_0_gpu_clk  [get_bd_pins clk_wiz_0/gpu_clk] \
-  [get_bd_pins GpuTop_0/gpu_clk]
   connect_bd_net -net clk_wiz_0_locked  [get_bd_pins clk_wiz_0/locked] \
   [get_bd_pins rst_clk_wiz_0_200M/dcm_locked]
   connect_bd_net -net clk_wiz_0_vga_clk  [get_bd_pins clk_wiz_0/vga_clk] \
-  [get_bd_pins GpuTop_0/vga_clk]
+  [get_bd_pins AxiGpu_0/vga_clk]
+  connect_bd_net -net gpu_clk_1  [get_bd_pins clk_wiz_0/gpu_clk] \
+  [get_bd_pins AxiGpu_0/gpu_clk]
   connect_bd_net -net mdm_1_debug_sys_rst  [get_bd_pins mdm_1/Debug_SYS_Rst] \
   [get_bd_pins rst_clk_wiz_0_200M/mb_debug_sys_rst]
-  connect_bd_net -net micro_sd_0_sd_clk  [get_bd_pins microsd/SD_SCK] \
+  connect_bd_net -net micro_sd_0_sd_clk  [get_bd_pins SpiMicroSD/SD_SCK] \
   [get_bd_ports SD_SCK]
-  connect_bd_net -net micro_sd_0_sd_cmd  [get_bd_pins microsd/SD_CMD] \
+  connect_bd_net -net micro_sd_0_sd_cmd  [get_bd_pins SpiMicroSD/SD_CMD] \
   [get_bd_ports SD_CMD]
-  connect_bd_net -net micro_sd_0_sd_dat3  [get_bd_pins microsd/SD_DAT3] \
+  connect_bd_net -net micro_sd_0_sd_dat3  [get_bd_pins SpiMicroSD/SD_DAT3] \
   [get_bd_ports SD_DAT3]
-  connect_bd_net -net micro_sd_0_sd_vdd  [get_bd_pins microsd/SD_RESET] \
+  connect_bd_net -net micro_sd_0_sd_vdd  [get_bd_pins SpiMicroSD/SD_RESET] \
   [get_bd_ports SD_RESET]
   connect_bd_net -net microblaze_riscv_0_Clk  [get_bd_pins clk_wiz_0/cpu_clk] \
   [get_bd_pins microblaze_riscv_0/Clk] \
@@ -855,11 +900,11 @@ proc create_root_design { parentCell } {
   [get_bd_pins axi_gpio_0/s_axi_aclk] \
   [get_bd_pins axi_gpio_1/s_axi_aclk] \
   [get_bd_pins microblaze_riscv_0_axi_periph/M06_ACLK] \
-  [get_bd_pins microsd/s_axi_aclk] \
-  [get_bd_pins GpuTop_0/s_axi_aclk]
+  [get_bd_pins SpiMicroSD/s_axi_aclk] \
+  [get_bd_pins AxiGpu_0/s_axi_aclk]
   connect_bd_net -net microblaze_riscv_0_intr  [get_bd_pins microblaze_riscv_0_xlconcat/dout] \
   [get_bd_pins microblaze_riscv_0_axi_intc/intr]
-  connect_bd_net -net microsd_ip2intc_irpt  [get_bd_pins microsd/ip2intc_irpt] \
+  connect_bd_net -net microsd_ip2intc_irpt  [get_bd_pins SpiMicroSD/ip2intc_irpt] \
   [get_bd_pins microblaze_riscv_0_xlconcat/In2]
   connect_bd_net -net mig_7series_0_mmcm_locked  [get_bd_pins mig_7series_0/mmcm_locked] \
   [get_bd_pins rst_mig_7series_0_81M/dcm_locked]
@@ -891,25 +936,25 @@ proc create_root_design { parentCell } {
   [get_bd_pins axi_gpio_0/s_axi_aresetn] \
   [get_bd_pins axi_gpio_1/s_axi_aresetn] \
   [get_bd_pins microblaze_riscv_0_axi_periph/M06_ARESETN] \
-  [get_bd_pins microsd/s_axi_aresetn] \
-  [get_bd_pins GpuTop_0/s_axi_aresetn]
+  [get_bd_pins SpiMicroSD/s_axi_aresetn] \
+  [get_bd_pins AxiGpu_0/s_axi_aresetn]
   connect_bd_net -net rst_clk_wiz_0_200M_peripheral_reset  [get_bd_pins rst_clk_wiz_0_200M/peripheral_reset] \
-  [get_bd_pins microsd/reset] \
-  [get_bd_pins GpuTop_0/reset]
+  [get_bd_pins SpiMicroSD/reset] \
+  [get_bd_pins AxiGpu_0/reset]
   connect_bd_net -net rst_mig_7series_0_81M_peripheral_aresetn  [get_bd_pins rst_mig_7series_0_81M/peripheral_aresetn] \
   [get_bd_pins ram_interconnect/M00_ARESETN] \
   [get_bd_pins mig_7series_0/aresetn]
   connect_bd_net -net sd_dat0_0_1  [get_bd_ports SD_DAT0] \
-  [get_bd_pins microsd/SD_DAT0]
+  [get_bd_pins SpiMicroSD/SD_DAT0]
   connect_bd_net -net util_ds_buf_0_BUFG_O  [get_bd_pins util_ds_buf_0/BUFG_O] \
   [get_bd_pins mig_7series_0/sys_clk_i] \
   [get_bd_pins clk_wiz_0/clk_in1]
 
   # Create address segments
-  assign_bd_address -offset 0xC0000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs GpuTop_0/S_AXI/reg0] -force
+  assign_bd_address -offset 0xC0000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs AxiGpu_0/axi_bram_ctrl_0/S_AXI/Mem0] -force
   assign_bd_address -offset 0x40000000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40010000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_gpio_1/S_AXI/Reg] -force
-  assign_bd_address -offset 0x44A00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs microsd/axi_quad_spi_0/AXI_LITE/Reg] -force
+  assign_bd_address -offset 0x44A00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs SpiMicroSD/axi_quad_spi_0/AXI_LITE/Reg] -force
   assign_bd_address -offset 0x41C00000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_timer_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x40600000 -range 0x00010000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs axi_uartlite_0/S_AXI/Reg] -force
   assign_bd_address -offset 0x00000000 -range 0x00004000 -target_address_space [get_bd_addr_spaces microblaze_riscv_0/Data] [get_bd_addr_segs microblaze_riscv_0_local_memory/dlmb_bram_if_cntlr/SLMB/Mem] -force

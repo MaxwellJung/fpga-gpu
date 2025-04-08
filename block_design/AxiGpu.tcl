@@ -285,7 +285,9 @@ proc create_root_design { parentCell } {
      catch {common::send_gid_msg -ssname BD::TCL -id 2096 -severity "ERROR" "Unable to referenced block <$block_name>. Please add the files for ${block_name}'s definition into the project."}
      return 1
    }
-  
+    set_property CONFIG.GPU_FIRMWARE_FILE {/home/maxwelljung/programming/fpga-gpu/build/gpu_firmware.mem} $GpuWrapper_0
+
+
   # Create interface connections
   connect_bd_intf_net -intf_net Conn1 [get_bd_intf_pins axi_bram_ctrl_0/S_AXI] [get_bd_intf_ports S_AXI]
 

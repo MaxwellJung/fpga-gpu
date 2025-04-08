@@ -43,7 +43,7 @@ module ThreadRegisters #(
     assign port_b_word_index = port_b_address[$clog2(CAPACITY_BYTES)-1:$clog2(BYTES_PER_WORD)];
 
     int i;
-    always_ff @(posedge port_a_clk) begin       
+    always_ff @(posedge port_a_clk) begin
         for (i = 0; i < BYTES_PER_WORD; i++) begin
             if (port_a_wr_en[i]) begin
                 if (port_a_word_index != 0)

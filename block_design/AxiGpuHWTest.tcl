@@ -363,6 +363,7 @@ proc create_root_design { parentCell } {
   [get_bd_pins clk_wiz/clk_in1]
 
   # Create address segments
+  assign_bd_address -offset 0x00000000 -range 0x00001000 -target_address_space [get_bd_addr_spaces jtag_axi_0/Data] [get_bd_addr_segs AxiGpu_0/axi_bram_ctrl_0/S_AXI/Mem0] -force
 
 
   # Restore current instance
