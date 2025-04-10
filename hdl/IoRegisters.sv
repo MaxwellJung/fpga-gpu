@@ -31,25 +31,33 @@ module IoRegisters #(
     logic [BYTES_PER_WORD-1:0] port_a_wr_en;
     logic [CORE_COUNT-1:0] gpu_busy;
 
-    always_ff @(posedge cpu_clk) begin
-        port_a_reset <= cpu_reset;
-        port_a_address <= cpu_address;
-        port_a_wr_en <= cpu_wr_en;
-        port_a_address_aligned <= port_a_address;
-        port_a_rd_en <= cpu_rd_en;
-        case (port_a_address_aligned)
-            0, 1, 2, 3: cpu_rd_data <= {port_a_rd_data[0][WORD_BITS-1:1], |gpu_busy};
-            default: cpu_rd_data <= port_a_rd_data[0];
-        endcase
-    end
-
     generate genvar i;
         for (i = 0; i < CORE_COUNT; i=i+1) begin
             always_ff @(posedge cpu_clk) begin
-                case (cpu_address)
-                    0, 1, 2, 3: port_a_wr_data[i] <= i;
-                    default: port_a_wr_data[i] <= cpu_wr_data;
-                endcase
+                if (gpu_reset) begin
+                    port_a_reset <= '1;
+                    port_a_address <= '0;
+                    cpu_rd_data <= '0;
+                    port_a_rd_en <= '0;
+                    port_a_wr_data[i] <= i;
+                    port_a_wr_en <= '1;
+                    port_a_address_aligned <= '0;
+                end
+                else begin
+                    port_a_reset <= cpu_reset;
+                    port_a_address <= cpu_address;
+                    case (port_a_address_aligned)
+                        0, 1, 2, 3: cpu_rd_data <= {port_a_rd_data[0][WORD_BITS-1:1], |gpu_busy};
+                        default: cpu_rd_data <= port_a_rd_data[0];
+                    endcase
+                    port_a_rd_en <= cpu_rd_en;
+                    case (cpu_address)
+                        0, 1, 2, 3: port_a_wr_data[i] <= i;
+                        default: port_a_wr_data[i] <= cpu_wr_data;
+                    endcase
+                    port_a_wr_en <= cpu_wr_en;
+                    port_a_address_aligned <= port_a_address;
+                end
             end
 
             assign gpu_busy[i] = port_a_rd_data[i][0];
