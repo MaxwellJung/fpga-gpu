@@ -25,7 +25,7 @@ RISCV-GNU-TOOLCHAIN = riscv64-unknown-elf
 GCC-TARGET = -march=rv32i -mabi=ilp32
 GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
-all: verilator-sim icarus-sim
+all: verilator icarus-sim
 verilator: ${VERILATOR_OBJ_DIR}/Gpu.mk
 verilator-sim: ${VERILATOR_OBJ_DIR}/Gpu.exe
 icarus: $(BUILD_DIR)/TbGpu.vvp
