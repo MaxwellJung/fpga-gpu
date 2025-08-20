@@ -1,3 +1,3 @@
 # fpga-gpu
 
-TMS34010 implemented on FPGA
+multi-core 2D graphics accelerator programmable with RISCV assembly.
