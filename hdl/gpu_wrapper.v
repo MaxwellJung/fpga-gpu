@@ -19,7 +19,7 @@ module gpu_wrapper #(
     input  wire        axis_aresetn,
 
     input  wire [31:0] axis_tdata,
-    input  wire [0:0]  axis_tkeep,
+    input  wire [3:0]  axis_tkeep,
     input  wire        axis_tlast,
     input  wire        axis_tvalid,
     output wire        axis_tready,

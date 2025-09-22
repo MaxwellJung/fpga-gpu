@@ -9,7 +9,6 @@
 void main() {
     initColorPalette();
     initFrameBuffer();
-    // testHeap();
     while (true)
         testHeap();
 

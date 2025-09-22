@@ -19,7 +19,7 @@ module gpu #(
     input  logic        axis_aresetn,
 
     input  logic [31:0] axis_tdata,
-    input  logic [0:0]  axis_tkeep,
+    input  logic [3:0]  axis_tkeep,
     input  logic        axis_tlast,
     input  logic        axis_tvalid,
     output logic        axis_tready,
@@ -152,6 +152,8 @@ module gpu #(
     logic [31:0] heap_mem_port_a_wr_data;
     logic [3:0]  heap_mem_port_a_wr_en;
 
+    logic [31:0] heap_wr_start_addr;
+
     axis_to_memory axis_to_memory_inst_0 (
         .axis_clk               (axis_clk),
         .axis_aresetn           (axis_aresetn),
@@ -161,6 +163,8 @@ module gpu #(
         .axis_tlast             (axis_tlast),
         .axis_tvalid            (axis_tvalid),
         .axis_tready            (axis_tready),
+
+        .heap_wr_start_addr     (heap_wr_start_addr),
 
         .heap_mem_port_a_clk     (heap_mem_port_a_clk),
         .heap_mem_port_a_addr    (heap_mem_port_a_addr),
@@ -196,6 +200,10 @@ module gpu #(
         .port_a_rd_en      (io_reg_port_a_rd_en),
         .port_a_wr_data    (io_reg_port_a_wr_data),
         .port_a_wr_en      (io_reg_port_a_wr_en),
+
+        // Heap write start address for axis_to_memory
+        .heap_wr_start_addr(heap_wr_start_addr),
+
         // GPU side interface
         .port_b_clk        (gpu_clk),
         .port_b_reset      ('0),

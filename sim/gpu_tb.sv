@@ -23,14 +23,23 @@ module gpu_tb();
         .gpu_clk                 (gpu_clk),
         .reset                   (reset),
 
-        // AXI-Stream interface to data memory
-        .axis_clk               (),
-        .axis_aresetn           (),
+        // IO registers interface
+        .io_reg_port_a_clk       (cpu_clk),
+        .io_reg_port_a_reset     (reset),
+        .io_reg_port_a_addr      (8),
+        .io_reg_port_a_rd_data   (),
+        .io_reg_port_a_rd_en     ('0),
+        .io_reg_port_a_wr_data   (32'h00000010),
+        .io_reg_port_a_wr_en     (4'b1111),
 
-        .axis_tdata             (),
-        .axis_tkeep             (),
+        // AXI-Stream interface to data memory
+        .axis_clk               (cpu_clk),
+        .axis_aresetn           (!reset),
+
+        .axis_tdata             (32'hF0F0F0F0),
+        .axis_tkeep             (4'b1111),
         .axis_tlast             (),
-        .axis_tvalid            (),
+        .axis_tvalid            (1),
         .axis_tready            (),
 
         // vga interface
