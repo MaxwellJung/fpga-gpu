@@ -1,5 +1,6 @@
 module gpu_wrapper #(
-    parameter FIRMWARE_FILE = "build/firmware/gputest.mem"
+    parameter MEM_INIT_FILE  = "build/firmware/gputest.mem",
+    parameter HEAP_INIT_FILE = "data/gpu_heap_init.mem"
 ) (
     input wire gpu_clk,
     input wire reset,
@@ -32,7 +33,8 @@ module gpu_wrapper #(
     output wire [3:0] vga_b
 );
     gpu #(
-        .FIRMWARE_FILE           (FIRMWARE_FILE)
+        .MEM_INIT_FILE           (MEM_INIT_FILE),
+        .HEAP_INIT_FILE          (HEAP_INIT_FILE)
     ) gpu_inst_0 (
         .gpu_clk                 (gpu_clk),
         .reset                   (reset),

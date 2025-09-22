@@ -4,11 +4,11 @@ import numpy as np
 import random
 
 def main():
-    rgb332_color_palette()
+    # rgb332_color_palette()
     # frame_buffer()
     # black_image()
     # index_image()
-    # random_image()
+    random_image()
     # test_image()
 
 def rgb332_color_palette():
@@ -28,8 +28,8 @@ def index_image():
         print('{0:06b}'.format(i%(2**6)))
 
 def random_image():
-    for i in range(800*600):
-        print('{0:06b}'.format(random.randint(0, 2**6-1)))
+    for i in range(400*300//4):
+        print('{0:08x}'.format(random.randint(0, (2**32)-1)))
 
 def test_image():
     # Read the image

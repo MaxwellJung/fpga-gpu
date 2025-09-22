@@ -1,6 +1,6 @@
 module heap_memory #(
-    parameter INIT_FILE = "build/firmware/gputest.mem",
-    parameter CAPACITY_BYTES = 2048,
+    parameter INIT_FILE = "data/gpu_heap_init.mem",
+    parameter CAPACITY_BYTES = 131072,
     parameter WORD_BYTES = 4
 ) (
     // Write interface from CPU side

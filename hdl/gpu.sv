@@ -1,5 +1,6 @@
 module gpu #(
-    parameter FIRMWARE_FILE = "build/firmware/gputest.mem"
+    parameter MEM_INIT_FILE  = "build/firmware/gputest.mem",
+    parameter HEAP_INIT_FILE = "data/gpu_heap_init.mem"
 ) (
     input  logic gpu_clk,
     input  logic reset,
@@ -62,7 +63,7 @@ module gpu #(
     );
 
     main_memory #(
-        .INIT_FILE         (FIRMWARE_FILE)
+        .INIT_FILE         (MEM_INIT_FILE)
     ) main_memory_inst_0 (
         .clk               (gpu_clk),
 
@@ -167,7 +168,9 @@ module gpu #(
         .heap_mem_port_a_wr_en   (heap_mem_port_a_wr_en)
     );
 
-    heap_memory heap_memory_inst_0 (
+    heap_memory #(
+        .INIT_FILE         (HEAP_INIT_FILE)
+    ) heap_memory_inst_0 (
         .port_a_clk        (heap_mem_port_a_clk),
         .port_a_addr       (heap_mem_port_a_addr),
         .port_a_wr_data    (heap_mem_port_a_wr_data),
