@@ -1,5 +1,5 @@
 module gpu #(
-    parameter MEM_INIT_FILE  = "build/firmware/gputest.mem",
+    parameter MEM_INIT_FILE  = "data/gpu_mem_init.mem",
     parameter HEAP_INIT_FILE = "data/gpu_heap_init.mem"
 ) (
     input  logic gpu_clk,

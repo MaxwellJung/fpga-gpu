@@ -19,7 +19,7 @@ GCC-OPTIONS = -O1 -g ${GCC-TARGET}
 
 all: gpu_tb.vcd
 
-gputest: $(SRC_FILES)
+gpu_firmware: $(SRC_FILES)
 	mkdir -p $(FIRMWARE_BUILD_DIR)
 # compile into assembly
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${FIRMWARE_BUILD_DIR}/main.asm -S ${SRC_DIR}/main.c
@@ -27,6 +27,7 @@ gputest: $(SRC_FILES)
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${FIRMWARE_BUILD_DIR}/framebuffer.asm -S ${SRC_DIR}/framebuffer.c
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${FIRMWARE_BUILD_DIR}/palette.asm -S ${SRC_DIR}/palette.c
 	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${FIRMWARE_BUILD_DIR}/io_reg.asm -S ${SRC_DIR}/io_reg.c
+	${RISCV-GNU-TOOLCHAIN}-gcc ${GCC-OPTIONS} -o ${FIRMWARE_BUILD_DIR}/heap.asm -S ${SRC_DIR}/heap.c
 # compile into object
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/startup.o ${SRC_DIR}/startup.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/main.o ${FIRMWARE_BUILD_DIR}/main.asm
@@ -34,14 +35,15 @@ gputest: $(SRC_FILES)
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/framebuffer.o ${FIRMWARE_BUILD_DIR}/framebuffer.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/palette.o ${FIRMWARE_BUILD_DIR}/palette.asm
 	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/io_reg.o ${FIRMWARE_BUILD_DIR}/io_reg.asm
+	${RISCV-GNU-TOOLCHAIN}-as ${GCC-TARGET} -o ${FIRMWARE_BUILD_DIR}/heap.o ${FIRMWARE_BUILD_DIR}/heap.asm
 # link objects into elf
-	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gputest.ld -o ${FIRMWARE_BUILD_DIR}/gputest.elf ${FIRMWARE_BUILD_DIR}/*.o
+	${RISCV-GNU-TOOLCHAIN}-ld -b elf32-littleriscv -T ${SRC_DIR}/gpu_firmware.ld -o ${FIRMWARE_BUILD_DIR}/gpu_firmware.elf ${FIRMWARE_BUILD_DIR}/*.o
 # convert to mem file
-	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${FIRMWARE_BUILD_DIR}/gputest.elf ${FIRMWARE_BUILD_DIR}/gputest.bin
-	hexdump -v -e '1/4 "%08X" "\n"' ${FIRMWARE_BUILD_DIR}/gputest.bin > ${FIRMWARE_BUILD_DIR}/gputest.mem
-	cp ${FIRMWARE_BUILD_DIR}/gputest.mem ${DATA_DIR}/gpu_mem_init.mem
+	${RISCV-GNU-TOOLCHAIN}-objcopy -O binary ${FIRMWARE_BUILD_DIR}/gpu_firmware.elf ${FIRMWARE_BUILD_DIR}/gpu_firmware.bin
+	hexdump -v -e '1/4 "%08X" "\n"' ${FIRMWARE_BUILD_DIR}/gpu_firmware.bin > ${FIRMWARE_BUILD_DIR}/gpu_firmware.mem
+	cp ${FIRMWARE_BUILD_DIR}/gpu_firmware.mem ${DATA_DIR}/gpu_mem_init.mem
 # disassemble for debug
-	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${FIRMWARE_BUILD_DIR}/gputest.elf > ${FIRMWARE_BUILD_DIR}/gputest-objdump.txt
+	${RISCV-GNU-TOOLCHAIN}-objdump -D -S -t ${FIRMWARE_BUILD_DIR}/gpu_firmware.elf > ${FIRMWARE_BUILD_DIR}/gpu_firmware-objdump.txt
 
 riscvtest: riscvtest.mem
 
@@ -75,7 +77,7 @@ bitstream: FORCE
 
 
 # Verilator
-gpu_tb.vcd: $(HDL_FILES) $(SIM_FILES) gputest
+gpu_tb.vcd: $(HDL_FILES) $(SIM_FILES) gpu_firmware
 	mkdir -p $(VERILATOR_BUILD_DIR)
 	verilator $(VERILATOR-FLAGS) --top-module gpu_tb $(PKG_FILES) $(HDL_FILES) $(SIM_FILES)
 	$(VERILATOR_BUILD_DIR)/Vgpu_tb

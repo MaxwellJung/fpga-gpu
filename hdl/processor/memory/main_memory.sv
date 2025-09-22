@@ -1,6 +1,6 @@
 module main_memory #(
-    parameter INIT_FILE = "build/firmware/gputest.mem",
-    parameter CAPACITY_BYTES = 2048,
+    parameter INIT_FILE = "data/gpu_mem_init.mem",
+    parameter CAPACITY_BYTES = 4096,
     parameter WORD_BYTES = 4
 ) (
     input logic clk,

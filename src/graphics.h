@@ -31,4 +31,6 @@ void hline(uint16_t x);
 void hlineR(int16_t dx);
 void testGraphics();
 
+void drawBlock(int x, int y, int width, int height, uint8_t *src);
+
 #endif // _GRAPHICS_H

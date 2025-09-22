@@ -4,11 +4,14 @@
 #include "framebuffer.h"
 #include "graphics.h"
 #include "io_reg.h"
+#include "heap.h"
 
 void main() {
     initColorPalette();
     initFrameBuffer();
-    // testGraphics();
+    // testHeap();
+    while (true)
+        testHeap();
 
     while (true) {
         while (!isStartBitHigh());

@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include "graphics.h"
+#include "heap.h"
 #include "framebuffer.h"
 
 Point2D cp;
@@ -124,5 +125,14 @@ void testGraphics() {
         move(i, i);
         pixelValue(i);
         rect(FRAMEBUFFER_WIDTH-i-1, FRAMEBUFFER_HEIGHT-i-1);
+    }
+}
+
+void drawBlock(int x, int y, int width, int height, uint8_t *src) {
+    for (int dy = 0; dy < height; ++dy) {
+        for (int dx = 0; dx < width; ++dx) {
+            int pixel_index = getPixelIndex(x+dx, y+dy);
+            framebuffer[pixel_index] = src[width*dy + dx];
+        }
     }
 }

@@ -427,7 +427,7 @@ proc create_hier_cell_axi_gpu { parentCell nameHier } {
    }
     set_property -dict [list \
     CONFIG.HEAP_INIT_FILE {~/programming/fpga-gpu/data/gpu_heap_init.mem} \
-    CONFIG.MEM_INIT_FILE {~/programming/fpga-gpu/build/firmware/gputest.mem} \
+    CONFIG.MEM_INIT_FILE {~/programming/fpga-gpu/data/gpu_mem_init.mem} \
   ] $gpu_wrapper_0
 
 

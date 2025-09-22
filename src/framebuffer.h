@@ -8,9 +8,6 @@
 #define FRAMEBUFFER_HEIGHT     300
 #define FRAMEBUFFER_LENGTH     (FRAMEBUFFER_WIDTH*FRAMEBUFFER_HEIGHT)
 
-#define HEAP_BASE_ADDR         0x10000000
-
-
 extern uint8_t* framebuffer;
 
 // set ith pixel to ith color index
