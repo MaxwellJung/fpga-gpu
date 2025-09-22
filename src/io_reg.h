@@ -50,11 +50,16 @@ typedef struct {
     uint8_t arg5;
     uint8_t arg6;
     uint8_t arg7;
+
+    uint32_t reserved;
 } CommandReg;
 
 typedef struct {
     StatusReg status;
     ControlReg control;
+    uint32_t heap_wr_start_addr;
+    uint32_t reserved[13];
+
     CommandReg command_list[NUM_COMMANDS];
 } IORegisters;
 
