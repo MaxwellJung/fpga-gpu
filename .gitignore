@@ -1,8 +1,8 @@
 build/
-sim/
 *.xsa
 .vscode/
-dump.vcd
+*.vcd
+*.gtkw
 vivado/
 a.out
 

@@ -1,251 +1,284 @@
-module Gpu #(
-    parameter INIT_FILE = "build/gputest.mem",
-    parameter MAIN_MEMORY_BYTES = 2048,
-    parameter IO_REG_BYTES = 4096,
-
-    parameter PIXEL_BITS = 8,
-    localparam PALETTE_LENGTH = (1<<PIXEL_BITS),
-    parameter RED_BITS = 4,
-    parameter GREEN_BITS = 4,
-    parameter BLUE_BITS = 4,
-    parameter ALPHA_BITS = 4,
-    localparam COLOR_BITS = RED_BITS + GREEN_BITS + BLUE_BITS + ALPHA_BITS,
-    localparam BYTES_PER_COLOR = (COLOR_BITS-1)/8 + 1,
-    localparam PALETTE_BYTES = PALETTE_LENGTH*BYTES_PER_COLOR,
-
-    parameter RESOLUTION_X = 400,
-    parameter RESOLUTION_Y = 300,
-    localparam BYTES_PER_PIXEL = (PIXEL_BITS-1)/8 + 1,
-    localparam FRAMEBUFFER_LENGTH = RESOLUTION_X*RESOLUTION_Y,
-    localparam FRAMEBUFFER_BYTES = FRAMEBUFFER_LENGTH*BYTES_PER_PIXEL,
-
-    parameter SYNC_LATENCY = 3 // latency between video controller requesting pixel to palette outputting pixel
+module gpu #(
+    parameter FIRMWARE_FILE = "build/firmware/gputest.mem"
 ) (
-    input logic gpu_clk,
-    input logic vga_clk,
-    input logic reset,
+    input  logic gpu_clk,
+    input  logic reset,
 
-    // AXI4 host interface
-    input logic [11:0]S_AXI_araddr,
-    input logic [1:0]S_AXI_arburst,
-    input logic [3:0]S_AXI_arcache,
-    input logic [7:0]S_AXI_arlen,
-    input logic S_AXI_arlock,
-    input logic [2:0]S_AXI_arprot,
-    output logic S_AXI_arready,
-    input logic [2:0]S_AXI_arsize,
-    input logic S_AXI_arvalid,
+    // IO registers interface
+    input  logic        io_reg_port_a_clk,
+    input  logic        io_reg_port_a_reset,
+    input  logic [11:0] io_reg_port_a_addr,
+    output logic [31:0] io_reg_port_a_rd_data,
+    input  logic [31:0] io_reg_port_a_rd_en,
+    input  logic [31:0] io_reg_port_a_wr_data,
+    input  logic [3:0]  io_reg_port_a_wr_en,
 
-    input logic [11:0]S_AXI_awaddr,
-    input logic [1:0]S_AXI_awburst,
-    input logic [3:0]S_AXI_awcache,
-    input logic [7:0]S_AXI_awlen,
-    input logic S_AXI_awlock,
-    input logic [2:0]S_AXI_awprot,
-    output logic S_AXI_awready,
-    input logic [2:0]S_AXI_awsize,
-    input logic S_AXI_awvalid,
+    // AXI-Stream interface to heap memory
+    input  logic        axis_clk,
+    input  logic        axis_aresetn,
 
-    input logic S_AXI_bready,
-    output logic [1:0]S_AXI_bresp,
-    output logic S_AXI_bvalid,
+    input  logic [31:0] axis_tdata,
+    input  logic [0:0]  axis_tkeep,
+    input  logic        axis_tlast,
+    input  logic        axis_tvalid,
+    output logic        axis_tready,
 
-    output logic [31:0]S_AXI_rdata,
-    output logic S_AXI_rlast,
-    input logic S_AXI_rready,
-    output logic [1:0]S_AXI_rresp,
-    output logic S_AXI_rvalid,
-
-    input logic [31:0]S_AXI_wdata,
-    input logic S_AXI_wlast,
-    output logic S_AXI_wready,
-    input logic [3:0]S_AXI_wstrb,
-    input logic S_AXI_wvalid,
-
-    input logic s_axi_aclk,
-    input logic s_axi_aresetn,
-
-    // video interface
-    output logic vga_hs,
-    output logic vga_vs,
-    output logic [RED_BITS-1:0] vga_r,
-    output logic [GREEN_BITS-1:0] vga_g,
-    output logic [BLUE_BITS-1:0] vga_b
+    // vga interface
+    input  logic       vga_clk,
+    output logic       vga_hs,
+    output logic       vga_vs,
+    output logic [3:0] vga_r,
+    output logic [3:0] vga_g,
+    output logic [3:0] vga_b
 );
-    logic inst_reset;
-    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] inst_addr;
-    logic [31:0] inst_rd_data;
-    logic inst_rd_en;
 
-    logic [$clog2(MAIN_MEMORY_BYTES)-1:0] data_mem_addr;
-    logic [31:0] data_mem_rd_data;
-    logic [31:0] data_mem_wr_data;
-    logic [3:0] data_mem_wr_en;
+    //#########################################################################
+    // Display Processor
+    //#########################################################################
 
-    logic [$clog2(IO_REG_BYTES)-1:0] io_reg_addr;
-    logic [31:0] io_reg_rd_data;
-    logic [31:0] io_reg_wr_data;
-    logic [3:0] io_reg_wr_en;
+    logic                                 dp_inst_reset;
+    logic [31:0]                          dp_inst_addr;
+    logic [31:0]                          dp_inst_rd_data;
+    logic                                 dp_inst_rd_en;
 
-    logic [$clog2(PALETTE_BYTES)-1:0] palette_wr_addr;
-    logic [31:0] palette_wr_data;
-    logic [3:0] palette_wr_en;
+    logic [31:0]                          dp_data_addr;
+    logic [31:0]                          dp_data_rd_data;
+    logic [31:0]                          dp_data_wr_data;
+    logic [3:0]                           dp_data_wr_en;
 
-    logic [$clog2(FRAMEBUFFER_BYTES)-1:0] fb_wr_addr;
-    logic [31:0] fb_wr_data;
-    logic [3:0] fb_wr_en;
-
-    DisplayProcessor u_DisplayProcessor (
+    display_processor display_processor_inst_0 (
         .clk                   (gpu_clk),
         .reset                 (reset),
         // Instruction memory
-        .inst_reset            (inst_reset),
-        .inst_addr             (inst_addr),
-        .inst_rd_data          (inst_rd_data),
-        .inst_rd_en            (inst_rd_en),
+        .dp_inst_reset         (dp_inst_reset),
+        .dp_inst_addr          (dp_inst_addr),
+        .dp_inst_rd_data       (dp_inst_rd_data),
+        .dp_inst_rd_en         (dp_inst_rd_en),
         // Data memory
-        .data_mem_addr         (data_mem_addr),
-        .data_mem_rd_data      (data_mem_rd_data),
-        .data_mem_wr_data      (data_mem_wr_data),
-        .data_mem_wr_en        (data_mem_wr_en),
-        // I/O reg
-        .io_reg_addr           (io_reg_addr),
-        .io_reg_rd_data        (io_reg_rd_data),
-        .io_reg_wr_data        (io_reg_wr_data),
-        .io_reg_wr_en          (io_reg_wr_en),
-        // color palette
-        .palette_wr_addr       (palette_wr_addr),
-        .palette_wr_data       (palette_wr_data),
-        .palette_wr_en         (palette_wr_en),
-        // framebuffer
-        .fb_wr_addr            (fb_wr_addr),
-        .fb_wr_data            (fb_wr_data),
-        .fb_wr_en              (fb_wr_en)
+        .dp_data_addr          (dp_data_addr),
+        .dp_data_rd_data       (dp_data_rd_data),
+        .dp_data_wr_data       (dp_data_wr_data),
+        .dp_data_wr_en         (dp_data_wr_en)
     );
 
     main_memory #(
-        .INIT_FILE         (INIT_FILE),
-        .CAPACITY_BYTES    (MAIN_MEMORY_BYTES),
-        .BYTES_PER_WORD    (4)
-    ) u_main_memory (
+        .INIT_FILE         (FIRMWARE_FILE)
+    ) main_memory_inst_0 (
         .clk               (gpu_clk),
-        // instruction
-        .port_a_reset      (inst_reset),
-        .port_a_address    (inst_addr),
-        .port_a_rd_data    (inst_rd_data),
-        .port_a_rd_en      (inst_rd_en),
+
+        .port_a_reset      (dp_inst_reset),
+        .port_a_address    (dp_inst_addr),
+        .port_a_rd_data    (dp_inst_rd_data),
+        .port_a_rd_en      (dp_inst_rd_en),
         .port_a_wr_data    ('0),
         .port_a_wr_en      ('0),
-        // data
+
         .port_b_reset      ('0),
-        .port_b_address    (data_mem_addr),
-        .port_b_rd_data    (data_mem_rd_data),
+        .port_b_address    (main_mem_port_b_address),
+        .port_b_rd_data    (main_mem_port_b_rd_data),
         .port_b_rd_en      ('1),
-        .port_b_wr_data    (data_mem_wr_data),
-        .port_b_wr_en      (data_mem_wr_en)
+        .port_b_wr_data    (main_mem_port_b_wr_data),
+        .port_b_wr_en      (main_mem_port_b_wr_en)
     );
 
-    AxiGpuIORegisters u_AxiGpuIORegisters (
-        // AXI4 interface
-        .S_AXI_araddr      (S_AXI_araddr),
-        .S_AXI_arburst     (S_AXI_arburst),
-        .S_AXI_arcache     (S_AXI_arcache),
-        .S_AXI_arlen       (S_AXI_arlen),
-        .S_AXI_arlock      (S_AXI_arlock),
-        .S_AXI_arprot      (S_AXI_arprot),
-        .S_AXI_arready     (S_AXI_arready),
-        .S_AXI_arsize      (S_AXI_arsize),
-        .S_AXI_arvalid     (S_AXI_arvalid),
-        .S_AXI_awaddr      (S_AXI_awaddr),
-        .S_AXI_awburst     (S_AXI_awburst),
-        .S_AXI_awcache     (S_AXI_awcache),
-        .S_AXI_awlen       (S_AXI_awlen),
-        .S_AXI_awlock      (S_AXI_awlock),
-        .S_AXI_awprot      (S_AXI_awprot),
-        .S_AXI_awready     (S_AXI_awready),
-        .S_AXI_awsize      (S_AXI_awsize),
-        .S_AXI_awvalid     (S_AXI_awvalid),
-        .S_AXI_bready      (S_AXI_bready),
-        .S_AXI_bresp       (S_AXI_bresp),
-        .S_AXI_bvalid      (S_AXI_bvalid),
-        .S_AXI_rdata       (S_AXI_rdata),
-        .S_AXI_rlast       (S_AXI_rlast),
-        .S_AXI_rready      (S_AXI_rready),
-        .S_AXI_rresp       (S_AXI_rresp),
-        .S_AXI_rvalid      (S_AXI_rvalid),
-        .S_AXI_wdata       (S_AXI_wdata),
-        .S_AXI_wlast       (S_AXI_wlast),
-        .S_AXI_wready      (S_AXI_wready),
-        .S_AXI_wstrb       (S_AXI_wstrb),
-        .S_AXI_wvalid      (S_AXI_wvalid),
-        .s_axi_aclk        (s_axi_aclk),
-        .s_axi_aresetn     (s_axi_aresetn),
-        // GPU interface
-        .io_reg_addr       (io_reg_addr),
-        .io_reg_clk        (gpu_clk),
-        .io_reg_wr_data    (io_reg_wr_data),
-        .io_reg_rd_data    (io_reg_rd_data),
-        .io_reg_en         ('1),
-        .io_reg_reset      (reset),
-        .io_reg_wr_en      (io_reg_wr_en)
+    logic [31:0] main_mem_port_b_address;
+    logic [31:0] main_mem_port_b_rd_data;
+    logic [31:0] main_mem_port_b_wr_data;
+    logic  [3:0] main_mem_port_b_wr_en;
+
+    logic [31:0] heap_mem_port_b_address;
+    logic [31:0] heap_mem_port_b_rd_data;
+    logic [31:0] heap_mem_port_b_wr_data;
+    logic  [3:0] heap_mem_port_b_wr_en;
+
+    logic [31:0] io_reg_port_b_address;
+    logic [31:0] io_reg_port_b_rd_data;
+    logic [31:0] io_reg_port_b_wr_data;
+    logic  [3:0] io_reg_port_b_wr_en;
+
+    logic [31:0] color_pal_port_b_address;
+    logic [31:0] color_pal_port_b_rd_data;
+    logic [31:0] color_pal_port_b_wr_data;
+    logic  [3:0] color_pal_port_b_wr_en;
+
+    logic [31:0] framebuffer_port_b_address;
+    logic [31:0] framebuffer_port_b_rd_data;
+    logic [31:0] framebuffer_port_b_wr_data;
+    logic  [3:0] framebuffer_port_b_wr_en;
+
+    data_bus_arbitrator data_bus_arbitrator_inst_0 (
+        .clk                     (gpu_clk),
+        .reset                   (reset),
+
+        .dp_data_addr            (dp_data_addr),
+        .dp_data_rd_data         (dp_data_rd_data),
+        .dp_data_wr_data         (dp_data_wr_data),
+        .dp_data_wr_en           (dp_data_wr_en),
+
+        .main_mem_port_b_address (main_mem_port_b_address),
+        .main_mem_port_b_rd_data (main_mem_port_b_rd_data),
+        .main_mem_port_b_wr_data (main_mem_port_b_wr_data),
+        .main_mem_port_b_wr_en   (main_mem_port_b_wr_en),
+
+        .heap_mem_port_b_address (heap_mem_port_b_address),
+        .heap_mem_port_b_rd_data (heap_mem_port_b_rd_data),
+        .heap_mem_port_b_wr_data (heap_mem_port_b_wr_data),
+        .heap_mem_port_b_wr_en   (heap_mem_port_b_wr_en),
+
+        .io_reg_port_b_address   (io_reg_port_b_address),
+        .io_reg_port_b_rd_data   (io_reg_port_b_rd_data),
+        .io_reg_port_b_wr_data   (io_reg_port_b_wr_data),
+        .io_reg_port_b_wr_en     (io_reg_port_b_wr_en),
+
+        .color_pal_port_b_address (color_pal_port_b_address),
+        .color_pal_port_b_rd_data (color_pal_port_b_rd_data),
+        .color_pal_port_b_wr_data (color_pal_port_b_wr_data),
+        .color_pal_port_b_wr_en   (color_pal_port_b_wr_en),
+
+        .framebuffer_port_b_address (framebuffer_port_b_address),
+        .framebuffer_port_b_rd_data (framebuffer_port_b_rd_data),
+        .framebuffer_port_b_wr_data (framebuffer_port_b_wr_data),
+        .framebuffer_port_b_wr_en   (framebuffer_port_b_wr_en)
     );
 
-    logic [$clog2(PALETTE_LENGTH)-1:0] palette_index;
-    logic [COLOR_BITS-1:0] color;
-    Palette #(
-        .PALETTE_LENGTH     (PALETTE_LENGTH),
-        .COLOR_BITS         (COLOR_BITS)
-    ) u_Palette (
-        .reset              (reset),
+    //#########################################################################
+    // AXI-Stream interface to heap memory
+    //#########################################################################
 
-        .wr_clk             (gpu_clk),
-        .wr_addr            (palette_wr_addr),
-        .wr_data            (palette_wr_data),
-        .wr_en              ({&palette_wr_en[3:2], &palette_wr_en[1:0]}),
+    // heap memory interface
+    logic        heap_mem_port_a_clk;
+    logic [10:0] heap_mem_port_a_addr;
+    logic [31:0] heap_mem_port_a_wr_data;
+    logic [3:0]  heap_mem_port_a_wr_en;
 
-        .rd_clk             (vga_clk),
-        .rd_en              ('1),
-        .rd_index           (palette_index),
-        .rd_color           (color)
+    axis_to_memory axis_to_memory_inst_0 (
+        .axis_clk               (axis_clk),
+        .axis_aresetn           (axis_aresetn),
+
+        .axis_tdata             (axis_tdata),
+        .axis_tkeep             (axis_tkeep),
+        .axis_tlast             (axis_tlast),
+        .axis_tvalid            (axis_tvalid),
+        .axis_tready            (axis_tready),
+
+        .heap_mem_port_a_clk     (heap_mem_port_a_clk),
+        .heap_mem_port_a_addr    (heap_mem_port_a_addr),
+        .heap_mem_port_a_wr_data (heap_mem_port_a_wr_data),
+        .heap_mem_port_a_wr_en   (heap_mem_port_a_wr_en)
     );
 
-    logic [$clog2(RESOLUTION_X)-1:0] fb_rd_x;
-    logic [$clog2(RESOLUTION_Y)-1:0] fb_rd_y;
-    Framebuffer #(
-        .RESOLUTION_X          (RESOLUTION_X),
-        .RESOLUTION_Y          (RESOLUTION_Y),
-        .PIXEL_BITS            (PIXEL_BITS)
-    ) u_Framebuffer (
-        .reset                 (reset),
+    heap_memory heap_memory_inst_0 (
+        .port_a_clk        (heap_mem_port_a_clk),
+        .port_a_addr       (heap_mem_port_a_addr),
+        .port_a_wr_data    (heap_mem_port_a_wr_data),
+        .port_a_wr_en      (heap_mem_port_a_wr_en),
 
-        .wr_clk                (gpu_clk),
-        .wr_pxl_addr           (fb_wr_addr),
-        .wr_pxl_data           (fb_wr_data),
-        .wr_en                 (fb_wr_en),
-
-        .rd_clk                (vga_clk),
-        .rd_en                 ('1),
-        .rd_pxl_x              (fb_rd_x),
-        .rd_pxl_y              (fb_rd_y),
-        .rd_pxl_value          (palette_index)
+        .port_b_clk        (gpu_clk),
+        .port_b_address    (heap_mem_port_b_address),
+        .port_b_rd_data    (heap_mem_port_b_rd_data),
+        .port_b_wr_data    (heap_mem_port_b_wr_data),
+        .port_b_wr_en      (heap_mem_port_b_wr_en)
     );
 
-    VideoController #(
-        .SYNC_LATENCY(SYNC_LATENCY)
-    ) video_controller (
-        .clk(vga_clk),
-        .reset(reset),
+    //#########################################################################
+    // IO Registers
+    //#########################################################################
 
-        .fb_rd_x(fb_rd_x),
-        .fb_rd_y(fb_rd_y),
-        .color(color),
+    io_registers io_registers_inst_0 (
+        // CPU side interface
+        .port_a_clk        (io_reg_port_a_clk),
+        .port_a_reset      (io_reg_port_a_reset),
+        .port_a_address    (io_reg_port_a_addr),
+        .port_a_rd_data    (io_reg_port_a_rd_data),
+        .port_a_rd_en      (io_reg_port_a_rd_en),
+        .port_a_wr_data    (io_reg_port_a_wr_data),
+        .port_a_wr_en      (io_reg_port_a_wr_en),
+        // GPU side interface
+        .port_b_clk        (gpu_clk),
+        .port_b_reset      ('0),
+        .port_b_address    (io_reg_port_b_address),
+        .port_b_rd_data    (io_reg_port_b_rd_data),
+        .port_b_rd_en      ('1),
+        .port_b_wr_data    (io_reg_port_b_wr_data),
+        .port_b_wr_en      (io_reg_port_b_wr_en)
+    );
 
-        .vga_hs(vga_hs),
-        .vga_vs(vga_vs),
+    //#########################################################################
+    // Video Out
+    //#########################################################################
 
-        .vga_r(vga_r),
-        .vga_g(vga_g),
-        .vga_b(vga_b)
+    logic [$clog2(400*300)-1:0] pixel_index;
+    logic pixel_index_valid;
+    logic h_sync;
+    logic v_sync;
+
+    vga_controller vga_controller (
+        .clk               (vga_clk),
+        .reset             (reset),
+
+        .pixel_index       (pixel_index),
+        .pixel_index_valid (pixel_index_valid),
+
+        .h_sync            (h_sync),
+        .v_sync            (v_sync)
+    );
+
+    
+    logic [7:0] color_index;
+    logic       color_index_valid;
+
+    framebuffer framebuffer_inst_0 (
+        // vga interface
+        .vga_clk           (vga_clk),
+        .vga_reset         (reset),
+        .pixel_index       (pixel_index),
+        .pixel_index_valid (pixel_index_valid),
+        .color_index       (color_index),
+        .color_index_valid (color_index_valid),
+
+        // display processor interface
+        .port_b_clk        (gpu_clk),
+        .port_b_reset      ('0),
+        .port_b_address    (framebuffer_port_b_address),
+        .port_b_rd_data    (framebuffer_port_b_rd_data),
+        .port_b_rd_en      ('1),
+        .port_b_wr_data    (framebuffer_port_b_wr_data),
+        .port_b_wr_en      (framebuffer_port_b_wr_en)
+    );
+
+    logic [11:0] vga_rgb;
+    color_palette color_palette_inst_0 (
+        // vga interface
+        .vga_clk           (vga_clk),
+        .vga_reset         (reset),
+        .color_index       (color_index),
+        .color_index_valid (color_index_valid),
+        .rgb               (vga_rgb),
+
+        // display processor interface
+        .port_b_clk        (gpu_clk),
+        .port_b_reset      ('0),
+        .port_b_address    (color_pal_port_b_address),
+        .port_b_rd_data    (color_pal_port_b_rd_data),
+        .port_b_rd_en      ('1),
+        .port_b_wr_data    (color_pal_port_b_wr_data),
+        .port_b_wr_en      (color_pal_port_b_wr_en)
+    );
+
+    always_comb begin
+        {vga_r, vga_g, vga_b} = vga_rgb;
+    end
+
+    // Delay hsync and vsync by latency of framebuffer & color palette read (3 cycles)
+    ff_chain #(
+        .LENGTH(3),
+        .WIDTH(2)
+    ) ff_chain_inst_0 (
+        .clk   (vga_clk),
+        .reset (reset),
+
+        .in    ({h_sync, v_sync}),
+        .out   ({vga_hs, vga_vs})
     );
 
 endmodule

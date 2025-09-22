@@ -1,4 +1,4 @@
-`include "./hdl/processor/defines.svh"
+import display_processor_pkg::*;
 
 module Alu (
     input logic [31:0] src_a,

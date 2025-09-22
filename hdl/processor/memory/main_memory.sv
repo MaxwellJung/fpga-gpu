@@ -1,32 +1,29 @@
 module main_memory #(
-    parameter INIT_FILE = "build/gputest.mem",
-    parameter CAPACITY_BYTES = 128,
-    parameter BYTES_PER_WORD = 4,
-    localparam WORD_BITS = BYTES_PER_WORD*8,
-    localparam WORD_COUNT = CAPACITY_BYTES/BYTES_PER_WORD,
-    localparam ADDR_BITS = $clog2(CAPACITY_BYTES)
+    parameter INIT_FILE = "build/firmware/gputest.mem",
+    parameter CAPACITY_BYTES = 2048,
+    parameter WORD_BYTES = 4
 ) (
     input logic clk,
 
-    input logic port_a_reset,
-    input logic [ADDR_BITS-1:0] port_a_address,
-    output logic [WORD_BITS-1:0] port_a_rd_data,
-    input logic port_a_rd_en,
-    input logic [WORD_BITS-1:0] port_a_wr_data,
-    input logic [BYTES_PER_WORD-1:0] port_a_wr_en,
+    input  logic                              port_a_reset,
+    input  logic [$clog2(CAPACITY_BYTES)-1:0] port_a_address,
+    output logic [8*WORD_BYTES-1:0]           port_a_rd_data,
+    input  logic                              port_a_rd_en,
+    input  logic [8*WORD_BYTES-1:0]           port_a_wr_data,
+    input  logic [WORD_BYTES-1:0]             port_a_wr_en,
 
-    input logic port_b_reset,
-    input logic [ADDR_BITS-1:0] port_b_address,
-    output logic [WORD_BITS-1:0] port_b_rd_data,
-    input logic port_b_rd_en,
-    input logic [WORD_BITS-1:0] port_b_wr_data,
-    input logic [BYTES_PER_WORD-1:0] port_b_wr_en
+    input  logic                              port_b_reset,
+    input  logic [$clog2(CAPACITY_BYTES)-1:0] port_b_address,
+    output logic [8*WORD_BYTES-1:0]           port_b_rd_data,
+    input  logic                              port_b_rd_en,
+    input  logic [8*WORD_BYTES-1:0]           port_b_wr_data,
+    input  logic [WORD_BYTES-1:0]             port_b_wr_en
 );
-    BlockMemory #(
+    block_memory #(
         .INIT_FILE         (INIT_FILE),
         .CAPACITY_BYTES    (CAPACITY_BYTES),
-        .BYTES_PER_WORD    (BYTES_PER_WORD)
-    ) u_BlockMemory (
+        .WORD_BYTES    (WORD_BYTES)
+    ) block_memory_inst_0 (
         // Port A
         .port_a_clk        (clk),
         .port_a_reset      (port_a_reset),

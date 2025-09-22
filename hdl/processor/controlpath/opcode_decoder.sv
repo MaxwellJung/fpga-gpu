@@ -1,4 +1,4 @@
-`include "./hdl/processor/defines.svh"
+import display_processor_pkg::*;
 
 module OpcodeDecoder (
     input opcode_t op,

@@ -1,3 +1,5 @@
+import display_processor_pkg::*;
+
 module Hazard(
     // input from datapath
     input logic [4:0] d_rs1,

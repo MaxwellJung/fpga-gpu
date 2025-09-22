@@ -1,4 +1,4 @@
-`include "./hdl/processor/defines.svh"
+import display_processor_pkg::*;
 
 module RISCVCore #(
     parameter RESOLUTION_X = 400,

@@ -1,4 +1,4 @@
-`include "./hdl/processor/defines.svh"
+import display_processor_pkg::*;
 
 module SignExtend (
     input logic [31:7] instr,
