@@ -16,7 +16,7 @@ module axis_to_memory (
 
     // Heap memory BRAM port A
     output logic        heap_mem_port_a_clk,
-    output logic [10:0] heap_mem_port_a_addr,
+    output logic [31:0] heap_mem_port_a_addr,
     output logic [31:0] heap_mem_port_a_wr_data,
     output logic [3:0]  heap_mem_port_a_wr_en
 );

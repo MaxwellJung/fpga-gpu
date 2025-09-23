@@ -3,6 +3,8 @@
 
 #include "xparameters.h"
 
+#include "xaxidma.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -20,6 +22,10 @@ extern "C" {
 #define RESOLUTION_X 400
 #define RESOLUTION_Y 300
 #define COLOR_PALETTE_LENGTH 256
+
+#define DMA_DEVICE_ID XPAR_AXI_DMA_0_BASEADDR
+
+extern XAxiDma dma_device;
 
 int initGPU();
 void testGPU();

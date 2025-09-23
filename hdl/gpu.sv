@@ -148,7 +148,7 @@ module gpu #(
 
     // heap memory interface
     logic        heap_mem_port_a_clk;
-    logic [10:0] heap_mem_port_a_addr;
+    logic [31:0] heap_mem_port_a_addr;
     logic [31:0] heap_mem_port_a_wr_data;
     logic [3:0]  heap_mem_port_a_wr_en;
 

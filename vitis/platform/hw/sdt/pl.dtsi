@@ -196,30 +196,29 @@
 		axi_dma_0: dma@41e00000 {
 			compatible = "xlnx,axi-dma-7.1" , "xlnx,axi-dma-1.00.a";
 			xlnx,s2mm-data-width = <0x20>;
-			xlnx,mm2s-burst-size = <16>;
+			xlnx,mm2s-burst-size = <256>;
 			xlnx,m-axi-mm2s-data-width = <32>;
-			clock-frequency = <100000000 100000000 100000000 100000000>;
+			clock-frequency = <100000000 100000000>;
 			xlnx,num-s2mm-channels = <1>;
 			xlnx,dlytmr-resolution = <125>;
 			xlnx,rable = <0>;
-			xlnx,sg-length-width = <14>;
+			xlnx,sg-length-width = <26>;
 			xlnx,prmry-is-aclk-async = <0>;
 			xlnx,include-s2mm-sf = <1>;
 			#dma-cells = <1>;
 			xlnx,ip-name = "axi_dma";
 			xlnx,single-interface = <0>;
-			xlnx,sg-include-stscntrl-strm;
+			xlnx,sg-include-stscntrl-strm = <0>;
 			xlnx,include-s2mm-dre = <0>;
 			reg = <0x41e00000 0x10000>;
 			xlnx,addr-width = <32>;
-			xlnx,include-s2mm = <1>;
-			clocks = <&clk_bus_0 &clk_bus_0 &clk_bus_0 &clk_bus_0>;
+			xlnx,include-s2mm = <0>;
+			clocks = <&clk_bus_0 &clk_bus_0>;
 			xlnx,s-axis-s2mm-tdata-width = <32>;
 			xlnx,micro-dma = <0>;
 			xlnx,increase-throughput = <0>;
 			xlnx,mm2s-data-width = <0x20>;
 			xlnx,addrwidth = <0x20>;
-			xlnx,include-sg;
 			xlnx,sg-use-stsapp-length = <0>;
 			xlnx,m-axis-mm2s-tdata-width = <32>;
 			xlnx,edk-iptype = "PERIPHERAL";
@@ -229,7 +228,7 @@
 			xlnx,enable-multi-channel = <0>;
 			status = "okay";
 			xlnx,include-mm2s-sf = <1>;
-			clock-names = "s_axi_lite_aclk" , "m_axi_sg_aclk" , "m_axi_mm2s_aclk" , "m_axi_s2mm_aclk";
+			clock-names = "s_axi_lite_aclk" , "m_axi_sg_aclk" , "m_axi_mm2s_aclk";
 			xlnx,include-mm2s = <1>;
 			xlnx,include-mm2s-dre = <0>;
 			xlnx,name = "axi_dma_0";
@@ -237,12 +236,6 @@
 				xlnx,datawidth = <0x20>;
 				xlnx,device-id = <0x0>;
 				compatible = "xlnx,axi-dma-mm2s-channel";
-				dma-channels = <0x1>;
-			};
-			dma_channel_41e00030: dma-channel@41e00030 {
-				xlnx,datawidth = <0x20>;
-				xlnx,device-id = <0x0>;
-				compatible = "xlnx,axi-dma-s2mm-channel";
 				dma-channels = <0x1>;
 			};
 		};
