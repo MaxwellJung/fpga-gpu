@@ -256,9 +256,6 @@ CMAKE_VERBOSE_MAKEFILE:BOOL=ON
 //Device Id
 DEVICE_ID:STRING=7a100t
 
-//Number of slrs
-NUMBER_OF_SLRS:STRING=0x1
-
 //The directory containing a CMake configuration file for SCUGIC.
 SCUGIC_DIR:PATH=SCUGIC_DIR-NOTFOUND
 
@@ -291,6 +288,15 @@ XILTIMER_tick_timer:STRING=None
 
 //Yocto based embeddedsw FLOW
 YOCTO:BOOL=OFF
+
+//Value Computed by CMake
+axidma_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/axidma/src
+
+//Value Computed by CMake
+axidma_IS_TOP_LEVEL:STATIC=OFF
+
+//Value Computed by CMake
+axidma_SOURCE_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/axidma/src
 
 //Value Computed by CMake
 bram_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/bram/src
@@ -364,7 +370,7 @@ proc_compiler:STRING=riscv64-unknown-elf-gcc
 proc_compiler_flags:STRING= -O2 -march=rv32imac_zicsr_zifencei_zicbom -mabi=ilp32 -DSDT;-c
 
 //Extra Compiler Flags used in BSP and library generation
-proc_extra_compiler_flags:STRING=-g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
+proc_extra_compiler_flags:STRING= -g -ffunction-sections -fdata-sections -Wall -Wextra -fno-tree-loop-distribute-patterns
 
 //Value Computed by CMake
 spi_BINARY_DIR:STATIC=/home/maxwelljung/programming/fpga-gpu/vitis/platform/microblaze_riscv_0/standalone_microblaze_riscv_0/bsp/libsrc/build_configs/gen_bsp/libsrc/spi/src
@@ -553,7 +559,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=16
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=17
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

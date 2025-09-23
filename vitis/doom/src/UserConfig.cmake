@@ -125,6 +125,7 @@ set(USER_COMPILE_SOURCES
 "doomgeneric/d_main.c"
 "gpu.c"
 "platform.cpp"
+"gpio.c"
 )
 
 # -----------------------------------------

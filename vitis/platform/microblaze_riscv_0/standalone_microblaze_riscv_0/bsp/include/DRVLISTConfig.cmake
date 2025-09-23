@@ -1,1 +1,1 @@
-set(DRIVER_LIST bram;common;gpio;intc;spi;tmrctr;uartlite)
+set(DRIVER_LIST axidma;bram;common;gpio;intc;spi;tmrctr;uartlite)

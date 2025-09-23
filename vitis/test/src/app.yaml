@@ -1,4 +1,0 @@
-domain_path: /home/maxwelljung/programming/fpga-gpu/vitis/test-platform/export/test-platform/sw/standalone_microblaze_riscv_0
-app_src_dir: /tools/Xilinx/Vitis/2024.2/data/embeddedsw/lib/sw_apps/hello_world
-template: hello_world
-lang: c

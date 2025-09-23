@@ -7,10 +7,13 @@
 #include "platform.h"
 #include "gpu.h"
 #include "SysTick.h"
+#include "gpio.h"
 
 extern "C" {
+#include "doomkeys.h"
 #include "doomgeneric.h"
 }
+
 
 void DG_Init() {
     if (init_platform() == XST_SUCCESS) {
@@ -40,7 +43,49 @@ uint32_t DG_GetTicksMs()
 
 int DG_GetKey(int* pressed, unsigned char* doomKey)
 {
-    return 0;
+    // Poll GPIO pins
+    int switches_data = readSwitches();
+    int buttons_data = readButtons();
+    char key = 0;
+
+    switch (switches_data) {
+        case 0x1:
+            key = KEY_FIRE; // fire
+            break;
+        case 0x2:
+            key = KEY_USE; // use
+            break;
+        case 0x4:
+            key = KEY_RALT; // strafe
+            break;
+        case 0x8:
+            key = KEY_RSHIFT; // run
+            break;
+	}
+
+	switch (buttons_data) {
+        case 0x1:
+            key = KEY_ENTER;
+            break;
+        case 0x2:
+            key = KEY_UPARROW;
+            break;
+        case 0x4:
+            key = KEY_LEFTARROW;
+            break;
+        case 0x8:
+            key = KEY_RIGHTARROW;
+            break;
+        case 0x10:
+            key = KEY_DOWNARROW;
+            break;
+	}
+
+    *doomKey = key;
+    *pressed = (switches_data != 0) || (buttons_data != 0);
+    // xil_printf("*doomKey=%x, *pressed=%x\r\n", *doomKey, *pressed);
+
+	return *pressed;
 }
 
 void DG_SetWindowTitle(const char * title)

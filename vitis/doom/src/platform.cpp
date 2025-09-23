@@ -13,8 +13,9 @@
 #include "xil_cache.h"
 #include "SysTick.h"
 #include "spi.h"
-#include "SD.h"                     // Arduino SD card & FAT filesystem library
 #include "gpu.h"
+#include "SD.h"                     // Arduino SD card & FAT filesystem library
+#include "gpio.h"
 
 extern "C" {
 #include "doomgeneric.h"
@@ -88,6 +89,13 @@ int init_platform() {
         return XST_FAILURE;
     }
 
+    if (initGPU() == XST_SUCCESS) {
+        xil_printf("Initialized GPU!\r\n");
+    } else {
+        xil_printf("GPU Failure!\r\n");
+        return XST_FAILURE;
+    }
+
     if (initSDCard() == XST_SUCCESS) {
         xil_printf("Initialized SD Card!\r\n");
     } else {
@@ -95,10 +103,10 @@ int init_platform() {
         return XST_FAILURE;
     }
 
-    if (initGPU() == XST_SUCCESS) {
-        xil_printf("Initialized GPU!\r\n");
+    if (initGpio() == XST_SUCCESS) {
+        xil_printf("Initialized GPIO!\r\n");
     } else {
-        xil_printf("GPU Failure!\r\n");
+        xil_printf("GPIO Failure!\r\n");
         return XST_FAILURE;
     }
 
